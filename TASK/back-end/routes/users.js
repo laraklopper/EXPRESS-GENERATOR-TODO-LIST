@@ -99,4 +99,35 @@ router.get('/', checkJWTToken, function(req, res){
 /*The checkJWTToken middleware is defined in a separate file (./middleware) is used to 
 verify the JWT token before allowing access to protected routes.*/
 
+//Route for adding a newTask
+router.post('/addTask', (req, res) =>{
+  try {
+    const { newTask } = req.body//Extract the new task value from the request body
+
+    // Conditional rendering to check if the new task value is provided
+    if (!newTask) {
+      //If no taskname is provided send a 400 (bad request) status response
+      return res.status(400).json({ message: "Task name is required" });
+    }
+
+    // Conditional rendering to check if the task title already exists in the tasks array
+    if (tasks.some(task => task.title === newTask)) {
+      return res.status(409).json({ message: "Task title already exists" });
+    }
+
+    // Create a new task object with a unique ID
+    const newTaskObject = {
+      id: tasks.length + 1,
+      title: newTask
+    };
+
+    tasks.push(newTaskObject);    // Add the new task object to the tasks array
+    res.json(newTaskObject);    // Respond with the newly added task object in JSON format
+  } 
+  catch (error) {
+    console.error('Error adding task:', error.message);//Display a error message in the console for debugging purposes
+    res.status(500).json({ message: 'Internal Server Error' });//Respond with a 500 (internal error status) and a error message
+  }
+})
+
 module.exports = router;//Export the router to be used in other parts of the appliction
