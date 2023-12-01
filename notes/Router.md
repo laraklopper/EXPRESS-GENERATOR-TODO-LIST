@@ -32,46 +32,25 @@ module.exports = router;
 - The generated token is then sent back in the JSON response.
 
 `````
+// Import the express module and create a router instance
 const express = require('express');
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
 const router = express.Router();
 
-
-router.post(
-  '/login',
-  async (req, res, next) => {
-    passport.authenticate(
-      'login',
-      async (err, user, info) => {
-        try {
-          if (err || !user) {
-            const error = new Error('An error occurred.');
-
-            return next(error);
-          }
-
-          req.login(
-            user,
-            { session: false },
-            async (error) => {
-              if (error) return next(error);
-
-              const body = { _id: user._id, email: user.email };
-              const token = jwt.sign({ user: body }, 'TOP_SECRET');
-
-              return res.json({ token });
-            }
-          );
-        } catch (error) {
-          return next(error);
-        }
-      }
-    )(req, res, next);
+// Define a GET route for '/profile'
+router.get(
+  '/profile',
+  // Middleware function - This function will be executed before the final route handler
+  (req, res, next) => {
+    // Respond with JSON containing a message, user information from the request object, and a token from the query parameters
+    res.json({
+      message: 'You made it to the secure route', // Success message
+      user: req.user, // User information retrieved from the request object
+      token: req.query.secret_token // Token retrieved from the query parameters
+    });
   }
 );
 
-module.exports = router;
+module.exports = router; // Export the router to be used in other parts of the application
 
 
 ```
