@@ -31,6 +31,51 @@ module.exports = router;
 - If the credentials are valid, it generates a JWT using `jwt.sign` with the user's email and a secret key. The `expiresIn` option sets the expiration time for the token.
 - The generated token is then sent back in the JSON response.
 
+
+registration endpoint (`/register`) in Express.js for user registration. 
+
+```javascript
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const router = express.Router();
+
+// Placeholder array for user data 
+const users = [];
+
+router.post('/register', (req, res, next) => {
+  const { username, password } = req.body;
+
+  // Basic validation - check if username and password are provided
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Username and password are required' });
+  }
+
+  // Check if the username is already taken
+  if (users.some(user => user.username === username)) {
+    return res.status(409).json({ message: 'Username is already taken' });
+  }
+
+  // Store the user data (in-memory, replace with database logic)
+  const newUser = { username, password };
+  users.push(newUser);
+
+  // Generate a JWT token for the newly registered user
+  const token = jwt.sign({ username: newUser.username }, 'TOP_SECRET', { expiresIn: '1h' });
+
+  res.json({ token });
+});
+
+module.exports = router;
+```
+
+In this example:
+
+- The endpoint `/register` expects a POST request with a JSON payload containing `username` and `password`.
+- It performs basic validation to ensure that both `username` and `password` are provided.
+- It checks if the `username` is already taken by looking into the `users` array (replace this with your database logic).
+- If the username is available, it creates a new user, pushes it into the `users` array, and generates a JWT token for the newly registered user.
+
+
 `````
 // Import the express module and create a router instance
 const express = require('express');
