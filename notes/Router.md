@@ -8,16 +8,15 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 router.post('/login', (req, res, next) => {
-  // Assuming you have a user object with an email and password
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  // Validate user credentials (this is a simple example, use a secure method in a real application)
-  if (email === 'user@example.com' && password === 'password') {
+ 
+  if (username === 'user@gmail.com' && password === 'password') {
     // Generate a JWT token
-    const token = jwt.sign({ email: email }, 'TOP_SECRET', { expiresIn: '1h' });
+    const token = jwt.sign({ username: username }, 'TOP_SECRET', { expiresIn: '1h' });
 
-    // Send the token in the response
-    res.json({ token });
+    
+    res.json({ token });// Send the token in the response
   } else {
     // Invalid credentials
     res.status(401).json({ error: 'Invalid credentials' });
