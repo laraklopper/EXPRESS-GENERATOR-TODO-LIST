@@ -32,7 +32,7 @@ module.exports = router;
 - If the credentials are valid, it generates a JWT using `jwt.sign` with the user's email and a secret key. The `expiresIn` option sets the expiration time for the token.
 - The generated token is then sent back in the JSON response.
 
-// ...
+`````
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
