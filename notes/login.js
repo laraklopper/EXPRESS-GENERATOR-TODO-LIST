@@ -16,7 +16,7 @@ export default function Login() {
         body: JSON.stringify({ username, password }),
       });
 
-      const { token } = await response.json(); // Assuming the token is returned in the response body
+      const { token } = await response.json(); 
       setToken(token);
     } catch (error) {
       console.error('Login failed:', error);
