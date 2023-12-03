@@ -59,13 +59,13 @@ export default function App() {//Export default App Function component
   //===============REQUEST FUNCTIONS========================
   //----------------POST REQUESTS------------------------
   //Function to submit login
-  const submitLogin = async () => {
+  const submitLogin = async () => {//Define an async function to for user login
     try {
       //Send a POST request to server
       const response = await fetch('http://localhost:3001/users/login', {
         method: 'POST',//Request method
         headers: {
-          'Content-Type': 'application/json',//Type of data being passed
+          'Content-Type': 'application/json',//Specify the type of data being passed
         },
         body: JSON.stringify({ username, password }),
       });
@@ -85,22 +85,21 @@ export default function App() {//Export default App Function component
   };
 
   //Function to add newUser
-  const addUser = async () => {
+  const addUser = async () => {//Define an async function to add a new user
     try {
       const response = await fetch ('http://localhost:3001/users/register', {
         method : 'POST',///Request method
         headers:{
-          'Content-type': 'application/json',//Content type being passed
+          'Content-type': 'application/json',//Specify the type of data being passed
         },
-        body: JSON.stringify({newUsername, newPassword})
+        body: JSON.stringify({newUsername, newPassword})// Convert user data to JSON and include it in the request body
       })
       //Conditional rendering to check the 'ok' property of the response object
       if (!response.ok) {
         throw new Error('Failed to add newUser');//Throw an error message if the POST request is unsuccessful
       }
 
-      console.log("New user successfully added");
-
+      console.log("New user successfully added");// Log a success message to the console if the user is successfully added
 
     } 
     catch (error) {
@@ -111,13 +110,13 @@ export default function App() {//Export default App Function component
   }
 
   //Function to addTask
-  const addTask = async () => {
+  const addTask = async () => {//Define an async function to add a new task
     try {
       //Send a POST request to the server
       const response = await fetch('http://localhost:3001/addTask', {
         method: 'POST',//Request method
         headers: {
-          'Content-type': 'application/json',//Type of data being passed
+          'Content-type': 'application/json',//Specify the type of data being passed
         },
         body: JSON.stringify({ value: taskInput }),// Convert taskInput to JSON and include it in the request body
       });
@@ -147,10 +146,10 @@ export default function App() {//Export default App Function component
       const response = await fetch(`http://localhost:3001/editTask/${taskId}`, {
         method: 'PUT',//Request method
         headers: {
-          'Content-type': 'application/json',//Type of content being passed
+          'Content-type': 'application/json',//Specify the type of content being passed
         },
         body: JSON.stringify({
-          value: taskToUpdate.value,
+          value: taskToUpdate.value,// Convert taskInput to JSON and include it in the request body
         }),
       });
 
@@ -169,7 +168,7 @@ export default function App() {//Export default App Function component
 
   //-----------------DELETE REQUEST------------------
   //Function to delete task
-  const deleteTask = async (taskId) => {
+  const deleteTask = async (taskId) => {//Define an async function to add a new task
     try {
       //Send a DELETE request to the server
       const response = await fetch(`http://localhost:3001/deleteTask/${taskId}`, {
