@@ -1,0 +1,50 @@
+# TASK MIDDLEWARE EXAMPLES 
+
+## VALID USERNAME
+Express middleware that responds with an `HTTP 403 (forbidden) status code` to all requests from users whose usernames don't end with the substring '@gmail.com':
+
+```javascript
+// Import necessary modules
+const express = require('express');
+
+// Create an Express application
+const app = express();
+
+// Custom middleware function
+const validateUsername = (req, res, next) => {
+  // Extract 'username' in the request body or query parameters
+  const username = req.body.username || req.query.username;
+
+  // Check if the username ends with '@gmail.com'
+  if (username && username.endsWith('@gmail.com')) {
+    // If the username is valid, proceed to the next middleware or route handler
+    next();
+  } else {
+    // If the username is not valid, respond with HTTP 403 Forbidden status
+    res.status(403).send('Access Forbidden: Invalid username');
+  }
+};
+
+// Use the middleware for all routes
+app.use(validateUsername);
+
+// Define a sample route
+app.get('/api/data', (req, res) => {
+  // Your route logic here
+  res.send('This is a protected route.');
+});
+
+// Start the Express server
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+```
+
+- The `validateUsername` middleware checks if the provided username (from request body or query parameters) ends with '@gmail.com'.
+- If it does, the middleware calls `next()` to proceed to the next middleware or route handler. If not, it responds with a `403 Forbidden` status and a corresponding message.
+- This middleware is then applied to all routes using `app.use(validateUsername)`.
+
+## VALID TASKS
+
+## VALID CONTENT TYPES
