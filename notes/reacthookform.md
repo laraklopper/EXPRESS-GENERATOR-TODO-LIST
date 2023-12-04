@@ -1,7 +1,6 @@
 # REACT HOOK FORM
 
-Install `react-hook-form`
-
+**INSTALL**
 ```bash
 npm install react-hook-form
 ```
@@ -76,3 +75,103 @@ export default function LoginForm({
   );
 }
 ```
+- Import the `useForm` from `react-hook-form` and initialise it.
+- Use the `onSubmit` prop with the React Hook Form's `handleSubmit` function.
+- The input elements is used the `register` function from React Hook Form to bind input values and validation rules.
+- The `setValue` function is used to update the form values manually.
+## REGISTRATION FORM
+
+To use React Hook Form and add local storage functionality to your registration form:
+
+1. Install `React Hook Form`:
+2. Import `useForm` hook from `react-hook-form`.
+3. Use the `useForm` hook to create a form instance.
+4. Use the `handleSubmit` function from React Hook Form
+5. Use the `register` function to register form inputs.
+6. Add validation rules using the `rules` prop.
+7. Utilize the `setValue` function to set form values.
+
+8. Implement local storage logic to store user data.
+
+
+`RegistrationForm` component:
+
+```jsx
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+
+export default function RegistrationForm({
+  newUsername,
+  setNewUsername,
+  addUser,
+  setNewPassword,
+  newPassword,
+}) {
+  const { register, handleSubmit, setValue } = useForm();
+
+  const onSubmit = (data) => {
+    // Store user data in local storage
+    localStorage.setItem('userData', JSON.stringify(data));
+
+    // Call addUser function 
+    addUser();
+  };
+
+  return (
+    <div>
+      <Row className="regisFormRow">
+        <Col>
+          <h2 className="h2">REGISTER</h2>
+        </Col>
+      </Row>
+      <form onSubmit={handleSubmit(onSubmit)} id="registrationForm">
+        <Row className="regisFormRow">
+          <Col className="regisFormCol">
+            <label className="regisLabel">
+              <p className="labelText">USERNAME:</p>
+              <input
+                type="text"
+                name="newUsername"
+                value={newUsername}
+                onChange={(e) => {
+                  setNewUsername(e.target.value);
+                  setValue('newUsername', e.target.value);
+                }}
+                required
+                className="regisInput"
+                ref={register({ required: true })}
+              />
+            </label>
+          </Col>
+          <Col className="regisFormCol">
+            <label className="regisLabel">
+              <p className="labelText">PASSWORD:</p>
+              <input
+                name="newPassword"
+                value={newPassword}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                  setValue('newPassword', e.target.value);
+                }}
+                type="password"
+                required
+                className="regisInput"
+                ref={register({ required: true })}
+              />
+            </label>
+          </Col>
+          <Col>
+            <Button variant="primary" type="submit" id="registrationBtn">
+              REGISTER
+            </Button>
+          </Col>
+        </Row>
+      </form>
+    </div>
+  );
+}
+```
+
