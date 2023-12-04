@@ -71,10 +71,13 @@ export default function App() {//Export default App Function component
       });
 
       //Conditional rendering to check the 'ok' property of the response object
-      if (!response.ok) {
-        throw new Error('Failed to login');//Throw an error message if the POST request is unsuccessful
-      }
-
+  
+      if (response.status >= 200 && response.status < 300) {
+      console.log('Successfully logged in');
+      setLogin(true);
+    } else {
+      throw new Error('Failed to login');//Throw an error message if the POST request is unsuccessful
+    }
       console.log('Successfully logged in');//Log a success message in the console if the login is successful
       setLogin(true);//Set the login status to true
     }
