@@ -175,3 +175,45 @@ export default function RegistrationForm({
 }
 ```
 
+## ADD TASK FORM
+
+```
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+
+export default function Form({ addTask }) {
+  const { register, handleSubmit, reset } = useForm();
+
+  const onSubmit = (data) => {
+    // Pass the task data to the addTask function
+    addTask(data.task);
+    // Reset the form after submitting
+    reset();
+  };
+
+  return (
+    <form className="form" onSubmit={handleSubmit(onSubmit)}>
+      <Row>
+        <Col>
+          <label className="formLabel">
+            <p className="formText">ADD TASK:</p>
+            <input
+              type="text"
+              {...register('task', { required: true })}
+              className="input"
+            />
+          </label>
+        </Col>
+        <Col>
+          <Button variant="primary" type="submit">
+            ADD TASK
+          </Button>
+        </Col>
+      </Row>
+    </form>
+  );
+}
+```
