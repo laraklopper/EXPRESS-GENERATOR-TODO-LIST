@@ -1,0 +1,121 @@
+body{
+  background-color: cornflowerblue;
+  display: block;
+}
+#root{
+  background-color: #6495ed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* App Container */
+#appContainer{
+  margin: 10px;
+  padding: 0px;
+  display: block
+}
+/* Header */
+#header{
+  background-color: cadetblue;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  padding: 10px;
+}
+.h1{
+  text-align: center;
+  font-family: cursive;
+  font-weight: bold;
+}
+/* Section 1 */
+#section1 {
+  background-color: cadetblue;
+  margin: 0px;
+  padding: 10px;
+}
+.h2{
+  text-align: center;
+  font-weight: 500;
+}
+/* Login form */
+#login{
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: gray;
+}
+#loginHeading{
+  margin-top: 5px;
+  margin-bottom: 5px;
+
+}
+#loginForm{
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  margin-left: 0px;
+  margin-right: 0px;
+  display: block;
+}
+.loginLabel{
+  display: flex;
+    align-items: baseline;
+}
+.labelText {
+  padding: 0px;
+  margin-right: 5px;
+  font-weight: bold;
+}
+/* Registration form */
+#registration{
+  padding: 10px;
+  background-color: gray;
+}
+#registrationHeading{
+    margin-top: 5px;
+      margin-bottom: 5px;
+      margin-left: 0px;
+        margin-right: 0px;
+        padding: 5px;
+}
+#registrationForm{
+    padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      margin-left: 0px;
+      margin-right: 0px;
+}
+.regisLabel{
+  display: flex;
+  align-items: baseline;
+}
+
+
+
+/* Toggle Page Button */
+#pageToggleRow{
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  padding-right: 10px;
+  padding-left: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  
+}
+#toggleCol {
+  display: flex;
+  align-items: baseline;
+  justify-content: right;
+  padding: 10px;
+  margin: 0px;
+}
+#toggleText{
+  font-weight: bold;
+  margin-right: 5px;
+  margin-left: 0px;
+}
+/* Section2 */
