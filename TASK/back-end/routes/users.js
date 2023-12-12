@@ -1,5 +1,6 @@
 const express = require('express');//Import the Express framework for creating the server and handling routes
 const jwt = require('jsonwebtoken');//Import jsonwebtoken for generating and verifying JSON Web Tokens (JWT).
+const { checkJWTToken, authenticateToken } = require('./middleware');// Import middleware functions for token checking and authentication
 // Create an Express router which can be used to define a route for the application.
 const router = express.Router();
 
@@ -41,22 +42,26 @@ router.get('/findTasks', function (req, res) {
 });
 
 //-------- Route for user login-----------------
-router.post("/login", function (req, res) {
+// Route for user login with token authentication
+router.post("/login", authenticateToken, (req, res) => {
   const { username, password } = req.body;
   const user = users.find(user => user.username === username && user.password === password);
 
   if (user) {
+    // Generate a new JWT token for the authenticated user
     const jwtToken = jwt.sign(
       {
         username: user.username,
         password: user.password,
       },
       'secretKey',
-      { expiresIn: '1h' } 
+      { expiresIn: '1h' }
     );
 
     res.json({ "token": jwtToken });
-  } else {
+  } 
+  else {
+    // If the user is not authenticated, send a 401 Unauthorized response
     res.status(401).json({ message: "User not Authenticated" });
   }
 });
