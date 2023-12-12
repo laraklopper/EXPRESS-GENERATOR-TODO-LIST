@@ -52,7 +52,7 @@ router.post('/login', (req, res, next) => {
   }
 });
 
-
+//-----------Route to register a new user-------------------------
 router.post('/register', (req, res, next) => {
   const { newUsername, newPassword } = req.body
 
