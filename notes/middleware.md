@@ -1,5 +1,27 @@
 # TASK MIDDLEWARE EXAMPLES 
+## AUTHENTICATION
+```
+const jwt = require('jsonwebtoken');
 
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token,
+    process.env.TOKEN_SECRET as string, (err: any, user: any) => {
+    console.log(err)
+
+    if (err) return res.sendStatus(403)
+
+    req.user = user
+
+    next()
+  })
+}
+
+```
 ## VALID USERNAME
 Express middleware that responds with an `HTTP 403 (forbidden) status code` to all requests from users whose usernames don't end with the substring '@gmail.com':
 
