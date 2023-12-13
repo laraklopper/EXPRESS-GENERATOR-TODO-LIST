@@ -1,14 +1,16 @@
-// Importing necessary React and Bootstrap components
-import React, { useEffect, useState } from 'react';
-import './App.css';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Header from './components/Header';
-import RegistrationForm from './components/RegistrationForm';
-import LoginForm from './components/LoginForm';
-import TaskForm from './components/TaskForm';
+// Import necessary React components and Bootstrap components
+import React, { useEffect, useState } from 'react';// Import the React module to use React functionalities
+import './App.css';//Import CSS stylesheet
+//Bootstrap
+import Container from 'react-bootstrap/Container';//Import bootstrap container
+import Row from 'react-bootstrap/Row';//Import bootstrap row 
+import Col from 'react-bootstrap/Col';//Import bootstrap coloumn
+import Button from 'react-bootstrap/Button';// Import button component from bootstrap library
+//Components
+import Header from './components/Header';//Import Header function component
+import RegistrationForm from './components/RegistrationForm';//Import RegistrationForm function component
+import LoginForm from './components/LoginForm';//Import LoginForm function component
+import TaskForm from './components/TaskForm';//Import TaskForm Function component
 
 //App function component
 export default function App() {//Export default App function component
