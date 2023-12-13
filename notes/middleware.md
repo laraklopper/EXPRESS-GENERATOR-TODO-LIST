@@ -1,9 +1,12 @@
 # TASK MIDDLEWARE EXAMPLES 
+```
+const jwt = require('jsonwebtoken');
+```
 ## AUTHENTICATION
 
 **Middleware function to authenticate a JWT token from the 'Authorization' header**
 ```
-const jwt = require('jsonwebtoken');
+
 
 function authenticateToken(req, res, next) {
     // Extract the token from the 'Authorization' header
@@ -90,4 +93,15 @@ function enforceContentType(req, res, next) {
     next();
 }
 
+```
+## EXPORT MIDDLEWARE
+**Export the middleware functions for use in other parts of the application**
+
+```
+module.exports = {
+    authenticateToken,
+    limitTaskLength,
+    enforceContentType,
+    validateUsername
+};
 ```
