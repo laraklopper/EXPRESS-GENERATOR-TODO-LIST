@@ -27,10 +27,7 @@ Express middleware that responds with an `HTTP 403 (forbidden) status code` to a
 
 ```javascript
 // Import necessary modules
-const express = require('express');
-
-// Create an Express application
-const app = express();
+const jwt = require('jsonwebtokens');
 
 // Custom middleware function
 const validateUsername = (req, res, next) => {
@@ -47,20 +44,7 @@ const validateUsername = (req, res, next) => {
   }
 };
 
-// Use the middleware for all routes
-app.use(validateUsername);
 
-// Define a sample route
-app.get('/api/data', (req, res) => {
-  // Your route logic here
-  res.send('This is a protected route.');
-});
-
-// Start the Express server
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
 ```
 
 - The `validateUsername` middleware checks if the provided username (from request body or query parameters) ends with '@gmail.com'.
