@@ -1,20 +1,18 @@
-// Import necessary React components and Bootstrap components
-import React, { useEffect, useState } from 'react';// Import the React module to use React functionalities
-import './App.css';//Import CSS stylesheet
-//Bootstrap
-import Container from 'react-bootstrap/Container';//Import bootstrap container
-import Row from 'react-bootstrap/Row';//Import bootstrap row 
-import Col from 'react-bootstrap/Col';//Import bootstrap coloumn
-import Button from 'react-bootstrap/Button';// Import button component from bootstrap library
-//Components
-import Header from './components/Header';//Import Header function component
-import RegistrationForm from './components/RegistrationForm';//Import RegistrationForm function component
-import LoginForm from './components/LoginForm';//Import LoginForm function component
-import TaskForm from './components/Form';//Import TaskForm Function component
+// Importing necessary React and Bootstrap components
+import React, { useEffect, useState } from 'react';
+import './App.css';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Header from './components/Header';
+import RegistrationForm from './components/RegistrationForm';
+import LoginForm from './components/LoginForm';
+import TaskForm from './components/TaskForm';
 
 //App function component
-export default function App() {//Export default App Function component
-  //===========STATE VARIABLES=======================
+export default function App() {//Export default App function component
+  // =============STATE VARIABLES==================
   const [taskData, setTaskData] = useState([]);//State to store the data fetched from the server 
   const [isLoaded, setIsLoaded] = useState(false);//State to indicate whether the data has been loaded.
   const [error, setError] = useState(null);//Stores any error that occurs during data fetching or other operations.
@@ -28,299 +26,363 @@ export default function App() {//Export default App Function component
   const [newPassword, setNewPassword] = useState('');//State tp store newPassword
   const [isRegistration, setIsRegistration] = useState(false);//State to handle registration
 
-  //=========FETCH DATA==================
-  // Fetch initial data from the server on component mount
+  //=============USE EFFECT HOOK TO FETCH DATA==================
+  // Fetch tasks from the server on component mount
   useEffect(() => {
-    async function fetchTasks() {
+    async function fetchTasks() {  // Define an asynchronous function to fetch task
       try {
+        //Send a GET request to the server
         const response = await fetch('http://localhost:3001/users/findTasks', {
-          method: 'GET',
-          headers: {
-            'Content-type': 'application/json',
+          method: 'GET',//Request method
+          headers: {// Set the headers for the request
+            'Content-type': 'application/json',// Indicate that the request body will be in JSON format
           },
         });
-
+        
+       // Conditional rendering to chheck if the response status is within the successful range (200-299)
         if (response.status >= 200 && response.status < 300) {
-          const data = await response.json();
-          setTaskData(data);
-          setIsLoaded(true);
-        } else {
-          throw new Error('Failed to fetch tasks');
+          const data = await response.json(); // Parse the response body as JSON
+          setTaskData(data);// Update the state variable taskData with the fetched data.
+          setIsLoaded(true);// Set the isLoaded state to true to indicate that the data has been loaded
+        } 
+        else {
+          throw new Error('Failed to fetch tasks');//If the GET request is unsuccessful throw an error message
         }
-      } catch (error) {
-        console.error('Error fetching data:', error.message);
-        setError('Error fetching data:', error.message);
-        setIsLoaded(true);
+      } 
+      catch (error) {
+      //Handle any errors that occur during the request 
+        console.error('Error fetching data:', error.message);//Display an error message in the console for debugging purposes
+        setError('Error fetching data:', error.message);//Set the error state using the setError function with an error message
+        setIsLoaded(true); // Set the isLoaded state to true to indicate that the data has been loaded
       }
     }
-    fetchTasks();
-  }, []);
+    fetchTasks();//Invoke the callback function
+  }, []);//The empty dependency array ([])  ensures that the effect runs only once when the component mounts. 
 
   //===============REQUEST FUNCTIONS========================
-  //-----------------POST REQUESTS----------------------
-  //Function to submit login
-  const submitLogin = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+  //--------------POST REQUEST-----------------
+  // Function submit login 
+  const submitLogin = async () => {//Define an async function to submit login
+  try {
+    //Send a POST request to the server
+  const response = await fetch('http://localhost:3001/users/login', {
+      method: 'POST',//Request method
+      headers: {//Send the headers for request
+        'Content-Type': 'application/json',// Set the content type to indicate that the request body is in JSON format
+      },
+      body: JSON.stringify({ username, password }),// Convert the login credentials to a JSON string and include it in the request body
+    });
 
-      if (response.status >= 200 && response.status < 300) {
-        console.log('Successfully logged in');
-        setLogin(true);
-        localStorage.setItem('loginStatus', JSON.stringify(true));
-        localStorage.setItem('username', username);
-      } else {
-        throw new Error('Failed to login');
-      }
-    } catch (error) {
-      console.error('Login Failed', error.message);
-      setError('Error logging in. Please try again.');
+    // Conditional rendering to check if the response status is within the successful range (200-299)
+    if (response.status >= 200 && response.status < 300) {
+    
+      console.log('Successfully logged in');  // Log a success message to the console
+      setLogin(true);// Set the login state to true to indicate that the user is logged in
+
+      localStorage.setItem('loginStatus', JSON.stringify(true));  // Store login status and username in local storage for persistence
+      localStorage.setItem('username', username);//Store the username in local storage for persistence.
+    } else {
+      throw new Error('Failed to login');//If the POST request is unsucccessful throw an error
     }
-  };
+  } catch (error) {
+    //Handle errors that occur during the request
+    console.error('Login Failed', error.message);//Log an error message in the console for debugging purposes
+    setError('Login Failed', error.message);//Set the error state using the setError function with an error message
+  }
+};
 
+  // Check for stored login status and username on component mount
   useEffect(() => {
+      // Retrieve stored login status and username from local storage
     const storedLoginStatus = localStorage.getItem('loginStatus');
     const storedUsername = localStorage.getItem('username');
-
+    
+  // Conditional rendering to check if both login status and username are stored in local storage
     if (storedLoginStatus && storedUsername) {
-      setLogin(JSON.parse(storedLoginStatus));
-      setUsername(storedUsername);
+      setLogin(JSON.parse(storedLoginStatus));    // Update the login state with the stored login status
+      setUsername(storedUsername);    // Update the username state with the stored username
     }
   }, []);
 
-  useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) {
-      setTaskData(JSON.parse(storedTasks));
+  // Check for stored tasks on component mount or when taskData changes
+// Use effect to update taskData when it changes or on component mount
+useEffect(() => {
+  const storedTasks = localStorage.getItem('tasks');  // Retrieve tasks from local storage
+
+  // Conditional rendering to check if tasks are stored in local storage
+  if (storedTasks) {
+    setTaskData(JSON.parse(storedTasks));// Parse the JSON string and update the taskData state with the stored tasks
+  }
+}, [taskData]);
+
+  // Function to add a new task
+ // Define an async function to add a task
+const addTask = async (taskInput) => {
+  try {
+    // Make an asynchronous HTTP POST request to add a task
+    const response = await fetch('http://localhost:3001/addTask', {
+      method: 'POST', // Request method
+      headers: {
+        'Content-type': 'application/json', //Specify the content of the request body
+      },
+      body: JSON.stringify({ value: taskInput }),// Convert the taskInput to a JSON string and include it in the request body
+    });
+
+    // Conditional rendering to check if the response status is within the successful range (200-299)
+    if (response.status >= 200 && response.status < 300) {
+      const updatedList = await response.json();      // Parse the response body as JSON
+      setTaskData(updatedList);      // Update the taskData state with the updated list of tasks
+
+
+      localStorage.setItem('tasks', JSON.stringify(updatedList)); // Store the updated list of tasks in local storage 
+      console.log(updatedList);      // Log the updated list to the console
+
+
+      console.log('Task added successfully');  // Log a success message to the console
+
+    } else {
+      throw new Error('Failed to add task');//Throw an error message if the POST request is not successful
     }
-  }, [setTaskData]);
+  } catch (error) {
+    // Handle errors which occur during the request
+    console.error('Error adding task:', error.message);//Display an error message in the console for debugging purposes
+    setError('Error adding task', error.message);//Set the error state using the setError function with an error message
+  }
+};
 
-  
-  //Function to addTask
-  const addTask = async (taskInput) => {
+  // Function to add a new user
+  const addUser = async () => {//Define an async function to add a new user
     try {
-      const response = await fetch('http://localhost:3001/addTask', {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify({ value: taskInput }),
-      });
-
-      if (response.status >= 200 && response.status < 300) {
-        const updatedList = await response.json();
-        setTaskData(updatedList);
-        localStorage.setItem('tasks', JSON.stringify(updatedList));
-        console.log(updatedList);
-        console.log('Task added successfully');
-      } else {
-        throw new Error('Failed to add task');
-      }
-    } catch (error) {
-      console.error('Error adding task:', error.message);
-      setError('Error adding task. Please try again.');
-    }
-  };
-
-
-  //Function to add newUser
-  const addUser = async () => {
-    try {
+       // Send a POST request to the server to add a new user
       const response = await fetch('http://localhost:3001/users/register', {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json',
+        method: 'POST',//Request method
+        headers: {//Set request headers
+          'Content-type': 'application/json',// Specify the type of data being passed
         },
+        // Convert the newUsername and newPassword to a JSON string and include it in the request body
         body: JSON.stringify({ newUsername, newPassword }),
       });
 
+          // Conditional rendering to check if the response status is within the successful range (200-299)
       if (response.status >= 200 && response.status < 300) {
-        console.log('New user successfully added');
+        console.log('New user successfully added');// Log a success message to the console
+         // Retrieve existing users from local storage or initialize an empty array
         const users = JSON.parse(localStorage.getItem('users')) || [];
-        users.push({ username: newUsername, password: newPassword });
-        localStorage.setItem('users', JSON.stringify(users));
-      } else {
-        throw new Error('Failed to add new user');
+        users.push({ username: newUsername, password: newPassword });// Add the new user to the users array
+
+        localStorage.setItem('users', JSON.stringify(users));// Store the updated users array in local storage
+      } 
+      else {
+        throw new Error('Failed to add new user');//Throw an error message if the POST request is unsuccessful
       }
     } catch (error) {
-      console.error('Error adding new user', error.message);
-      setError("Error adding new user", error.message);
+          //Handle errors that occur during the request
+      console.error('Error adding new user', error.message);//Log an error message in the console for debugging purposes
+      setError("Error adding new user", error.message);//Set the error state using the setError function with an error message
     }
   }
 
-  //----------------PUT REQUEST---------------------------
-  //Function to editTask
-  const editTask = async (taskId) => {
-    try {
-      const taskToUpdate = updatedTasks.find((task) => task.id === taskId);
-      const response = await fetch(`http://localhost:3001/editTask/${taskId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          value: taskToUpdate.value,
-        }),
-      });
+//----------------PUT REQUEST---------------------------
 
-      if (response.status >= 200 && response.status < 300) {
-        console.log('Task successfully updated');
-        const updatedList = await response.json();
-        setTaskData(updatedList);
-        localStorage.setItem('tasks', JSON.stringify(updatedList));
-      } else {
-        throw new Error('Failed to edit task');
-      }
-    } catch (error) {
-      console.error('Error editing task:', error.message);
-      setError('Error editing task. Please try again.');
+// Function to edit a task
+const editTask = async (taskId) => {
+  try {
+    // Find the task to update in the updatedTasks array (assumed to be defined elsewhere in the code)
+    const taskToUpdate = updatedTasks.find((task) => task.id === taskId);
+
+    // Send a PUT request to update the task on the server
+    const response = await fetch(`http://localhost:3001/editTask/${taskId}`, {
+      method: 'PUT', // Request method
+      headers: {// Set the request method
+        'Content-type': 'application/json', // Specify the type of data being passed
+      },
+      body: JSON.stringify({// Convert the taskToUpdate data to a JSON string and include it in the request body
+        value: taskToUpdate.value,
+      }),
+    });
+
+    // Conditional rendering  if the response status is within the successful range (200-299)
+    if (response.status >= 200 && response.status < 300) {
+      console.log('Task successfully updated');      // Log a success message to the console
+      const updatedList = await response.json();// Parse the response body as JSON
+
+      setTaskData(updatedList);      // Update the taskData state with the updated list of tasks
+      localStorage.setItem('tasks', JSON.stringify(updatedList));// Store the updated list of tasks in local storage
+
+    } else {     
+      throw new Error('Failed to edit task');//Throw an error if the PUT request is unsucessful
     }
-  };
+  } catch (error) {
+    //Error handling for if the request is unsuccessful
+    console.error('Error editing task:', error.message);//Display an error message in the console for debugging purposes
+    setError('Error editing task. Please try again.');//Set the error state using the setError function with an error message
 
-  //-----------------DELETE REQUEST------------------
-  //Function to delete task
-  const deleteTask = async (taskId) => {
+  }
+};
+
+//---------------------DELETE REQUEST---------------
+  // Function to delete a task
+  const deleteTask = async (taskId) => {//Define an async function to delete a task
     try {
+      //Send a DELETE request to the server
       const response = await fetch(`http://localhost:3001/users/deleteTask/${taskId}`, {
-        method: 'DELETE',
+        method: 'DELETE',//Request method
         headers: {
-          'Content-type': 'application/json',
+          'Content-type': 'application/json',// Specify the type of data being passed
         },
       });
-
+      
+      // Conditional rendering to check if the response status is within the successful range (200-299)
       if (response.status >= 200 && response.status < 300) {
-        const updatedList = await response.json();
-        setTaskData(updatedList);
-        localStorage.setItem('tasks', JSON.stringify(updatedList));
-        console.log('Task successfully deleted');
-        setUpdatedTasks([]);
-      } else {
-        throw new Error('Failed to delete task');
+        const updatedList = await response.json();      // Parse the response body as JSON
+
+        setTaskData(updatedList);  // Update the taskData state with the updated list of tasks
+        localStorage.setItem('tasks', JSON.stringify(updatedList));   // Store the updated list of tasks in local storage for persistence
+        console.log('Task successfully deleted');// Log a success message to the console
+        setUpdatedTasks([]); // Clear the updatedTasks state
+      } 
+      else {
+        throw new Error('Failed to delete task');//Throw an error message if an error occurs during the DELETE request
       }
-    } catch (error) {
-      console.error('Error deleting task:', error.message);
-      setError('Error deleting task. Please try again.');
+    } 
+    catch (error) {
+      //Handle errors which occur during the request
+      console.error('Error deleting task:', error.message);//Display an error message in the console for debugging purposes
+      setError('Error deleting task. Please try again.');//Set the error state using the setError function with an error message
     }
   };
 
+//===================EVENT LISTENERS==============================  
+// Event listener to set loginStatus to false
+const appLogin = () => {
+  setLoginStatus(false);
+};
 
-  //===============EVENT LISTENERS=======================
+// Event listener to handle logout click
+const handleLogoutClick = () => {
+  // Remove login-related items from local storage
+  localStorage.removeItem('loginStatus');
+  localStorage.removeItem('username');
+  
+  // Call the handleLogout function
+  handleLogout();
+};
 
-  // Event listener to set loginStatus to false
-  const appLogin = () => {
-    setLoginStatus(false);
-  };
+// Function to logout
+const logout = () => {
+  // Set loginStatus to true and login to false
+  setLoginStatus(true);
+  setLogin(false);
+};
 
-  // Event listener to handle logout click
-  const handleLogoutClick = () => {
-    localStorage.removeItem('loginStatus');
-    localStorage.removeItem('username');
-    handleLogout();
-  };
+// Function to handle logout
+const handleLogout = () => {
+  // Reset username and password inputs
+  setUsername('');
+  setPassword('');
+  
+  // Call the appLogin function to set loginStatus to false
+  appLogin();
+};
 
-  // Function to logout
-  const logout = () => {
-    setLoginStatus(true);
-    setLogin(false);
-  };
+// Event listener to toggle between registration and login pages
+const togglePage = () => {
+  // Toggle the isRegistration state to switch between registration and login pages
+  setIsRegistration(!isRegistration);
 
-  // Function to handle logout
-  const handleLogout = () => {
-    setUsername('');
-    setPassword('');
-    appLogin();
-  };
+  // Reset input fields when toggling pages
+  setNewUsername(''); // Reset new username input
+  setNewPassword(''); // Reset new password input
+  setUsername('');    // Reset login username input
+  setPassword('');    // Reset login password input
+};
 
-  // Event listener to toggle between registration and login pages
-  const togglePage = () => {
-    setIsRegistration(!isRegistration);
-    setNewUsername(''); // Reset new username input
-    setNewPassword(''); // Reset new password input
-    setUsername(''); // Reset login username input
-    setPassword(''); // Reset login password input
-  };
-
-
-  //==============JSX RENDERING=============================
-
+//==========JSX RENDERING=============
+  
   return (
-      <Container id='appContainer'>
-        <Header />
-        {loginStatus ? (
-          <section id='section1'>
-            <div>
-              {isRegistration ? (
-                <LoginForm
-                  submitLogin={submitLogin}
-                  login={login}
-                  handleLogoutClick={handleLogoutClick}
-                  setUsername={setUsername}
-                  setPassword={setPassword}
-                  username={username}
-                  password={password}
-                />
-              ) : (
-                <RegistrationForm
-                  addUser={addUser}
-                  newUsername={newUsername}
-                  setNewUsername={setNewUsername}
-                  newPassword={newPassword}
-                  setNewPassword={setNewPassword}
-                />
-              )}
-              <Row id='pageToggleRow'>
-                <Col id='toggleCol'>
-                  <p id='toggleText'>CLICK HERE TO VISIT THE:</p>
-                  <Button variant='primary' onClick={togglePage} id='registrationBtn'>
-                    {isRegistration ? 'Login Page' : 'Registration Page'}
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          </section>
-        ) : (
-          <section id='section2'>
-            <TaskForm addTask={addTask} taskInput={taskInput} setTaskInput={setTaskInput} />
-            {error ? (
-              <div>{error}</div>
-            ) : !isLoaded ? (
-              <p>Loading...</p>
+    <Container id='appContainer'>
+      <Header />
+      {loginStatus ? (
+        // Render the login or registration form based on isRegistration state
+        <section id='section1'>
+          <div>
+            {isRegistration ? (
+              <RegistrationForm
+                addUser={addUser}
+                newUsername={newUsername}
+                setNewUsername={setNewUsername}
+                newPassword={newPassword}
+                setNewPassword={setNewPassword}
+              />
             ) : (
-              <ul>
-                {taskData.map((task) => (
-                  <li key={task.taskId} id='tasks'>
-                    <div>
-                      {task.taskId}
-                    </div>
-                    <div>
-                      <Button variant="primary" onClick={() => editTask(task.taskId)}>
-                        EDIT
-                      </Button>
-                    </div>
-                    <div>
-                      <Button variant="primary" onClick={() => deleteTask(task.taskId)}>
-                        DELETE
-                      </Button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              <LoginForm
+                submitLogin={submitLogin}
+                login={login}
+                handleLogoutClick={handleLogoutClick}
+                setUsername={setUsername}
+                setPassword={setPassword}
+                username={username}
+                password={password}
+              />
             )}
-            {error && <p>{error}</p>}
-            <Row>
-              <Col>
-                <Button variant="primary" onClick={logout}>
-                  Logout
+
+            {/* Toggle between registration and login pages */}
+            <Row id='pageToggleRow'>
+              <Col id='toggleCol'>
+                <p id='toggleText'>CLICK HERE TO VISIT THE:</p>
+                <Button variant='primary' onClick={togglePage} id='registrationBtn'>
+                  {isRegistration ? 'Login Page' : 'Registration Page'}
                 </Button>
               </Col>
             </Row>
-          </section>
-        )}
-      </Container>
+          </div>
+        </section>
+      ) : (
+        // Render the task management section when logged in
+        <section id='section2'>
+          {/* Task input form */}
+          <TaskForm addTask={addTask} taskInput={taskInput} setTaskInput={setTaskInput} />
+
+          {/* Render tasks list */}
+          {error ? (
+            <div>{error}</div>
+          ) : !isLoaded ? (
+            <p>Loading...</p>
+          ) : (
+            <ul>
+              {taskData.map((task) => (
+                <li key={task.taskId} id='tasks'>
+                  <div>
+                    {task.taskId}
+                  </div>
+                  <div>
+                    <Button variant="primary" onClick={() => editTask(task.taskId)}>
+                      EDIT
+                    </Button>
+                  </div>
+                  <div>
+                    <Button variant="primary" onClick={() => deleteTask(task.taskId)}>
+                      DELETE
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {/* Display error messages */}
+          {error && <p>{error}</p>}
+
+          {/* Logout button */}
+          <Row>
+            <Col>
+              <Button variant="primary" onClick={logout}>
+                Logout
+              </Button>
+            </Col>
+          </Row>
+        </section>
+      )}
+    </Container>
   );
 }
