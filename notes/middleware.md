@@ -34,8 +34,6 @@ function authenticateToken(req, res, next) {
 **Express middleware that responds with an `HTTP 403 (forbidden) status code` to all requests from users whose usernames don't end with the substring '@gmail.com':**
 
 ```javascript
-const jwt = require('jsonwebtokens');
-
 // Custom middleware function
 const validateUsername = (req, res, next) => {
     const username = req.body.newUsername;    // Extract 'username' in the request body or query parameters
