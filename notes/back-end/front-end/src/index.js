@@ -4,6 +4,7 @@ import './index.css';//Import CSS stylesheet
 import App from './App';//Import the app function in App.js file
 import reportWebVitals from './reportWebVitals';//Import reportWebVitals function from './reportWebVitals' to measure performance metrics 
 import { BrowserRouter } from "react-router-dom";//Import browserrouter
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Create a root for rendering the React app using the element id
 const root = ReactDOM.createRoot(document.getElementById('root'));
