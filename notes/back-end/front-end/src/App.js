@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';// Import the React module to use React functionalities
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 import Home from './home';
 import Login from './login';
 import './App.css';
@@ -35,12 +35,17 @@ export default function App(){
   
   return (
     <div className="App">
-      <BrowserRouter>
+    <nav>
+    <ul>
+     <li className='navLink'><Link to="/Home">HOME</Link>  </li>
+     <li className='navLink'><Link to="/Login">HOME</Link>  </li>
+    </ul>
+    </nav>
+
         <Routes>
-          <Route path="/" element={<Home email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} />
+          <Route exact path="/Home" element={<Home email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} />
           <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
         </Routes>
-      </BrowserRouter>
     </div>
   );
 }
