@@ -30,6 +30,9 @@ function authenticateToken(req, res, next) {
     // Extracting the token from the 'Authorization' header
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
+    /* Check if authHeader exists and is truthy using the logical AND operator (&&).
+ If authHeader is falsy (e.g., null or undefined), token will be assigned the value of authHeader (null or undefined).
+ If authHeader is truthy, the expression after && is evaluated.*/
 
     // If no token is found, send a 401 Unauthorized response
     if (token == null) return res.sendStatus(401);
