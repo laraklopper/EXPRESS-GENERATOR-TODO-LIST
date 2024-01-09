@@ -56,3 +56,7 @@ router.post('/login', function (req, res) {
 });
 
 ```
+## REFERENCES
+
+- https://copyprogramming.com/howto/const-jwt-require-jsonwebtoken-const-bcrypt-require-bcrypt
+- 
