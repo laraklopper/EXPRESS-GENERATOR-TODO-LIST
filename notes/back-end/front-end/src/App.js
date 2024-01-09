@@ -1,51 +1,70 @@
-import React, { useEffect, useState } from 'react';// Import the React module to use React functionalities
-import { Link, Route, Routes } from 'react-router-dom';
-import Home from './home';
-import Login from './login';
-import './App.css';
+import React, { useState } from 'react';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Header from './components/Header';
+import { Routes, Route } from 'react-router-dom';
+import Login from './components/Login';
+import Home from './components/Home';
 
-export default function App(){
+const App = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginStatus, setLoginStatus] = useState(false);
+  const [login, setLogin] = useState(false);
 
-  const [loggedIn, setLoggedIn] = useState(false)
-  const [email, setEmail] = useState("")
+  const handleLogout = () => {
+    setUsername('');
+    setPassword('');
+    setLoginStatus(false);
+    setLogin(false);
+    localStorage.clear(); // Clear all stored data on logout
+  };
 
-  useEffect(() => {
-    // Fetch the user email and token from local storage
-    const user = JSON.parse(localStorage.getItem("user"))
+  const submitLogin = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    // If the token/email does not exist, mark the user as logged out
-    if (!user || !user.token) {
-      setLoggedIn(false)
-      return
+      if (response.status >= 200 && response.status < 300) {
+        console.log('Successfully logged in');
+        setLogin(true);
+        setLoginStatus(true);
+        localStorage.setItem('loginStatus', JSON.stringify(true));
+        localStorage.setItem('username', username);
+      } else {
+        const errorMessage = await response.json();
+        throw new Error(`Failed to login: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error('Login Failed', error.message);
     }
+  };
 
-    // If the token exists, verify it with the auth server to see if it is valid
-    fetch("http://localhost:3080/verify", {
-            method: "POST",
-            headers: {
-                'jwt-token': user.token
-              }
-        })
-        .then(res => response.json())
-        .then(res => {
-            setLoggedIn('success' === res.message)
-            setEmail(user.email || "")
-        })
-  }, [])
-  
   return (
-    <div className="App">
-    <nav>
-    <ul>
-     <li className='navLink'><Link to="/Home">HOME</Link>  </li>
-     <li className='navLink'><Link to="/Login">HOME</Link>  </li>
-    </ul>
-    </nav>
-
-        <Routes>
-          <Route exact path="/Home" element={<Home email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>} />
-          <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-        </Routes>
+    <div>
+      <Container>
+        <Header />
+        <Row>
+          <Col>
+            <Routes>
+              <Route
+                exact
+                path="/login"
+                element={<Login username={username} setUsername={setUsername} password={password} login={login} setPassword={setPassword} submitLogin={submitLogin} />}
+              />
+              <Route path="/home" element={<Home handleLogout={handleLogout} />} />
+            </Routes>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
-}
+};
+
+export default App;
