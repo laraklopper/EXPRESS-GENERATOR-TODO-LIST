@@ -33,7 +33,7 @@ function App() {
 
 export default App;
 ```
-``
+```
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
