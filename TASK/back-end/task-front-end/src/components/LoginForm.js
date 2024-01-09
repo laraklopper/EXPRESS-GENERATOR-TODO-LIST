@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react';// Import the React module to use React functionalities
 import Row from 'react-bootstrap/Row';//Import bootstrap row 
 import Col from 'react-bootstrap/Col';//Import bootstrap coloumn
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
+import Button from 'react-bootstrap/Button';// Import button component from bootstrap library
 import FormHeadings from './FormHeadings';
 
 //LoginForm function component
