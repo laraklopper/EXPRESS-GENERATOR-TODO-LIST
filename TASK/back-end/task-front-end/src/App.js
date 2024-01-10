@@ -14,18 +14,24 @@ import TaskForm from './components/TaskForm';//Import TaskForm Function componen
 
 //App function component
 export default function App() {//Export default App Function component
-  //===========STATE VARIABLES=======================
-  const [taskData, setTaskData] = useState([]);//State to store the data fetched from the server 
-  const [isLoaded, setIsLoaded] = useState(false);//State to indicate whether the data has been loaded.
-  const [error, setError] = useState(null);//Stores any error that occurs during data fetching or other operations.
-  const [updatedTasks, setUpdatedTasks] = useState([]);//Stores tasks that have been updated.
-  const [login, setLogin] = useState(false);//State used to indicates whether or not the user is logged in.
-  const [password, setPassword] = useState('');//Stores the password entered by the user.
+  //===========STATE VARIABLES=======================  
+  //User variables
   const [username, setUsername] = useState('');//Stores the username entered by the user.
-  const [loginStatus, setLoginStatus] = useState(true);//Indicates the login status.
-  const [taskInput, setTaskInput] = useState('');//State to store Input
+  const [password, setPassword] = useState('');//Stores the password entered by the user.
   const [newUsername, setNewUsername] = useState(' ');//State to store newUsername
   const [newPassword, setNewPassword] = useState('');//State tp store newPassword
+  //Task Variables
+  const [taskData, setTaskData] = useState([]);//State to store the data fetched from the server 
+  const [taskInput, setTaskInput] = useState('');//State to store Input
+  const [updatedTasks, setUpdatedTasks] = useState([]);//Stores tasks that have been updated.
+  //Event variables  
+  const [isLoaded, setIsLoaded] = useState(false);//State to indicate whether the data has been loaded.
+  const [error, setError] = useState(null);//Stores any error that occurs during data fetching or other operations.
+  const [login, setLogin] = useState(false);//State used to indicates whether or not the user is logged in.
+  const [loginStatus, setLoginStatus] = useState(true);//Indicates the login status.
+  const [isRegistration, setIsRegistration] = useState(false)//
+  
+ 
   const [isRegistration, setIsRegistration] = useState(false);//State to handle registration
 
  //=============USE EFFECT HOOK TO FETCH DATA==================
