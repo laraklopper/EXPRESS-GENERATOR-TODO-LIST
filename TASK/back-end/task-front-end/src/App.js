@@ -16,34 +16,32 @@ import TaskForm from './components/TaskForm';//Import TaskForm Function componen
 export default function App() {//Export default App Function component
   //===========STATE VARIABLES=======================  
   //User variables
-  const [username, setUsername] = useState('');//Stores the username entered by the user.
-  const [password, setPassword] = useState('');//Stores the password entered by the user.
-  const [newUsername, setNewUsername] = useState(' ');//State to store newUsername
-  const [newPassword, setNewPassword] = useState('');//State tp store newPassword
+  const [username, setUsername] = useState('');//State to store the username entered by the user.
+  const [password, setPassword] = useState('');//State to store the password entered by the user.
+  const [newUsername, setNewUsername] = useState(' ');//State used to store newUsername
+  const [newPassword, setNewPassword] = useState('');//State used to store newPassword
   //Task Variables
   const [taskData, setTaskData] = useState([]);//State to store the data fetched from the server 
-  const [taskInput, setTaskInput] = useState('');//State to store Input
+  const [taskInput, setTaskInput] = useState('');//State to store task Input
   const [updatedTasks, setUpdatedTasks] = useState([]);//Stores tasks that have been updated.
   //Event variables  
   const [isLoaded, setIsLoaded] = useState(false);//State to indicate whether the data has been loaded.
-  const [error, setError] = useState(null);//Stores any error that occurs during data fetching or other operations.
+  const [error, setError] = useState(null);//State to any error that occurs during data fetching or other operations.
   const [login, setLogin] = useState(false);//State used to indicates whether or not the user is logged in.
-  const [loginStatus, setLoginStatus] = useState(true);//Indicates the login status.
-  const [isRegistration, setIsRegistration] = useState(false)//
-  
- 
+  const [loginStatus, setLoginStatus] = useState(true);//State used to indicate the login status.
   const [isRegistration, setIsRegistration] = useState(false);//State to handle registration
 
  //=============USE EFFECT HOOK TO FETCH DATA==================
  
    // Fetch initial data from the server on component mount
    useEffect (() => {
-    async function fetchTasks() {
+    async function fetchTasks() {//Define an async function to fetch tasks
       try {
+        //Send a GET request to the server
         const response = await fetch('http://localhost:3001/users/findTasks',{
-          method: 'GET',
-          headers:{
-            'Content-Type': 'application/json'
+          method: 'GET',//Request method
+          headers:{//Send the headers for request
+            'Content-Type': 'application/json'//Specify the content of the request body
           }
         })
 
@@ -51,7 +49,7 @@ export default function App() {//Export default App Function component
               if (response.status >= 200 && response.status < 300) {
                 const data = await response.json(); // Parse the response body as JSON
                 setTaskData(data);// Update the state variable taskData with the fetched data.
-                setIsLoaded(true);// Set the isLoaded state to true to indicate that the data has been loaded
+                // setIsLoaded(true);// Set the isLoaded state to true to indicate that the data has been loaded
               }
               else {
                 throw new Error('Failed to fetch tasks');//If the GET request is unsuccessful throw an error message
@@ -62,7 +60,7 @@ export default function App() {//Export default App Function component
         //Handle any errors that occur during the request
               // console.error('Error fetching data:');//Display an error message in the console for debugging purposes
               setError('Error fetching data:', error.message);//Set the error state using the setError function with an error message
-              setIsLoaded(true); // Set the isLoaded state to true to indicate that the data has been loaded
+              // setIsLoaded(true); // Set the isLoaded state to true to indicate that the data has been loaded
       }
     }
      fetchTasks()//Invoke the callback function
@@ -78,7 +76,7 @@ export default function App() {//Export default App Function component
       const response = await fetch('http://localhost:3001/users/login', {
         method: 'POST',//Request method
         headers: {//Send the headers for request
-          'Content-Type': 'application/json',// Set the content type to indicate that the request body is in JSON format
+          'Content-Type': 'application/json',//Specify the content of the request bodyt
              // 'Authorization': 'Bearer ' + TOKEN,
         },
         body: JSON.stringify({ username, password }),// Convert the login credentials to a JSON string and include it in the request body
@@ -90,7 +88,7 @@ export default function App() {//Export default App Function component
         console.log('Successfully logged in');  // Log a success message to the console
         setLogin(true);// Set the login state to true to indicate that the user is logged in
 
-        localStorage.setItem('loginStatus', JSON.stringify(true));  // Store login status and username in local storage for persistence
+        localStorage.setItem('loginStatus', JSON.stringify(true));  // Store login status and username in local storage
         localStorage.setItem('username', username);//Store the username in local storage for persistence.
         // localStorage.setItem('token', token);
 
