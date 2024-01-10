@@ -79,6 +79,7 @@ export default function App() {//Export default App Function component
         method: 'POST',//Request method
         headers: {//Send the headers for request
           'Content-Type': 'application/json',// Set the content type to indicate that the request body is in JSON format
+             // 'Authorization': 'Bearer ' + TOKEN,
         },
         body: JSON.stringify({ username, password }),// Convert the login credentials to a JSON string and include it in the request body
       });
@@ -91,6 +92,8 @@ export default function App() {//Export default App Function component
 
         localStorage.setItem('loginStatus', JSON.stringify(true));  // Store login status and username in local storage for persistence
         localStorage.setItem('username', username);//Store the username in local storage for persistence.
+        // localStorage.setItem('token', token);
+
       } else {
         throw new Error('Failed to login');//If the POST request is unsucccessful throw an error
       }
@@ -166,6 +169,7 @@ export default function App() {//Export default App Function component
         method: 'POST',//Request method
         headers: {
           'Content-type': 'application/json',//Specify the data type
+          // 'Authorization': 'Bearer ' + TOKEN,
         },
         body: JSON.stringify({ newUsername, newPassword }),
       });
