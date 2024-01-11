@@ -126,7 +126,7 @@ export default function App() {//Export default App Function component
    const addTask = async (taskInput) => { // Define an async function to add a task
     try {
       // Make an asynchronous HTTP POST request to add a task
-      const response = await fetch('http://localhost:3001/addTask', {
+      const response = await fetch('http://localhost:3001/users/addTask', {
         method: 'POST', // Request method
         headers: {//Set the headers for request
           'Content-type': 'application/json', //Specify the content of the request body
