@@ -16,19 +16,16 @@ import TaskForm from './components/TaskForm';//Import TaskForm Function componen
 export default function App() {//Export default App Function component
   //===========STATE VARIABLES=======================  
   //User variables
-  const [username, setUsername] = useState('');//State to store the username entered by the user.
-  const [password, setPassword] = useState('');//State to store the password entered by the user.
-  const [newUsername, setNewUsername] = useState(' ');//State used to store newUsername
-  const [newPassword, setNewPassword] = useState('');//State used to store newPassword
+  const [username, setUsername] = useState('');//State used to store the username entered by the user.
+  const [password, setPassword] = useState('');//State used to store the password entered by the user
+  const [newUsername, setNewUsername] = useState('');//State used to store newUsername
+  const [newPassword, setNewPassword] = useState('');//State to store newPassword
   //Task Variables
   const [taskData, setTaskData] = useState([]);//State to store the data fetched from the server 
-  const [taskInput, setTaskInput] = useState('');//State to store task Input
-  const [updatedTasks, setUpdatedTasks] = useState([]);//Stores tasks that have been updated.
+  const [taskInput, setTaskInput] = useState(' ');//State to store task Input
   //Event variables  
-  const [isLoaded, setIsLoaded] = useState(false);//State to indicate whether the data has been loaded.
   const [error, setError] = useState(null);//State to any error that occurs during data fetching or other operations.
   const [login, setLogin] = useState(false);//State used to indicates whether or not the user is logged in.
-  const [loginStatus, setLoginStatus] = useState(true);//State used to indicate the login status.
   const [isRegistration, setIsRegistration] = useState(false);//State to handle registration
 
  //=============USE EFFECT HOOK TO FETCH DATA==================
@@ -60,7 +57,6 @@ export default function App() {//Export default App Function component
         //Handle any errors that occur during the request
               // console.error('Error fetching data:');//Display an error message in the console for debugging purposes
               setError('Error fetching data:', error.message);//Set the error state using the setError function with an error message
-              // setIsLoaded(true); // Set the isLoaded state to true to indicate that the data has been loaded
       }
     }
      fetchTasks()//Invoke the callback function
@@ -76,7 +72,7 @@ export default function App() {//Export default App Function component
       const response = await fetch('http://localhost:3001/users/login', {
         method: 'POST',//Request method
         headers: {//Send the headers for request
-          'Content-Type': 'application/json',//Specify the content of the request bodyt
+          'Content-Type': 'application/json',//Specify the content of the request body
              // 'Authorization': 'Bearer ' + TOKEN,
         },
         body: JSON.stringify({ username, password }),// Convert the login credentials to a JSON string and include it in the request body
@@ -92,7 +88,8 @@ export default function App() {//Export default App Function component
         localStorage.setItem('username', username);//Store the username in local storage for persistence.
         // localStorage.setItem('token', token);
 
-      } else {
+      } 
+      else {
         throw new Error('Failed to login');//If the POST request is unsucccessful throw an error
       }
     } catch (error) {
@@ -150,11 +147,11 @@ export default function App() {//Export default App Function component
         console.log('Task added successfully');  // Log a success message to the console
 
       } else {
-        throw new Error('Failed to add task');//Throw an error message if the POST request is not successfu
+        throw new Error('Failed to add task');//Throw an error message if the POST request is not successful
       }
     } catch (error) {
       // Handle errors which occur during the request
-      console.error('Error adding task:', error.message);//Display an error message in the console for debugging
+      console.error('Error adding task:', error.message);//Display an error message in the console for debugging purposes
       setError('Error adding task', error.message);//Set the error state using the setError function with an error message
     }
   };
@@ -191,7 +188,7 @@ export default function App() {//Export default App Function component
   // Function to edit a task
   const editTask = async (taskId) => {
     try {
-      // Find the task to update in the updatedTasks array (assumed to be defined elsewhere in the code)
+      // Find the task to update in the updatedTasks array
       const taskToUpdate = updatedTasks.find((task) => task.id === taskId);
 
       // Send a PUT request to update the task on the server
