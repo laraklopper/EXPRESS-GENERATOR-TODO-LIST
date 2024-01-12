@@ -29,12 +29,17 @@ export default function App() {//Export default App function component
   const [loginStatus, setLoginStatus] = useState(true);//State used to indicate the login status
   const [isRegistration, setIsRegistration] = useState(false);//State to indicate whether the user is using the registration form
 
+   //Local Storage stores key-value pairs in a web browser with no expiration time
+  //setItem(key, value) - stores the key/value pair
+  //getItem(key, value) - gets the key/value pair
+  //removeItem(key, value) - removes the key with its value
   //===============USE EFFECT HOOKS==============
   // useEffect hooks to fetch tasks and initialize login status
   useEffect(() => {
     // Retrieve tasks from local storage using the key 'tasks'
     const storedTasks = localStorage.getItem('tasks');
-
+   
+    
     //Conditional rendering to check if there are tasks stored in localstorage
     if (storedTasks) {
       // If tasks are found, parse the JSON string and update the taskData state
