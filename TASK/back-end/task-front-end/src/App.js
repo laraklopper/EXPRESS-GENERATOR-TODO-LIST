@@ -326,12 +326,17 @@ export default function App() {//Export default App function component
 //==========================JSX RENDERING=========================
 
   return (
+    //App container
     <Container id='appContainer'>
+    {/* Header */}
       <Header />
       {loginStatus ? (
+        // Section1
         <section id='section1'>
           <div>
+        {/* Toggle between the login and registration page */}
             {isRegistration ? (
+        // Registration Form 
               <RegistrationForm
                 addUser={addUser}
                 newUsername={newUsername}
@@ -341,6 +346,7 @@ export default function App() {//Export default App function component
               />
             ) : (
               <LoginForm
+              // LoginForm
                 submitLogin={submitLogin}
                 login={login}
                 handleLogoutClick={handleLogoutClick}
@@ -353,7 +359,9 @@ export default function App() {//Export default App function component
             <Row id='pageToggleRow'>
               <Col id='toggleCol'>
                 <p id='toggleText'>CLICK HERE TO VISIT THE:</p>
+                  {/* Button to toggle between the registration and Login Page */}
                 <Button variant='primary' onClick={togglePage} id='registrationBtn'>
+                  {/* Change the button text based on which page is active*/}
                   {isRegistration ? 'Login Page' : 'Registration Page'}
                 </Button>
               </Col>
@@ -361,25 +369,30 @@ export default function App() {//Export default App function component
           </div>
         </section>
       ) : (
+        // Section2
         <section id='section2'>
+        {/* Form to add new Tasks */}
           <TaskForm addTask={addTask} taskInput={taskInput} setTaskInput={setTaskInput} />
           {error ? (
             <div>{error}</div>
           ) : !isLoaded ? (
-            <p>Loading...</p>
+            <p>Loading...</p>{/* Set the Loading state */}
           ) : (
             <ul>
+             {/* Display the taskData */}
               {taskData.map((task) => (
                 <li key={task.taskId} id='tasks'>
                   <div>
                     {task.taskId}
                   </div>
                   <div>
+                     {/* Button to Edit a task */}
                     <Button variant="primary" onClick={() => editTask(task.taskId)}>
                       EDIT
                     </Button>
                   </div>
                   <div>
+                         {/* Button to Delete a task */}
                     <Button variant="primary" onClick={() => deleteTask(task.taskId)}>
                       DELETE
                     </Button>
@@ -388,9 +401,11 @@ export default function App() {//Export default App function component
               ))}
             </ul>
           )}
+          {/* Display an error message based on the error State */}
           {error && <p>{error}</p>}
           <Row>
             <Col>
+            {/* Button to Logout */}
               <Button variant="primary" onClick={logout}>
                 Logout
               </Button>
