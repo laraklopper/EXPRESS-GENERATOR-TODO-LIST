@@ -98,8 +98,10 @@ export default function App() {//Export default App function component
 
         console.log('Successfully logged in');// Display a success message in the console
 
+        //Updates the state variables to reflect the successful login. 
         setLogin(true);
         setLoginStatus(true);
+        //Updates the state variables to reflect the successful login. 
         localStorage.setItem('loginStatus', JSON.stringify(true));
         localStorage.setItem('username', username);
         localStorage.setItem('token', data.token);
@@ -107,7 +109,7 @@ export default function App() {//Export default App function component
         throw new Error('Failed to login');//Throw an error message if the POST request is unsuccessful
       }
     } catch (error) {
-      
+      //Handle any errors that may occur during the request
       console.error('Login Failed', error.message);//Display an error message in the console for debugging purposes
       setError(`Login Failed: ${error.message}`);///Set the error state with an error message
     }
@@ -139,7 +141,7 @@ export default function App() {//Export default App function component
   The [taskData] means that the effect will run whenever the taskData state changes.*/
   
   //Function to add a task
-  const addTask = async (taskInput) => {
+  const addTask = async (taskInput) => {//Define an async function to add a task
     try {
       const token = localStorage.getItem('token');//Retrieve the authentication from localStorage
       // Make a POST request to the server
@@ -155,18 +157,19 @@ export default function App() {//Export default App function component
       // Conditional rendering to check if the server response is in the successful range (200-299)
       if (response.status >= 200 && response.status < 300) {
         // If successful, parse the response JSON and update the taskData state
-        const updatedList = await response.json();
-        setTaskData(updatedList);
+        const updatedList = await response.json();//Parse the response JSON
+        setTaskData(updatedList);//Update the taskData state
 
         // Update the local storage with the updated taskData
         localStorage.setItem('tasks', JSON.stringify(updatedList));
-        console.log('Task added successfully');
+        console.log('Task added successfully');//Log a success message in the console if the request is successful
       } 
       else {
         throw new Error('Failed to add task');//Throw an error message if the POST request is unsuccessful
       }
     } 
     catch (error) {
+      //Handle any errors that may occur during the request
       console.error('Error adding task:', error.message);//Display a error message in the console for debugging purposes
       setError('Error adding task', error.message);//Set the error state
       localStorage.removeItem('token');//Remove the token from local storage if an error occurs.
