@@ -2,46 +2,51 @@ import React, { useEffect, useState } from 'react';// Import the React module to
 import './App.css';//Import CSS stylesheet
 //Bootstrap
 import Container from 'react-bootstrap/Container';//Import bootstrap container
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';//Import bootstrap row 
+import Col from 'react-bootstrap/Col';//Import bootstrap coloumn
+import Button from 'react-bootstrap/Button';// Import button component from bootstrap library
 //Components
-import Header from './components/Header';
-import Login from './components/Login';
-import Registration from './components/Registration';
-import TaskForm from './components/Form';
+import Header from './components/Header';//Import Header function component
+import RegistrationForm from './components/RegistrationForm';//Import RegistrationForm function component
+import LoginForm from './components/LoginForm';//Import LoginForm function component
+import TaskForm from './components/TaskForm';//Import TaskForm Function component
 
-// App function component
-export default function App() {//Export default app function component
-  // ===========STATE VARIABLES===============
-  //user variables
-  const [username, setUsername] = useState('');//State used to store the username entered by the user.
-  const [password, setPassword] = useState('');//State used to store the password entered by the user
-  const [newUsername, setNewUsername] = useState('');//State used to store newUsername
+//App function component
+export default function App() {//Export default App function component
+  //===========STATE VARIABLES=================
+  //Task variables
+  const [taskData, setTaskData] = useState([]);//State to store the array of tasks
+  const [taskInput, setTaskInput] = useState('');//State to store 
+  //User variables
+  const [username, setUsername] = useState('');//State to store the password entered by the user.
+  const [password, setPassword] = useState('');//State to store the password entered by the user.
+  const [newUsername, setNewUsername] = useState(' ');//State to store newUsername
   const [newPassword, setNewPassword] = useState('');//State to store newPassword
-  //task variables
-  const [taskData, setTaskData] = useState([]);//State to store the data fetched from the server 
-  const [taskInput, setTaskInput] = useState(' ');//State to store task Input
-  //Event variables
-  const [error, setError] = useState(null);//State to any error that occurs during data fetching or other operations.
-  const [login, setLogin] = useState(false);//State used to indicates whether or not the user is logged in
-  const [isRegistration, setIsRegistration] = useState(false);//State to handle registration
+  //Event variables  
+  const [isLoaded, setIsLoaded] = useState(false);//State to indicate whether the data has loaded
+  const [error, setError] = useState(null);//State to store any error that may occur during data fetching or operations
+  const [login, setLogin] = useState(false);//State to represent the login status
+  const [loginStatus, setLoginStatus] = useState(true);//State used to indicate the login status
+  const [isRegistration, setIsRegistration] = useState(false);//State to indicate whether the user is using the registration form
 
-  // Effect to fetch tasks on component mount
+  //===============USE EFFECT HOOKS==============
+  // useEffect hooks to fetch tasks and initialize login status
   useEffect(() => {
+    // Retrieve tasks from local storage using the key 'tasks'
     const storedTasks = localStorage.getItem('tasks');
 
+    //Conditional rendering to check if there are tasks stored in localstorage
     if (storedTasks) {
+      // If tasks are found, parse the JSON string and update the taskData state
       setTaskData(JSON.parse(storedTasks));
     }
-  }, []); // Use an empty dependency array to fetch tasks only once on component mount
+  }, []);
 
-  //===============REQUEST FUNCTIONS========================
-  //------------GET REQUEST-----------------
-  // Effect to fetch tasks when login status changes
+  //===============REQUESTS=====================
+  //------------GET REQUEST-----------
   useEffect(() => {
-    // Function to fetch tasks
-    const fetchTasks = async () => {
+    //Function to fetchTasks
+    async function fetchTasks() {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch('http://localhost:3001/users/findTasks', {
@@ -49,27 +54,27 @@ export default function App() {//Export default app function component
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
-          },
+          }
         });
 
-        if (response.ok) {
+        if (response.status >= 200 && response.status < 300) {
           const data = await response.json();
           setTaskData(data);
+          setIsLoaded(true);
         } else {
           throw new Error('Failed to fetch tasks');
         }
       } catch (error) {
-        setError('Error fetching Tasks: ' + error.message);
+        setError(`Error fetching data: ${error.message}`);
+        setIsLoaded(true);
       }
-    };
-
-    if (login) {
-      fetchTasks();
     }
-  }, [login]);
 
-  //-----------POST REQUESTS-----------------------
-  // Function to submit login credentials
+    fetchTasks();
+  }, []);
+
+  //------------POST REQUESTS----------------------
+  //Function to submit login
   const submitLogin = async () => {
     try {
       const response = await fetch('http://localhost:3001/users/login', {
@@ -80,22 +85,23 @@ export default function App() {//Export default app function component
         body: JSON.stringify({ username, password }),
       });
 
-      if (response.ok) {
-        const { token } = await response.json();
-        localStorage.setItem('token', token);
+      if (response.status >= 200 && response.status < 300) {
+        const data = await response.json();
+        console.log('Successfully logged in');
         setLogin(true);
+        setLoginStatus(true);
         localStorage.setItem('loginStatus', JSON.stringify(true));
         localStorage.setItem('username', username);
+        localStorage.setItem('token', data.token);
       } else {
-        throw new Error('Failed to Login');
+        throw new Error('Failed to login');
       }
     } catch (error) {
-      setError('Login Failed: ' + error.message);
-      localStorage.removeItem('token'); // Clear the token on login failure
+      console.error('Login Failed', error.message);
+      setError(`Login Failed: ${error.message}`);
     }
   };
 
-  // Effect to set login status and username from localStorage
   useEffect(() => {
     const storedLoginStatus = localStorage.getItem('loginStatus');
     const storedUsername = localStorage.getItem('username');
@@ -106,23 +112,21 @@ export default function App() {//Export default app function component
     }
   }, []);
 
-  // Effect to set taskData from localStorage
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks');
-
     if (storedTasks) {
       setTaskData(JSON.parse(storedTasks));
     }
   }, [taskData]);
 
-  // Function to add a new task
+  //Function to add a task
   const addTask = async (taskInput) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/users/addTask', {
+      const response = await fetch('http://localhost:3001/addTask', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ value: taskInput }),
@@ -132,29 +136,30 @@ export default function App() {//Export default app function component
         const updatedList = await response.json();
         setTaskData(updatedList);
         localStorage.setItem('tasks', JSON.stringify(updatedList));
+        console.log('Task added successfully');
       } else {
         throw new Error('Failed to add task');
       }
     } catch (error) {
-      setError('Error adding task: ' + error.message);
-      localStorage.removeItem('token'); // Clear the token on error
+      console.error('Error adding task:', error.message);
+      setError('Error adding task', error.message);
+      localStorage.removeItem('token');
     }
   };
 
-  // Function to add a new user
+  //Function to add a newUser
   const addUser = async () => {
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:3001/users/register', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ newUsername, newPassword }),
       });
 
       if (response.status >= 200 && response.status < 300) {
+        console.log('New user successfully added');
         const users = JSON.parse(localStorage.getItem('users')) || [];
         users.push({ username: newUsername, password: newPassword });
         localStorage.setItem('users', JSON.stringify(users));
@@ -162,13 +167,13 @@ export default function App() {//Export default app function component
         throw new Error('Failed to add new user');
       }
     } catch (error) {
-      setError('Error adding new user: ' + error.message);
-      localStorage.removeItem('token'); // Clear the token on error
+      console.error('Error adding new user', error.message);
+      setError("Error adding new user", error.message);
     }
   };
 
-  //----------------PUT REQUEST-----------------------
-  // Function to edit a task
+  //-------------------PUT REQUEST----------------------
+  //Function to edit a task
   const editTask = async (taskId) => {
     try {
       const token = localStorage.getItem('token');
@@ -186,6 +191,7 @@ export default function App() {//Export default app function component
       });
 
       if (response.status >= 200 && response.status < 300) {
+        console.log('Task successfully updated');
         const updatedList = await response.json();
         setTaskData(updatedList);
         localStorage.setItem('tasks', JSON.stringify(updatedList));
@@ -193,13 +199,13 @@ export default function App() {//Export default app function component
         throw new Error('Failed to edit task');
       }
     } catch (error) {
-      setError('Error editing task: ' + error.message);
-      localStorage.removeItem('token'); // Clear the token on error
+      console.error('Error editing task:', error.message);
+      setError('Error editing task. Please try again.');
+      localStorage.removeItem('token');
     }
   };
 
-  //-----------------DELETE REQUEST-----------------------
-  // Function to delete a task
+  //--------------DELETE TASK------------------
   const deleteTask = async (taskId) => {
     try {
       const token = localStorage.getItem('token');
@@ -215,17 +221,21 @@ export default function App() {//Export default app function component
         const updatedList = await response.json();
         setTaskData(updatedList);
         localStorage.setItem('tasks', JSON.stringify(updatedList));
+        console.log('Task successfully deleted');
       } else {
         throw new Error('Failed to delete task');
       }
     } catch (error) {
-      setError('Error deleting task: ' + error.message);
-      localStorage.removeItem('token'); // Clear the token on error
+      console.error('Error deleting task:', error.message);
+      setError('Error deleting task. Please try again.');
+      localStorage.removeItem('token');
     }
   };
 
-  //==============EVENT LISTENERS========================
-  // Function to handle logout
+  const appLogin = () => {
+    setLoginStatus(false);
+  };
+
   const handleLogoutClick = () => {
     localStorage.removeItem('loginStatus');
     localStorage.removeItem('username');
@@ -234,14 +244,9 @@ export default function App() {//Export default app function component
   };
 
   const logout = () => {
-    localStorage.removeItem('loginStatus');
-    localStorage.removeItem('username');
+    setLoginStatus(true);
+    setLogin(false);
     localStorage.removeItem('token');
-    setLogin(false);
-  };
-
-  const appLogin = () => {
-    setLogin(false);
   };
 
   const handleLogout = () => {
@@ -250,7 +255,6 @@ export default function App() {//Export default app function component
     appLogin();
   };
 
-  // Function to toggle between login and registration pages
   const togglePage = () => {
     setIsRegistration(!isRegistration);
     setNewUsername('');
@@ -258,69 +262,15 @@ export default function App() {//Export default app function component
     setUsername('');
     setPassword('');
   };
-
-  //====================JSX RENDERING==============================
-
+//==========================JSX RENDERING=========================
   return (
     <Container id='appContainer'>
       <Header />
-      {login ? (
-        <section id='section2'>
-          <div>
-            <Row id='formHeader'>
-              <Col className='formCol'>
-                <h2 className='h2'>ADD TASK</h2>
-              </Col>
-            </Row>
-            <TaskForm
-              username={username}
-              taskInput={taskInput}
-              setUsername={setUsername}
-              setTaskInput={setTaskInput}
-              addTask={addTask}
-            />
-          </div>
-          {error ? (
-            <div>{error}</div>
-          ) : (
-            <>
-              {!taskData.length ? (
-                <p>No tasks Found</p>
-              ) : (
-                <ul>
-                  {taskData.map((task) => (
-                    <li key={task.taskId} id='tasks'>
-                      <div>{task.taskId}</div>
-                      <div>
-                        <Button variant='primary' onClick={() => editTask(task.taskId)}>
-                          EDIT
-                        </Button>
-                      </div>
-                      <div>
-                        <Button variant='primary' onClick={() => deleteTask(task.taskId)}>
-                          DELETE
-                        </Button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </>
-          )}
-          {error && <p>{error}</p>}
-          <Row id='logout'>
-            <Col id='logoutCol'>
-              <Button variant='primary' onClick={logout} id='logoutBtn'>
-                Logout
-              </Button>
-            </Col>
-          </Row>
-        </section>
-      ) : (
+      {loginStatus ? (
         <section id='section1'>
           <div>
             {isRegistration ? (
-              <Registration
+              <RegistrationForm
                 addUser={addUser}
                 newUsername={newUsername}
                 setNewUsername={setNewUsername}
@@ -328,7 +278,7 @@ export default function App() {//Export default app function component
                 setNewPassword={setNewPassword}
               />
             ) : (
-              <Login
+              <LoginForm
                 submitLogin={submitLogin}
                 login={login}
                 handleLogoutClick={handleLogoutClick}
@@ -340,12 +290,50 @@ export default function App() {//Export default app function component
             )}
             <Row id='pageToggleRow'>
               <Col id='toggleCol'>
+                <p id='toggleText'>CLICK HERE TO VISIT THE:</p>
                 <Button variant='primary' onClick={togglePage} id='registrationBtn'>
                   {isRegistration ? 'Login Page' : 'Registration Page'}
                 </Button>
               </Col>
             </Row>
           </div>
+        </section>
+      ) : (
+        <section id='section2'>
+          <TaskForm addTask={addTask} taskInput={taskInput} setTaskInput={setTaskInput} />
+          {error ? (
+            <div>{error}</div>
+          ) : !isLoaded ? (
+            <p>Loading...</p>
+          ) : (
+            <ul>
+              {taskData.map((task) => (
+                <li key={task.taskId} id='tasks'>
+                  <div>
+                    {task.taskId}
+                  </div>
+                  <div>
+                    <Button variant="primary" onClick={() => editTask(task.taskId)}>
+                      EDIT
+                    </Button>
+                  </div>
+                  <div>
+                    <Button variant="primary" onClick={() => deleteTask(task.taskId)}>
+                      DELETE
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+          {error && <p>{error}</p>}
+          <Row>
+            <Col>
+              <Button variant="primary" onClick={logout}>
+                Logout
+              </Button>
+            </Col>
+          </Row>
         </section>
       )}
     </Container>
