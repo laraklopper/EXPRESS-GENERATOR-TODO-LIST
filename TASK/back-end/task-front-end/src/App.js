@@ -83,16 +83,17 @@ export default function App() {//Export default App function component
     try {
       const response = await fetch('http://localhost:3001/users/login', {
         method: 'POST',//Specify the request method
-        mode: 'cors',
+        mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json',/Specify the content-type for the request body 
         },
         body: JSON.stringify({ username, password }),// Convert user credentials to JSON and include in the request body
       });
 
+      // Conditional rendering to check if the server response is in the successful range (200-299)
       if (response.status >= 200 && response.status < 300) {
-        const data = await response.json();
-        console.log('Successfully logged in');
+        const data = await response.json();// Parse the response JSON data
+        console.log('Successfully logged in');// Display a success message in the console
         setLogin(true);// Set the 'login' state to true, indicating that the user is logged in
 
         setLoginStatus(true);// Set the 'loginStatus' state to true, indicating the overall login status
@@ -102,14 +103,15 @@ export default function App() {//Export default App function component
         sessionStorage.setItem('token', data.token);// Store the authentication token received from the server in sessionStorage
       } 
       else {
-        throw new Error('Failed to login');
+        throw new Error('Failed to login');//Throw an error message if the POST request is unsuccessful
       }
     } catch (error) {
-      console.error('Login Failed', error.message);
-      setError(`Login Failed: ${error.message}`);
+      console.error('Login Failed', error.message);//Log an error message in the console for debugging purposes
+      setError(`Login Failed: ${error.message}`);//Set the error state with an error message
     }
   };
 
+  //useEffect hook to for retrieving Login Status and username from sessionStorage
   useEffect(() => {
     const storedLoginStatus = sessionStorage.getItem('loginStatus');
     const storedUsername = sessionStorage.getItem('username');
@@ -120,6 +122,7 @@ export default function App() {//Export default App function component
     }
   }, []);
 
+   //useEffect hook used to retrieve and update Task Data from Local Storage
   useEffect(() => {
     const storedTasks = sessionStorage.getItem('tasks');
 
@@ -128,6 +131,7 @@ export default function App() {//Export default App function component
     }
   }, [taskData]);
 
+  //Function to add a task
   const addTask = async (taskInput) => {
     try {
       const token = sessionStorage.getItem('token');
@@ -156,7 +160,8 @@ export default function App() {//Export default App function component
     }
   };
 
-  const addUser = async () => {
+  //Function to add a newUser
+  const addUser = async () => {//Define an async function to add a new user
     try {
       const response = await fetch('http://localhost:3001/users/register', {
         method: 'POST',
