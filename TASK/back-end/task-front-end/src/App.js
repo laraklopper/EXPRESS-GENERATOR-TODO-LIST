@@ -221,7 +221,7 @@ export default function App() {//Export default App function component
       // Send a PUT request to the server
       const response = await fetch(`http://localhost:3001/editTask/${taskId}`, {
         method: 'PUT',//Request method 
-        mode:'cors',
+        mode:'cors',// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
         headers: {
           'Content-type': 'application/json',//Specify the content type
           'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
@@ -233,8 +233,7 @@ export default function App() {//Export default App function component
 
       // Conditional rendering to check if the server response is in the successful range (200-299)
       if (response.status >= 200 && response.status < 300) {
-        // If successful, log a success message and update the taskData state
-        console.log('Task successfully updated');
+        console.log('Task successfully updated');//Log a success message in the console
         
         const updatedList = await response.json();// Parse the JSON data from the response  
         setTaskData(updatedList);//Update the taskData state
