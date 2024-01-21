@@ -6,10 +6,12 @@ function authenticateToken(req, res, next) {
     // Extract the token from the 'Authorization' header
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    /* Check if authHeader exists and is truthy using the logical AND operator (&&).
+    /* Conditional rendering to check if authHeader exists and is truthy using the logical AND operator (&&).
  If authHeader is falsy (e.g., null or undefined), token will be assigned the value of authHeader (null or undefined).
  If authHeader is truthy, the expression after && is evaluated.*/
     if (token == null) return res.sendStatus(401);// If no token is found, send a 401 Unauthorized response
+    /*A 401(Unauthorized) response status code indicates that the client request has not been completed because it lacks 
+    valid authentication credentials for the requested resource.*/
 
 
     // Verify the JWT token using the 'verify' method
@@ -17,11 +19,12 @@ function authenticateToken(req, res, next) {
         if (err) {
             // If there's an error during token verification, send a 403 Forbidden response
             return res.sendStatus(403);
+            // A 403(Forbidden) response status code indicates that the server understands the request but refuses to authorize it.
         }
 
-        // If the token is valid, attach the decoded user data to the request object and proceed to the next middleware
+        // If the token is valid, the decoded information is attached to the request for further use.the decoded user data to the request object 
         req.decoded = decoded; 
-        next();
+        next();//The middleware then calls the `next()` function to move to the next middleware in the stack.
     });
 }
 
