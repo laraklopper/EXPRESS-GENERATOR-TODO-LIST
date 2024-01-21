@@ -1,10 +1,10 @@
 const express = require('express');// Import the Express framework for creating the server and handling routes
 const jwt = require('jsonwebtoken');// Import jsonwebtoken for generating and verifying JSON Web Tokens (JWT)
 const { // Import custom middleware functions 
-  authenticateToken, 
-  limitTaskLength, 
-  enforceContentType, 
-  validateUsername 
+  authenticateToken,// Middleware used  to authenticate a user based on a JSON Web Token (JWT) passed in the `Authorization` header of the incoming request.
+  limitTaskLength,// Middleware to check if the length of the `newTask` property in the request body exceeds a maximum length (140 characters).
+  enforceContentType, // Middleware used to enforce the content-type of the request(application/json)
+  validateUsername //Middleware checks if the `newUsername` property exists in the request body and if it ends with '@gmail.com'.
       } = require('./middleware');
 const router = express.Router();// Create an Express router which can be used to define routes for the application
 
@@ -35,13 +35,15 @@ let tasks = [
 
 // Protected route to retrieve tasks
 router.get('/findTasks', authenticateToken, async (req, res) => {
+  /*The `authenticateToken` middleware function ensures that the request is authenticated with a valid JWT.*/
   try {
     res.json(tasks);    // Respond with the list of tasks
-
   } 
   catch (error) {
+    //Error handling
     console.error('Error fetching tasks', error.message);//Log an error message in the console for debugging purposes
-    res.status(500).json({ message: 'Internal Server Error' });//Respond with a 500 Internal Server Error status
+    res.status(500).json({ message: 'Internal Server Error' });/*Respond with a 500 Internal Server Error status response indicating an 
+    unexpected condition that prevented it from fulfilling the request.*/
   
 }});
 
@@ -49,16 +51,15 @@ router.get('/findTasks', authenticateToken, async (req, res) => {
 
 // Route for user login
 router.post("/login", (req, res) => {
-  // Extract the JWT token from the Authorization header
-      const authHeader = req.headers['authorization'];
-      const token = authHeader && authHeader.split(' ')[1];
+      const authHeader = req.headers['authorization']; // Extract the JWT token from the Authorization header
+      const token = authHeader && authHeader.split(' ')[1];//The code splits the header to get the token
   const { username, password } = req.body;//Extract the username and password from the request body
 // Search for a user in the users array with matching username and password.
   const user = users.find(user => user.username === username && user.password === password);
 
   //Conditional rendering based on whether a user is found
   if (user) {
-    // Generate a JWT token for authentication
+    // If credentials are valid generate a JWT token in JSON format for authentication 
     const jwtToken = jwt.sign(
       {
         username: user.username,//JWT payload
@@ -73,7 +74,7 @@ router.post("/login", (req, res) => {
 
   } 
   else {  
-    // If no user is found, respond with a 401 Unauthorized status and a message
+    // If the user credentials are invalid , respond with a 401 Unauthorized status and a message
     res.status(401).json({ message: "User not Authenticated" });// Respond with an authentication failure message
   }
 });
@@ -89,9 +90,11 @@ router.post('/register', validateUsername, (req, res, next) => {
     return res.status(400).json({ message: 'Username and password are required' });
   }
   else if (users.some((user) => user.username === newUsername)) {// Conditional rendering to check if the username is already taken
-    
+    /*The `array.some` method tests whether at least one element in the array passes the test impleted by the provided function.
+    It returns true if, in the array, it finds an element for which the provided function returns true; otherwise it returns false.  */
     // If it is, respond with a 409 Conflict status and an error message
     return res.status(409).json({ message: 'Username is already taken' });
+    //The HTTP 409 Conflict response status code indicates a request conflict with the current state of the target resource.
   }
   // If username is unique, create a new user object
   const newUser = { username: newUsername, password: newPassword };
