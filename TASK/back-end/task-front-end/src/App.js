@@ -33,8 +33,7 @@ export default function App() {//Export default App function component
   //===============USE EFFECT HOOKS==============
   // useEffect hooks to fetch tasks and initialize login status
   useEffect(() => {
-    // Retrieve tasks from session storage using the key 'tasks'
-    const storedTasks = sessionStorage.getItem('tasks');
+    const storedTasks = sessionStorage.getItem('tasks');// Retrieve tasks from session storage using the key 'tasks'
 
     //Conditional rendering to check if there are tasks stored in sessionStorage
     if (storedTasks) {
@@ -113,6 +112,7 @@ export default function App() {//Export default App function component
       }
     } 
     catch (error) {  
+      // Handle any errors that occur during the request
       console.error('Login Failed', error.message);//Log an error message in the console for debugging purposes
       setError(`Login Failed: ${error.message}`);//Set the error state with an error message
     }
@@ -205,6 +205,7 @@ export default function App() {//Export default App function component
         throw new Error('Failed to add new user');//Throw an error message if the POST request is unsuccessful
       }
     } catch (error) {
+      // Handle any errors that occur during the request
       console.error('Error adding new user', error.message);//Display an error message in the console for debugging purposes
       setError("Error adding new user", error.message);// Sets the error state with an error message.
     }
@@ -233,8 +234,7 @@ export default function App() {//Export default App function component
 
       // Conditional rendering to check if the server response is in the successful range (200-299)
       if (response.status >= 200 && response.status < 300) {
-        // If successful, log a success message and update the taskData state
-        console.log('Task successfully updated');
+        console.log('Task successfully updated');//Log a success message in the console
         
         const updatedList = await response.json();// Parse the JSON data from the response  
         setTaskData(updatedList);//Update the taskData state
@@ -246,6 +246,7 @@ export default function App() {//Export default App function component
       }
     } 
     catch (error) {
+      // Handle any errors that occur during the request
       console.error('Error editing task:', error.message);//Display an error message in the console for debugging purposes
       setError('Error editing task. Please try again.');//Set the error state with an error message
       sessionStorage.removeItem('token');//Remove the authentication from SessionStorage if an error occurs
@@ -282,6 +283,7 @@ export default function App() {//Export default App function component
       }
     } 
     catch (error) {
+      // Handle any errors that occur during the request
       console.error('Error deleting task:', error.message);//Log an error message in the console for debugging purposes
       setError('Error deleting task. Please try again.');//Set the error state with an error message
       sessionStorage.removeItem('token');// Remove the token from session storage if an error occurs.
