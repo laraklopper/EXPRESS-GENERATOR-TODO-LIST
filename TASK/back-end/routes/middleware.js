@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');// Import the 'jsonwebtoken' library for han
 
 // Middleware function to authenticate a JWT token from the 'Authorization' header
 function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization'];// Extract the token from the 'Authorization' header
-    const token = authHeader && authHeader.split(' ')[1];// Extract the token from the header
+   const authHeader = req.headers['authorization'];// Extract the token from the 'Authorization' header
+    const token =  authHeader.split(' ')[1];// Extract the token from the header
   
     //Conditional rendering to check if the token is missing
     if (token == null) return res.sendStatus(401);// If no token is found, send a 401 Unauthorized response
@@ -13,8 +13,8 @@ function authenticateToken(req, res, next) {
     // Verify the JWT token using the 'verify' method
     jwt.verify(token, "secretKey", (err, decoded) => {
         if (err) {
-            // If there's an error during token verification, send a 403 Forbidden response
-            return res.sendStatus(403);
+            return res.sendStatus(403);// If there's an error during token verification, send a 403 Forbidden response
+
         }
 
         // If verification succeeds, store the decoded user information in the request object
