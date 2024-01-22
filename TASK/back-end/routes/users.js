@@ -34,10 +34,10 @@ let tasks = [
 ];
 
 // Protected route to retrieve tasks
-router.get('/findTasks', authenticateToken, async (req, res) => {
+router.get('/findTasks', authenticateToken, async (req, res) => {//Define the route for the HTTP request
   /*The `authenticateToken` middleware function ensures that the request is authenticated with a valid JWT.*/
   try {
-    res.json(tasks);    // Respond with the list of tasks
+     res.send(JSON.stringify(tasks));
   } 
   catch (error) {
     //Error handling
