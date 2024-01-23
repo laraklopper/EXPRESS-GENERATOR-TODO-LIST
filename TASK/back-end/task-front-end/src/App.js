@@ -184,12 +184,14 @@ export default function App() {//Export default App function component
   //Function to add a newUser
   const addUser = async () => {//Define an async funciton to add a new User
     try {
+      // const token = localStorage.getItem('token'); // Retrieve the JWT token from localStorage
       //Send a POST request to the server
       const response = await fetch('http://localhost:3001/users/register', {
         method: 'POST',//Request method
         mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
         headers: {
           'Content-type': 'application/json',//Specify the content tyoe
+          //'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
         },
         // Send the new username and password as JSON in the request body
         body: JSON.stringify({ newUsername, newPassword }),
