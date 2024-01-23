@@ -54,8 +54,8 @@ router.get('/findTasks', authenticateToken, async (req, res) => {//Define the ro
 // Route for user login
 router.post("/login", (req, res) => {//Define the route for the HTTP request
   
-  const authHeader = req.headers['authorization'];// Extract the JWT token from the Authorization header
-      const token = authHeader && authHeader.split(' ')[1];
+  // const authHeader = req.headers['authorization'];// Extract the JWT token from the Authorization header
+  //     const token = authHeader && authHeader.split(' ')[1];
   const { username, password } = req.body;//Extract the username and password from the request body
 // Search for a user in the users array with matching username and password.
   const user = users.find(user => user.username === username && user.password === password);
@@ -94,9 +94,8 @@ router.post('/register', validateUsername, (req, res, next) => {//Define the rou
     // If not, respond with a 400 Bad Request status and an error message
     return res.status(400).json({ message: 'Username and password are required' });
   }
-  else if (users.some((user) => user.username === newUsername)) {// Conditional rendering to check if the username is already taken
-    /*The `array.some` method tests whether at least one element in the array passes the test impleted by the provided function.
- It returns true if, in the array, it finds an element for which the provided function returns true; otherwise it returns false.  */
+  else if (users.find((user) => user.username === newUsername)) {// Conditional rendering to check if the username is already taken
+ 
     // If it is, respond with a 409 Conflict status and an error message
     return res.status(409).json({ message: 'Username is already taken' });
   }
