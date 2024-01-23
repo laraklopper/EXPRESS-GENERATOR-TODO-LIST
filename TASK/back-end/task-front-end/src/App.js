@@ -352,8 +352,7 @@ export default function App() {//Export default App function component
                 newUsername={newUsername}
                 setNewUsername={setNewUsername}
                 newPassword={newPassword}
-                setNewPassword={setNewPassword}
-               
+                setNewPassword={setNewPassword}              
                 addUser={addUser}
               />
             ) : (
