@@ -47,7 +47,7 @@ router.get('/findTasks', authenticateToken, async (req, res) => {//Define the ro
   catch (error) {
     //Handle any errors that may occur during the request
     console.error('Error fetching tasks', error.message);//Log an error message in the console for debugging purposes
-    res.status(500).json({ message: 'Internal Server Error' });//Respond with a 500 Internal Server Error status
+    res.status(500).json({ message: 'Internal Server Error' });//Respond with a 500 Internal Server Error status with a JSON object containing a message
   
 }});
 
@@ -71,14 +71,14 @@ router.post("/login", (req, res) => {//Define the route for the HTTP request
       {
         username: user.username,//JWT payload
       },
-      'secretKey',// secret key used to sign the JWT.
+      'userLoginSecretKey',// secret key used to sign the JWT.
       {
         expiresIn: '1h', // Specify the time until the  JWT will expire  (1 hour).
-        algorithm: 'HS256' //Specifies the signing algorithm used.
+        algorithm: 'HS256' //Specify the signing algorithm used.
     }
     );
     res.json({ token: jwtToken }); // Respond with a JSON object containing the generated JWT token
-
+    console.log(jwtToken);//Log the generated JWT token to the console
   } 
   else {  
     console.error('Login failed');//Log an error message in the console for debugging purposes
@@ -103,16 +103,18 @@ router.post('/register', validateUsername, (req, res,) => {//Define the route fo
     }
     // If username is unique, create a new user object
     const newUser = { username: newUsername, password: newPassword };
+    console.log(newUser);//log the newUser in the console
     users.push(newUser);  // Add the new user to the 'users' array
 
     // Generate a JWT token for the newly registered user
     const token = jwt.sign(
       { username: newUser.username },//JWT payload
-      'secretKey',// secret key used to sign the JWT.
+      'newUserSecretKey',// secret key used to sign the JWT.
       { expiresIn: '1h' }// Specify the time until the  JWT will expire  (1 hour).
     );
 
     res.json({ token });  // Respond with the generated JWT token
+    console.log(token); //Log the JWT token in the console
   } 
   catch (error) {
     console.error('Error registering user:', error.message);//Log an error message in the console for debugging purposes
@@ -172,18 +174,21 @@ router.put('/editTask/:id', authenticateToken, limitTaskLength, (req, res) => {/
 //Route to delete a task
 router.delete('/deleteTask/:id', authenticateToken, (req, res) => {//Define the route for the HTTP request
   try {
-    const taskId = parseInt(req.params.id); // Extract the task ID from the URL parameters
+    const taskId = parseInt(req.params.id); // Extract the task ID from the URL parameters and convert it to an integer
     //parseInt function used to parse a string and convert it to an integer
     const taskToDeleteIndex = tasks.findIndex((task) => task.id === taskId);  // Find the index of the task to be deleted in the 'tasks' array
 
     
     // Conditional rendering to check if the task exists and the user has permission to delete it
     if (taskToDeleteIndex === -1 || tasks[taskToDeleteIndex].username !== req.user.username) {
-      // Respond with a 404 Not Found status and an error message
+     // Return a 404 status with an error message if the task is not found or the user doesn't have permission
       return res.status(404).json({ message: 'Task not found or you do not have permission to delete it' });
     }
 
     tasks.splice(taskToDeleteIndex, 1);// Delete the specified task and respond with the updated task list
+    /*The array.splice method in JS is used to change the contents of an array by removing or replacing existing
+    elements or/and adding new elements*/
+    //taskToDeleteIndex:index of the tasks in the tasks array that needs to be deleted
     res.status(200).json(tasks);//Respond with a 200 OK status and the updated task list
   } 
 
