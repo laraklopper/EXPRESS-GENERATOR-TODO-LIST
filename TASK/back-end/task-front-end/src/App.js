@@ -367,6 +367,7 @@ export default function App() {//Export default App function component
                 setPassword={setPassword}
                 username={username}
                 password={password}
+                appLogin={appLogin}
               />
             )}
             {/* Toggle Button */}
