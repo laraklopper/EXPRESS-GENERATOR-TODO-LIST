@@ -34,15 +34,26 @@ let tasks = [
   },
 ];
 
+//Test route
+router.get('/', (req, res)=>{
+  try {
+    res.send(tasks)
+    console.log('success message');//Log a success message in the console
+  } 
+  catch (error) {
+    res.send.status(500).json('Internal Server Error')//Respond with a 500 Internal Server Error status
+  }
+  
+})
 //=============ROUTES===============
 //----------------GET REQUEST------------------
 // Protected route to retrieve tasks
 router.get('/findTasks', authenticateToken, async (req, res) => {//Define the route for the HTTP request
   //The `authenticateToken` middleware ensures that the request is only processed if a valid token is present in the request header.
   try {
-   
     res.send(JSON.stringify(tasks));// Send a JSON response containing the list of tasks
     // Use `JSON.stringify` to convert the `tasks` array into a JSON-formatted string before sending it.
+    console.log(JSON.stringify(tasks));// Log the tasks in JSON format to the console
   } 
   catch (error) {
     //Handle any errors that may occur during the request
@@ -56,7 +67,6 @@ router.get('/findTasks', authenticateToken, async (req, res) => {//Define the ro
 
 // Route for user login
 router.post("/login", (req, res) => {//Define the route for the HTTP request
-  
   // const authHeader = req.headers['authorization'];// Extract the JWT token from the Authorization header
       // const token = authHeader && authHeader.split(' ')[1];
   const { username, password } = req.body;//Extract the username and password from the request body
@@ -148,6 +158,7 @@ router.post('/addTask', limitTaskLength, enforceContentType, (req, res) => {//De
     }
   } 
   catch (error) {
+    //Handle any errors which occur in the try block
     console.error('Error adding task:', error.message);//Log an error message in the console
     res.status(500).json({ message: 'Internal Server Error' });//Respond with a 500(Internal Server Error) response
   }
@@ -157,7 +168,8 @@ router.post('/addTask', limitTaskLength, enforceContentType, (req, res) => {//De
 
 //Route to edit an existing task
 router.put('/editTask/:id', authenticateToken, limitTaskLength, (req, res) => {//Define the route for the HTTP request
-  const taskId = parseInt(req.params.id);  // Extract the task ID from the URL parameters
+  try{
+   const taskId = parseInt(req.params.id);  // Extract the task ID from the URL parameters
   /*parseInt function used to parse a string and convert it to an integer*/
   const updatedTitle = req.body.value;// Extract the updated task title from the request body
 
@@ -168,6 +180,13 @@ router.put('/editTask/:id', authenticateToken, limitTaskLength, (req, res) => {/
   // Respond with a 200 OK status and a success message and the updated task list
   res.status(200).json({ success: true, tasks });
 });
+  }
+  catch(error){
+    // If an error occurs during the try block, handle it here
+  console.error('Error editing tasks', error.message);// Log an error message to the console for debugging purposes
+    res.status(500).json({ message: 'Internal Server Error' });//Respond with a 500 Internal Server Error status and a JSON error message          
+  }
+
 
 //--------DELETE REQUEST----------------
 
@@ -191,10 +210,10 @@ router.delete('/deleteTask/:id', authenticateToken, (req, res) => {//Define the 
     //taskToDeleteIndex:index of the tasks in the tasks array that needs to be deleted
     res.status(200).json(tasks);//Respond with a 200 OK status and the updated task list
   } 
-
   catch (error) 
   {
-    console.error('Error deleting task:', error.message);//Log an error message in the console for debugging purposes
+    //Handle any errors which occur in the try block
+    console.error('Error editing tasks', error.message);// Log an error message to the console for debugging purposes
     res.status(500).json({ message: 'Internal Server Error' });//Respond with a 500 Internal Server Error status and a JSON error message
   }
 });
