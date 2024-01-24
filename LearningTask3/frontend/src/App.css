@@ -1,0 +1,196 @@
+/*body */
+body {
+  display: flex;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+  justify-content: center;
+  background-color: #2A748C;
+}
+/* container */
+#container{
+      width: 100%;
+        display: block;
+        margin: 0px;
+        padding: 0px;
+        overflow: hidden;
+}
+.row{
+      width: 100%;
+        display: flex;
+        justify-content: center;
+        margin: 0px;
+        padding: 0px;
+}
+.col{
+    width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 0px;
+  padding: 0px;
+}
+
+/*Header*/
+
+#header {
+  width: 100%;
+  padding: 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+  background: linear-gradient(to top right, #33ccff 0%, #399ebf 81%);
+}
+#heading {
+  width: 100%;
+  padding: 0px;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+  margin-right: 0px;
+  background: linear-gradient(to top right, #33ccff 0%, #399ebf 81%);
+}
+.h1 {
+  font-family: 'Alkatra', cursive;
+  font-size: 32px;
+  text-align: center;
+  padding: 0px;
+  font-weight: bold;
+  color: #263940;
+  margin-top: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 10px;
+}
+
+/*Section 1 */
+
+#section1 {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: block;
+  /* font-family: 'Bree Serif', serif; */
+  padding: 10px;
+      background: linear-gradient(to top left, #33ccff 0%, #399ebf 81%);
+}
+/* Form */
+.form {
+  width: 90%;
+  display: block;
+  padding-right: 0px;
+  margin: 10px;
+  overflow: hidden;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  border: none;
+
+}
+.label {
+  font-family: 'Anton', sans-serif;
+  margin-right: 10px;
+  margin-left: 5px;
+  font-size: 18px;
+  font-weight: bold;
+}
+.input {
+  font-size: 18px;
+  padding: 2px;
+  font-family: 'Anton', sans-serif;
+}
+.btn {
+  font-size: 18px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  font-family: 'Bree Serif', serif;
+}
+/* Section2 */
+#section2 {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: block;
+  padding: 10px;
+  background: linear-gradient(to top right, #33ccff 0%, #399ebf 81%);
+}
+#projectList {
+  margin: 10px;
+  display: flex;
+  width: 70%;
+  align-items: flex-start;
+  flex-direction: column
+}
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  align-content: flex-start;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  font-family: 'Bree Serif', serif;
+
+}
+.item{
+  background-color: #80b2b3;
+  margin-bottom: 5px;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-left: 0px;
+  padding: 5px;
+  display: block;
+  width: 100%;
+  
+}
+.description {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  align-content: flex-start;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: baseline;
+}
+.h2 {
+  margin-right: 15px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-top: 0px;
+  padding: 2px;
+  font-size: 20px;
+  display: block;
+  font-family: 'Bree Serif', serif;
+  font-weight: bold;
+}
+.h3{
+  font-family: 'Bree Serif', serif;
+  padding: 2px;
+  font-size: 20px;
+  font-weight: bold;
+}
+.col{
+      width: 100%;
+        display: flex;
+        justify-content: center;
+        margin: 0px;
+        padding: 0px;
+}
+.editProject{
+  display: block;
+  float: right;
+  width: 40%;
+}
+.row3{
+      width: 100%;
+        margin: 0px;
+        padding: 0px;
+        display: flex;
+        justify-content: center;
+}
