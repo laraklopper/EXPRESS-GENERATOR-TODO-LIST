@@ -9,7 +9,7 @@ import RegistrationForm from './components/RegistrationForm';//Import Registrati
 import LoginForm from './components/LoginForm';//Import LoginForm function component
 import TaskForm from './components/TaskForm';//Import TaskForm Function component
 import ToggleBtn from './components/ToggleBtn';//Import the ToggleBtn component
-import LogoutBtn from './components/LogoutBtn';
+import LogoutBtn from './components/LogoutBtn';//Import the LogoutBtn component
 
 //App function component
 export default function App() {//Export default App function component
@@ -133,41 +133,41 @@ export default function App() {//Export default App function component
   The [taskData] means that the effect will run whenever the taskData state changes.*/
   
   //Function to add a task
-  const addTask = async (taskInput) => {
-    try {
-      const token = localStorage.getItem('token');//Retrieve the authentication from localStorage
-      // Make a POST request to the server
-      const response = await fetch('http://localhost:3001/addTask', {
-        method: 'POST',//Request method
-        mode: "cors",// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
-        headers: {
-          'Content-type': 'application/json',//Specify the content type
-          'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
-        },
-        body: JSON.stringify({ value: taskInput }),
-      });
+  // const addTask = async (taskInput) => {
+  //   try {
+  //     const token = localStorage.getItem('token');//Retrieve the authentication from localStorage
+  //     // Make a POST request to the server
+  //     const response = await fetch('http://localhost:3001/addTask', {
+  //       method: 'POST',//Request method
+  //       mode: "cors",// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
+  //       headers: {
+  //         'Content-type': 'application/json',//Specify the content type
+  //         'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
+  //       },
+  //       body: JSON.stringify({ value: taskInput }),
+  //     });
 
-      // Conditional rendering to check if the server response is in the successful range (200-299)
-      if (response.status >= 200 && response.status < 300) {
-        // If successful, parse the response JSON and update the taskData state
-        const updatedList = await response.json();
-        setTaskData(updatedList);
+  //     // Conditional rendering to check if the server response is in the successful range (200-299)
+  //     if (response.status >= 200 && response.status < 300) {
+  //       // If successful, parse the response JSON and update the taskData state
+  //       const updatedList = await response.json();
+  //       setTaskData(updatedList);
 
-        // Update the local storage with the updated taskData
-        localStorage.setItem('tasks', JSON.stringify(updatedList));
-        console.log('Task added successfully');//Log a success message in the console
-      } 
-      else {
-        throw new Error('Failed to add task');//Throw an error message if the POST request is unsuccessful
-      }
-    } 
-    catch (error) {
-      // Handle any errors that occur during the request
-      console.error('Error adding task:', error.message);//Display a error message in the console for debugging purposes
-      setError('Error adding task', error.message);//Set the error state
-      localStorage.removeItem('token');//Remove the token from local storage if an error occurs.
-    }
-  };
+  //       // Update the local storage with the updated taskData
+  //       localStorage.setItem('tasks', JSON.stringify(updatedList));
+  //       console.log('Task added successfully');//Log a success message in the console
+  //     } 
+  //     else {
+  //       throw new Error('Failed to add task');//Throw an error message if the POST request is unsuccessful
+  //     }
+  //   } 
+  //   catch (error) {
+  //     // Handle any errors that occur during the request
+  //     console.error('Error adding task:', error.message);//Display a error message in the console for debugging purposes
+  //     setError('Error adding task', error.message);//Set the error state
+  //     localStorage.removeItem('token');//Remove the token from local storage if an error occurs.
+  //   }
+  // };
 
   //Function to add a newUser
   const addUser = async () => {//Define an async funciton to add a new User
@@ -343,7 +343,13 @@ export default function App() {//Export default App function component
         // Section2
         <section id='section2'>
           {/* Form to add new Tasks */}
-          <TaskForm addTask={addTask} taskInput={taskInput} setTaskInput={setTaskInput} />
+          <TaskForm 
+            // addTask={addTask} 
+            taskInput={taskInput} 
+            setTaskInput={setTaskInput} 
+            taskData={taskData}
+            setError={setError}
+              />
           {error ? (
             <div>{error}</div>
           ) : !isLoaded ? (
