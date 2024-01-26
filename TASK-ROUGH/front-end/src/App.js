@@ -266,16 +266,16 @@ export default function App() {
                   taskData.map((task) => (
                     <div key={task.id} className="task-item">
                       <span>{task.title}</span>
-                      <Button
-                        variant="info"
-                        onClick={() => editTask(task.id)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="danger"
-                        onClick={() => deleteTask(task.id)}
-                      >
+                      // <Button
+                      //   variant="info"
+                      //   onClick={() => editTask(task.id)}
+                      // >
+                      //   Edit
+                      // </Button>
+                      // <Button
+                      //   variant="danger"
+                      //   onClick={() => deleteTask(task.id)}
+                      // >
                         Delete
                       </Button>
                     </div>
@@ -287,11 +287,7 @@ export default function App() {
                 <p>Loading tasks...</p>
               )}
             </Col>
-            <Col md={12} className="logout-btn">
-              <Button variant="outline-danger" onClick={logout}>
-                Logout
-              </Button>
-            </Col>
+            
           </>
         ) : (
           <Col  className="auth-form">
