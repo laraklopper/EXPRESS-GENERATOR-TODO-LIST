@@ -21,11 +21,11 @@ export default function App() {//Export default App function component
   //User variables
   const [username, setUsername] = useState('');//State to store the password entered by the user.
   const [password, setPassword] = useState('');//State to store the password entered by the user.
-  // const [userData, setUserData] = useState({
+  // const [userData, setUserData] = useState({//State to store userData
   //   username: '',
   //   password: ' ',
   // })
-  // const [newUserData, setNewUserData] = ({
+  // const [newUserData, setNewUserData] = ({//State to store new user data
   //   newUsername: '',
   //   newPassword: '',
   // })
@@ -311,7 +311,6 @@ export default function App() {//Export default App function component
                   setLoginStatus={setLoginStatus}
                 />
                 </section>
-
           )}
       </Container>
     
