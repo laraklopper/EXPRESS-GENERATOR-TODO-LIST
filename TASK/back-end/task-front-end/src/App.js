@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';// Import the React module to use React functionalities
+//useEffect and useState are React hooks used for managing side effects and state
 import './App.css';//Import CSS stylesheet
 //Bootstrap
 import Container from 'react-bootstrap/Container';//Import bootstrap container
