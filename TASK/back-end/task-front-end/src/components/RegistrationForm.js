@@ -35,6 +35,7 @@ export default function RegistrationForm(//Import default RegistrationForm funct
                 },
                 //Request body
                 body: JSON.stringify({ newUsername, newPassword}),// Send the new username and password as JSON in the request body
+                //body: JSON.stringify ({newUsername: newUserData.newUsername, newPassword: newUserData.newPassword}),
             });
 
             // Conditional rendering to check if the server response is in the successful range (200-299)
@@ -59,6 +60,17 @@ export default function RegistrationForm(//Import default RegistrationForm funct
             setError("Error adding new user", error.message);// Sets the error state with an error message.
         }
     };
+
+    //==============EVENT LISTENERS=========================
+
+        // const handleRegistration = (event) => {
+        //     const {name, value} = event.target;
+        //     //update newTask state based on the input change
+        //     setNewUserData ((prevData) => ({
+        //         ...prevData,
+        //         [name]: value
+        //     }))
+        // } 
 
   
     //================JSX RENDERING==================
@@ -92,6 +104,7 @@ export default function RegistrationForm(//Import default RegistrationForm funct
                                 className='regisInput'
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
+                               //onChange(handleRegistrationChange)
                                 autoComplete='on'
                             />                    
                     </Col>
