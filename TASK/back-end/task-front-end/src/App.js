@@ -4,7 +4,7 @@ import './App.css';//Import CSS stylesheet
 import Container from 'react-bootstrap/Container';//Import bootstrap container
 import Row from 'react-bootstrap/Row';//Import bootstrap row 
 import Col from 'react-bootstrap/Col';//Import bootstrap coloumn
-// import Button from 'react-bootstrap/Button';// Import button component from bootstrap library
+import Button from 'react-bootstrap/Button';// Import button component from bootstrap library
 //Components
 import Header from './components/Header';//Import Header function component
 import RegistrationForm from './components/RegistrationForm';//Import RegistrationForm function component
@@ -21,18 +21,10 @@ export default function App() {//Export default App function component
   //User variables
   const [username, setUsername] = useState('');//State to store the password entered by the user.
   const [password, setPassword] = useState('');//State to store the password entered by the user.
-  // const [userData, setUserData] = useState({//State to store userData
-  //   username: '',
-  //   password: ' ',
-  // })
-  // const [newUserData, setNewUserData] = ({//State to store new user data
-  //   newUsername: '',
-  //   newPassword: '',
-  // })
   const [newUsername, setNewUsername] = useState(' ');//State to store newUsername
   const [newPassword, setNewPassword] = useState('');//State to store newPassword
   //Event variables  
-  const [isLoaded, setIsLoaded] = useState(false);//State to indicate whether the data has loaded
+  // const [isLoaded, setIsLoaded] = useState(false);//State to indicate whether the data has loaded
   const [error, setError] = useState(null);//State to store any error that may occur during data fetching or operations
   const [login, setLogin] = useState(false);//State to represent the login status
   const [loginStatus, setLoginStatus] = useState(true);//State used to indicate the login status
@@ -42,7 +34,6 @@ export default function App() {//Export default App function component
   //useEffect hook used to retrieve and update Task Data from localStorage
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks');  // Retrieve tasks from localStorage
-
     // Conditional rendering to check if the tasks are present in localStorage
     if (storedTasks) {
       setTaskData(JSON.parse(storedTasks));// If present, parse the JSON and update the taskData state
@@ -53,47 +44,40 @@ export default function App() {//Export default App function component
 
   //===============REQUESTS=====================
   //------------GET REQUEST-----------
+//Function to fetchTasks
 
-  useEffect(() => {
-    //Function to fetchTasks
-    const fetchTasks = async () => {//Define a async function to fetch tasks
-      try {
-        const token = localStorage.getItem('token');//Retrieve the authentication token from localStorage
-        //Send a GET request to the server
-        const response = await fetch('http://localhost:3001/users/findTasks', {
-          method: 'GET',//Request method
-          mode: "cors",// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
-          headers: {//Set the request headers            
-            'Content-Type': 'application/json',//Specify the type of content being passed
-            'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
-          }
-        });
-      
-        // Conditional rendering to check if the server response is in the successful range (200-299)
-        if (response.status >= 200 && response.status < 300) {
-          // const data = await response.json();// Parse the response body as JSON
-          const fetchedTasks = await response.json()
-          setTaskData(fetchedTasks);//Update the taskData state
-          setIsLoaded(true);// Set the loading state to true
-          console.log(fetchedTasks);
-        } 
-        else {
-          throw new Error('Failed to fetch tasks'); //Throw an error message if the GET request is unsuccessful
-        }
-      } 
-      catch (error) {
-        // Handle any errors that occur during the request
-        setError(`Error fetching data: ${error.message}`);//Set the error state
-        setIsLoaded(true);//Set the isLoaded state to true
-       console.error('Error fetching data:');//Display an error message in the console for debugging purposes
+  const fetchTasks = async () => {//Define a async function to fetch tasks
+  try {
+    const token = localStorage.getItem('token');/Retrieve the authentication token from localStorage
+    //Send a GET request to the server
+    const response = await fetch('http://localhost:3001/users/findTasks', {
+      method: 'GET',//Request type
+      mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
+      headers: {
+        'Content-Type': 'application/json',//Specify the type of content being passed
+        'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
       }
+    });
+    
+// Conditional rendering to check if the server response is in the successful range (200-299)
+    if (response.status >= 200 && response.status < 300) {
+      const fetchedTasks = await response.json();// Parse the response body as JSON
+      setTaskData(fetchedTasks);//Update the taskData state
+      console.log('Tasks successfully fetched:', fetchedTasks);
+    } else {
+      throw new Error('Failed to fetch tasks');//Throw an error message if the GET request is unsuccessful
     }
-    // Call the fetchTasks function when the component mounts
-    fetchTasks();
-  }, []);
+  } 
+  catch (error) {
+    // Handle any errors that occur during the request
+    setError(`Error fetching data: ${error.message}`);//Set the error state
+    console.error(`Error fetching tasks: ${error.message}`);//Display an error message in the console for debugging purposes
+  }
+};
 
   //------------POST REQUESTS----------------------
 
+  
   //useEffect hook to for retrieving Login Status and username from localStorage
   useEffect(() => {
     // Retrieve login status and username from local storage
@@ -135,85 +119,85 @@ export default function App() {//Export default App function component
 
   //-------------------PUT REQUEST----------------------
   //Function to edit a task
-  // const editTask = async (taskId) => {//Define an async function to edit a task
-  //   try {
-  //     const token = localStorage.getItem('token');// Retrieve the authentication token from localStorage
-  //     // Find the task to update based on taskId from the current taskData state
-  //     const taskToUpdate = taskData.find((task) => task.id === taskId);
+  const editTask = async (taskId) => {//Define an async function to edit a task
+    try {
+      const token = localStorage.getItem('token');// Retrieve the authentication token from localStorage
+      // Find the task to update based on taskId from the current taskData state
+      const taskToUpdate = taskData.find((task) => task.id === taskId);
 
-  //     // Send a PUT request to the server
-  //     const response = await fetch(`http://localhost:3001/editTask/${taskId}`, {
-  //       method: 'PUT',//Request method 
-  //       mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
-  //       headers: {
-  //         'Content-type': 'application/json',//Specify the content type
-  //         'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
-  //       },
-  //       body: JSON.stringify({//Send the updated task value as JSON in the request body
-  //         value: taskToUpdate.value,
-  //       }),
-  //     });
+      // Send a PUT request to the server
+      const response = await fetch(`http://localhost:3001/editTask/${taskId}`, {
+        method: 'PUT',//Request method 
+        mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
+        headers: {
+          'Content-type': 'application/json',//Specify the content type
+          'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
+        },
+        body: JSON.stringify({//Send the updated task value as JSON in the request body
+          value: taskToUpdate.value,
+        }),
+      });
 
-  //     // Conditional rendering to check if the server response is in the successful range (200-299)
-  //     if (response.status >= 200 && response.status < 300) {
-  //       // If successful, log a success message and update the taskData state
-  //       console.log('Task successfully updated');
+      // Conditional rendering to check if the server response is in the successful range (200-299)
+      if (response.status >= 200 && response.status < 300) {
+        // If successful, log a success message and update the taskData state
+        console.log('Task successfully updated');
         
-  //       const updatedList = await response.json();// Parse the JSON data from the response  
-  //       setTaskData(updatedList);//Update the taskData state
+        const updatedList = await response.json();// Parse the JSON data from the response  
+        setTaskData(updatedList);//Update the taskData state
 
-  //       localStorage.setItem('tasks', JSON.stringify(updatedList));// Update the localStorage with the updated taskData
+        localStorage.setItem('tasks', JSON.stringify(updatedList));// Update the localStorage with the updated taskData
 
-  //     } 
-  //     else {
-  //       throw new Error('Failed to edit task');//Throw an error if the PUT request is unsuccessful 
-  //     }
-  //   } 
-  //   catch (error) {
-  //     // Handle any errors that occur during the request
-  //     console.error('Error editing task:', error.message);//Display an error message in the console for debugging purposes
-  //     setError('Error editing task. Please try again.');//Set the error state with an error message
-  //     localStorage.removeItem('token');//Remove the authentication from localStorage if an error occurs
-  //   }
-  // };
+      } 
+      else {
+        throw new Error('Failed to edit task');//Throw an error if the PUT request is unsuccessful 
+      }
+    } 
+    catch (error) {
+      // Handle any errors that occur during the request
+      console.error('Error editing task:', error.message);//Display an error message in the console for debugging purposes
+      setError('Error editing task. Please try again.');//Set the error state with an error message
+      localStorage.removeItem('token');//Remove the authentication from localStorage if an error occurs
+    }
+  };
 
-  // //--------------DELETE REQUEST------------------
+  //--------------DELETE REQUEST------------------
   //Function to delete a task
-  // const deleteTask = async (taskId) => {//Define an async function to delete a task
-  //   try {
-  //     const token = localStorage.getItem('token');//Retrieves the authentication token from localStorage.
-  //     //Send a DELETE request to the server
-  //     const response = await fetch(`http://localhost:3001/users/deleteTask/${taskId}`, {
-  //       method: 'DELETE',//Request method
-  //       mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing)
-  //       headers: {
-  //         'Content-type': 'application/json',//Specify the content-type being passed
-  //         'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
-  //       },
-  //     });
+  const deleteTask = async (taskId) => {//Define an async function to delete a task
+    try {
+      const token = localStorage.getItem('token');//Retrieves the authentication token from localStorage.
+      //Send a DELETE request to the server
+      const response = await fetch(`http://localhost:3001/users/deleteTask/${taskId}`, {
+        method: 'DELETE',//Request method
+        mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing)
+        headers: {
+          'Content-type': 'application/json',//Specify the content-type being passed
+          'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
+        },
+      });
 
-  //     // Conditional rendering if the server response is in the successful range (200-299)
-  //     if (response.status >= 200 && response.status < 300) {
-  //       // If successful, parse the JSON data from the response and update the taskData state
-  //       const updatedList = await response.json();//Parse the JSON data from the response
-  //       setTaskData(updatedList);//Update the TaskData state
+      // Conditional rendering if the server response is in the successful range (200-299)
+      if (response.status >= 200 && response.status < 300) {
+        // If successful, parse the JSON data from the response and update the taskData state
+        const updatedList = await response.json();//Parse the JSON data from the response
+        setTaskData(updatedList);//Update the TaskData state
 
 
         
-  //       localStorage.setItem('tasks', JSON.stringify(updatedList));// Update the local storage with the updated taskData
-  //       console.log('Task successfully deleted');//Display a success message in the console
-  //     } 
-  //     else {
-  //       throw new Error('Failed to delete task');//Throw an error message if the DELETE request is unsuccessful
-  //     }
-  //   } 
-  //   catch (error) {
-  //     // Handle any errors that occur during the request
-  //     console.error('Error deleting task:', error.message);//Log an error message in the console for debugging purposes
-  //     setError('Error deleting task. Please try again.');//Set the error state with an error message
-  //     localStorage.removeItem('token');// Remove the token from localStorge if an error occurs.
-  //   }
-  // };
+        localStorage.setItem('tasks', JSON.stringify(updatedList));// Update the local storage with the updated taskData
+        console.log('Task successfully deleted');//Display a success message in the console
+      } 
+      else {
+        throw new Error('Failed to delete task');//Throw an error message if the DELETE request is unsuccessful
+      }
+    } 
+    catch (error) {
+      // Handle any errors that occur during the request
+      console.error('Error deleting task:', error.message);//Log an error message in the console for debugging purposes
+      setError('Error deleting task. Please try again.');//Set the error state with an error message
+      localStorage.removeItem('token');// Remove the token from localStorge if an error occurs.
+    }
+  };
 
 
 //==========================JSX RENDERING=========================
@@ -276,6 +260,8 @@ export default function App() {//Export default App function component
               <p>Loading...</p>
             ):(
               <div>
+   {/* <Button variant="primary" onClick={() => fetchTasks()}> FETCH TASKS</Button>*/}
+
                 <ul>
                   {taskData.map((task) => (
                     <li key={task.taskId}>
