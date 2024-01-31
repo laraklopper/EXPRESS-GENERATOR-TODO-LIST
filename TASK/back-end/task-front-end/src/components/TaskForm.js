@@ -12,11 +12,14 @@ export default function TaskForm(//Export default TaskForm function component
        
     }) {
         //=======STATE VARIABLES===============
-        const [newTask, setNewTask] = useState({
-            username: '',
-            title: '',
-        })
+        const [taskInput, setTaskInput] = useState("")
+        // const [newTask, setNewTask] = useState({
+        //     username: '',
+        //     title: '',
+        // })
+    
 
+      
     //==============REQUESTS====================
     //--------------POST REQUEST---------------------------
     //Function to add a task
@@ -31,7 +34,8 @@ export default function TaskForm(//Export default TaskForm function component
                     'Content-type': 'application/json',//Specify the content type
                     'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
                 },
-                body: JSON.stringify({ username: newTask.username, title: newTask.title }),
+                body: JSON.stringigy({value: taskToUpdate.value})
+                // body: JSON.stringify({ username: newTask.username, title: newTask.title }),
             });
 
             // Conditional rendering to check if the server response is in the successful range (200-299)
@@ -58,13 +62,13 @@ export default function TaskForm(//Export default TaskForm function component
     
 
     //Function to handle input change in the taskForm
-    const handleTaskInput = (event) => {
-        const {name, value} = event.target;
-        setNewTask ((prevData) => ({
-            ...prevData,
-            [name]:value
-        }))
-    }
+    // const handleTaskInput = (event) => {
+    //     const {name, value} = event.target;
+    //     setNewTask ((prevData) => ({
+    //         ...prevData,
+    //         [name]:value
+    //     }))
+    // }
     //===========JSX RENDERING==================
 
     return (
@@ -85,8 +89,10 @@ export default function TaskForm(//Export default TaskForm function component
                             placeholder="username"
                             type='text'
                             name='username'
-                            value={newTask.username}
-                            onChange={handleTaskInput}
+                            // value={newTask.username}
+                            value={taskInput}
+                            onChange=((e) => setTaskInput)
+                            // onChange={handleTaskInput}
                             className='taskInput'
                             /> 
                        </label>                            
@@ -100,8 +106,10 @@ export default function TaskForm(//Export default TaskForm function component
                         placeholder='Task'
                         type='text'
                         name='title'
-                        value={newTask.title}
-                        onChange={handleTaskInput}
+                        // value={newTask.title}
+                        value={taskInput}
+                         onChange=((e) => setTaskInput)
+                        // onChange={handleTaskInput}
                         className='taskInput'
                         />
                     </label>
