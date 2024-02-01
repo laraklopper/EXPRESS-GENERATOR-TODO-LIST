@@ -29,21 +29,16 @@ let tasks = [
   },
 ];
 
-//=========MIDDLEWARE==============
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+// router.get('/findTasks', authenticateToken, (res, req) => {
+//   try {
+//     res.json(JSON.stringify(tasks))
+//     console.log(JSON.stringify(tasks));
+//   } catch (error) {
+//     console.error('Error finding tasks,')
+//     res.status(500).json('Internal server error')
+//   }
+// })
 
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, 'userLoginSecretKey', (err, decoded) => {
-    if (err) {
-      return res.status(403).json();
-    }
-    req.user = decoded;
-    next();
-  });
-}
 
 //===========ROUTES=================
 // Protected route to retrieve tasks
