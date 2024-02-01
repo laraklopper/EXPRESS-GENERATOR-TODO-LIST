@@ -19,6 +19,14 @@ export default function App() {//Export default App function component
   //Task variables
   const [taskData, setTaskData] = useState([]);//State to store the array of tasks wind
   //User variables
+  // const [userData, setUserData] = useState({
+  //   username: '',
+  //   password: '',
+  // })
+  // const [newUserData, setNewUserData] = useState({
+  //   newUserName: '',
+  //   newPassword: '',
+  // })
   const [username, setUsername] = useState('');//State to store the password entered by the user.
   const [password, setPassword] = useState('');//State to store the password entered by the user.
   const [newUsername, setNewUsername] = useState(' ');//State to store newUsername
@@ -298,11 +306,8 @@ export default function App() {//Export default App function component
                 />
                 </section>
           )}
-      </Container>
-    
-          </div>
-      
-       
+        </Container>
+      </div>  
     </>
   );
 }
