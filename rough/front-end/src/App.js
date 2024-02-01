@@ -2,8 +2,19 @@ import React, { useState, useEffect } from 'react';
 
 export default function App() {
   const [taskData, setTaskData] = useState([]);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [newUsername, setNewUsername] = useState(' ');
+  const [newPassword, setNewPassword] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const storedTasks = localStorage.getItem('tasks');
+    if (storedTasks) {
+      setTaskData(JSON.parse(storedTasks));
+    }
+  },[]}
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -35,17 +46,25 @@ export default function App() {
     fetchTasks();
   }, []);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  } 
-  else if (!isLoaded) {
-    return <div>Loading...</div>;
-  } 
-  else {
-
     return (
+      <>
+      <di>
+      <Container>
+        // Heading
+        <header id='header'>
+            <Row>
+                <Col id='heading'>
+                    <h1 className='h1'>TO DO LIST</h1>
+                </Col>
+            </Row>
+        </header>
+      
+      </Container>
+      </div>
+      </>
       <div>
         <h1>Tasks</h1>
+      
         <ul>
           {taskData.map(task => (
             <li key={task.id}>
