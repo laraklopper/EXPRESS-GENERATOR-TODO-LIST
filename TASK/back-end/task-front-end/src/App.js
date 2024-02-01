@@ -86,18 +86,18 @@ export default function App() {//Export default App function component
   //------------POST REQUESTS----------------------
 
   
-  //useEffect hook to for retrieving Login Status and username from localStorage
-  useEffect(() => {
-    // Retrieve login status and username from local storage
-    const storedLoginStatus = localStorage.getItem('loginStatus');
-    const storedUsername = localStorage.getItem('username');
+  // //useEffect hook to for retrieving Login Status and username from localStorage
+  // useEffect(() => {
+  //   // Retrieve login status and username from local storage
+  //   const storedLoginStatus = localStorage.getItem('loginStatus');
+  //   const storedUsername = localStorage.getItem('username');
 
-    // Conditional rendering to check if both the login status and username are present in localStorage.
-    if (storedLoginStatus && storedUsername) {
-      setLogin(JSON.parse(storedLoginStatus));//If both are present parse the login status from a string to a boolean
-      // setUsername(storedUsername);//Update the username state with the stored username
-    }
-  }, []);
+  //   // Conditional rendering to check if both the login status and username are present in localStorage.
+  //   if (storedLoginStatus && storedUsername) {
+  //     setLogin(JSON.parse(storedLoginStatus));//If both are present parse the login status from a string to a boolean
+  //     // setUsername(storedUsername);//Update the username state with the stored username
+  //   }
+  // }, []);
 
   //useEffect hook used to retrieve and update Task Data from localStorage
   useEffect(() => {
