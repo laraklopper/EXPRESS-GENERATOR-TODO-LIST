@@ -51,36 +51,65 @@ export default function App() {
     }
   }, [taskData]);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3001/users/findTasks', {
-          method: 'GET',
-          mode: "cors",
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          }
-        });
+   //===============REQUESTS=====================
+  //------------GET REQUEST-----------
 
-        if (response.ok) {
-          const fetchedTasks = await response.json()
-          setTaskData(fetchedTasks);
-          setIsLoaded(true);
-          console.log(fetchedTasks);
-        } 
-        else {
-          throw new Error('Failed to fetch tasks');
+  //Function to fetch tasks
+  const fetchTasks = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch ('http://localhost:3001/users/fetchTasks', {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         }
-      } catch (error) {
-        setError(`Error fetching data: ${error.message}`);
-        console.error(`Error fetching data : ${error.message}`);
-        setIsLoaded(true);
+      })
+
+      if (response.ok) {
+        const fetchedTasks = await response.json()
+        setTaskData(fetchedTasks)
+        console.log(fetchedTasks);
+        
+      } else {
+        throw new Error ('Failed to fetch tasks')
       }
+    } catch (error) {
+      setError(`Error fetching data : ${error.message}`)
+      console.error(`Error fetching data : ${error.message}`);
     }
-    fetchTasks();
-  }, []);
+  }
+  // useEffect(() => {
+  //   const fetchTasks = async () => {
+  //     try {
+  //       const token = localStorage.getItem('token');
+  //       const response = await fetch('http://localhost:3001/users/findTasks', {
+  //         method: 'GET',
+  //         mode: "cors",
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Bearer ${token}`,
+  //         }
+  //       });
+
+  //       if (response.ok) {
+  //         const fetchedTasks = await response.json()
+  //         setTaskData(fetchedTasks);
+  //         setIsLoaded(true);
+  //         console.log(fetchedTasks);
+  //       } 
+  //       else {
+  //         throw new Error('Failed to fetch tasks');
+  //       }
+  //     } catch (error) {
+  //       setError(`Error fetching data: ${error.message}`);
+  //       console.error(`Error fetching data : ${error.message}`);
+  //       setIsLoaded(true);
+  //     }
+  //   }
+  //   fetchTasks();
+  // }, []);
 
   useEffect(() => {
     const storedLoginStatus = localStorage.getItem('loginStatus');
