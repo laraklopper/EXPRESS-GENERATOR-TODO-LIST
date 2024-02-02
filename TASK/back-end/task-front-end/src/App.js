@@ -44,7 +44,7 @@ export default function App() {
           }
         });
 
-        if (response.status >= 200 && response.status < 300) {
+        if (response.ok/*response.status >= 200 && response.status < 300*/) {
           const fetchedTasks = await response.json()
           setTaskData(fetchedTasks);
           setIsLoaded(true);
@@ -86,7 +86,7 @@ export default function App() {
         }),
       });
 
-      if (response.status >= 200 && response.status < 300) {
+      if (response.ok/*response.status >= 200 && response.status < 300*/) {
         console.log('Task successfully updated');
         const updatedList = await response.json();
         setTaskData(updatedList);
@@ -113,7 +113,7 @@ export default function App() {
         },
       });
 
-      if (response.status >= 200 && response.status < 300) {
+      if (response.ok/*response.status >= 200 && response.status < 300*/) {
         const updatedList = await response.json();
         setTaskData(updatedList);
         localStorage.setItem('tasks', JSON.stringify(updatedList));
@@ -128,6 +128,7 @@ export default function App() {
     }
   };
 
+  //===========JSX RENDERING==================
   return (
     <>
       <div id='appBody'>
