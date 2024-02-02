@@ -41,12 +41,15 @@ export default function App() {
   const [loginStatus, setLoginStatus] = useState(true);
   const [isRegistration, setIsRegistration] = useState(false);
 
+    //===============USE EFFECT HOOKS==============
+
+    //useEffect hook used to retrieve and update Task Data from localStorage
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks');
     if (storedTasks) {
       setTaskData(JSON.parse(storedTasks));
     }
-  }, [taskData, setTaskData]);
+  }, [taskData]);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -61,16 +64,18 @@ export default function App() {
           }
         });
 
-        if (response.ok/*response.status >= 200 && response.status < 300*/) {
+        if (response.ok) {
           const fetchedTasks = await response.json()
           setTaskData(fetchedTasks);
           setIsLoaded(true);
           console.log(fetchedTasks);
-        } else {
+        } 
+        else {
           throw new Error('Failed to fetch tasks');
         }
       } catch (error) {
         setError(`Error fetching data: ${error.message}`);
+        console.error(`Error fetching data : ${error.message}`);
         setIsLoaded(true);
       }
     }
