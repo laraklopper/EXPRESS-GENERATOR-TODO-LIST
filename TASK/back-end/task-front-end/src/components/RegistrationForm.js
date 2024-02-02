@@ -39,7 +39,7 @@ export default function RegistrationForm(//Import default RegistrationForm funct
             });
 
             // Conditional rendering to check if the server response is in the successful range (200-299)
-            if (response.status >= 200 && response.status < 300) {
+            if (response.ok) {
                 const data = await response.json()
                 if (data.token) {
                     console.log('New user successfully added');// If successful, log a success message and update the localStorage with the new user
