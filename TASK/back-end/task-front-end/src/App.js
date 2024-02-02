@@ -13,11 +13,28 @@ import LogoutBtn from './components/LogoutBtn';
 
 //App function component
 export default function App() {
+  //=========STATE VARIABLES======================
+  //--------Task variables------------
   const [taskData, setTaskData] = useState([]);
+  // const [taskInput, setTaskInput] = useState()
+  // const [newTask, setNewTask] = useState({
+  //   username: '',
+  //   title: '',
+  // })
+  //---------User variables-------------
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [newUsername, setNewUsername] = useState(' ');
   const [newPassword, setNewPassword] = useState('');
+  // const [userData, setUserData] = useState({
+  //   username: '',
+  //   password: '',
+  // })
+  // const [newUserData, setNewUserData] = useState({
+  //   newUsername: '',
+  //   newPassword: '',
+  // })
+  //--------Event variables---------------- 
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [login, setLogin] = useState(false);
