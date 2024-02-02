@@ -5,26 +5,31 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 
 export default function App() {
+  // ==========STATE VARIABLES======================
+  // --------Task variables------------
   const [taskData, setTaskData] = useState([]);
   const [newTask, setNewTask] = useState({
     username: '',
     title: '',
   });
 
+  // ---------User variables-------------
   const [userData, setUserData] = useState({
     username: '',
     password: '',
   });
-
   const [newUserData, setNewUserData] = useState({
     newUsername: '',
     newPassword: '',
   });
-
+  // --------Event variables----------------
   const [error, setError] = useState(null);
+  const [login, setLogin] = useState(false);
   const [loginStatus, setLoginStatus] = useState(true);
   const [isRegistration, setIsRegistration] = useState(false);
 
+  // ==========USE EFFECT HOOK===============
+  // useEffect hook used to retrieve and update Task Data from localStorage
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks');
     if (storedTasks) {
@@ -32,6 +37,9 @@ export default function App() {
     }
   }, [taskData]);
 
+  // ===============REQUESTS=====================
+  // ------------GET REQUEST-----------
+//Function to fetch tsk
   const fetchTasks = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -40,7 +48,7 @@ export default function App() {
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -56,6 +64,9 @@ export default function App() {
       console.error(`Error fetching data : ${error.message}`);
     }
   };
+
+  // ------------POST REQUESTS----------------------
+  // Function to submit login
 
   const submitLogin = async () => {
     try {
@@ -73,11 +84,14 @@ export default function App() {
 
         if (data.token) {
           console.log('Successfully logged in');
+          setLogin(true);
           setLoginStatus(true);
           localStorage.setItem('loginStatus', JSON.stringify(true));
           localStorage.setItem('userData', data.token);
           localStorage.setItem('token', data.token);
-          setTaskData({ username: '', password: '' });
+          setTaskData([]);
+
+          fetchTasks()
         } else {
           throw new Error('Invalid response from server');
         }
@@ -90,6 +104,7 @@ export default function App() {
     }
   };
 
+  // Function to add User
   const addUser = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -98,7 +113,7 @@ export default function App() {
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ newUsername: newUserData.newUsername, newPassword: newUserData.newPassword }),
       });
@@ -108,7 +123,6 @@ export default function App() {
         if (data.token) {
           console.log('New User successfully added');
           const users = JSON.parse(localStorage.getItem('users')) || [];
-          users.push({ newUsername: newUserData.newUsername, newPassword: newUserData.newPassword });
           localStorage.setItem('users', JSON.stringify(users));
         } else {
           throw new Error('Invalid server response');
@@ -118,10 +132,11 @@ export default function App() {
       }
     } catch (error) {
       console.error('Error adding new user', error.message);
-      setError(`Error adding new user: ${error.message}`);
+      setError(`Error adding new user ${error.message}`);
     }
   };
 
+  // Function to addNew task
   const addTask = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -130,7 +145,7 @@ export default function App() {
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ username: newTask.username, title: newTask.title }),
       });
@@ -144,13 +159,25 @@ export default function App() {
         throw new Error('Failed to add new Task');
       }
     } catch (error) {
-      setError(`Error adding task: ${error.message}`);
+      setError(`Error adding task ${error.message}`);
       console.error('Error adding task:', error.message);
       localStorage.removeItem('token');
     }
   };
 
-  const handleRegistrationInputChange = (event) => {
+  // ==========EVENT LISTENERS=====================
+
+  const appLogin = () => {
+    setLoginStatus(false);
+  };
+
+  const handleLogoutClick = () => {
+    localStorage.removeItem('loginStatus');
+    localStorage.removeItem('username');
+    localStorage.removeItem('token');
+  };
+
+  const handleRegistrationChange = (event) => {
     const { name, value } = event.target;
     setNewUserData((prevData) => ({
       ...prevData,
@@ -166,7 +193,7 @@ export default function App() {
     }));
   };
 
-  const handleTaskInputChange = (event) => {
+  const handleTaskInput = (event) => {
     const { name, value } = event.target;
     setNewTask((prevData) => ({
       ...prevData,
@@ -182,14 +209,11 @@ export default function App() {
 
   const logout = () => {
     setLoginStatus(true);
+    setLogin(false);
     localStorage.removeItem('token');
   };
 
-  const handleLogoutClick = () => {
-    localStorage.removeItem('loginStatus');
-    localStorage.removeItem('username');
-    localStorage.removeItem('token');
-  };
+  // ===========JSX RENDERING==================
 
   return (
     <>
@@ -219,7 +243,7 @@ export default function App() {
                               type='text'
                               name='newUsername'
                               value={newUserData.newUsername}
-                              onChange={handleRegistrationInputChange}
+                              onChange={handleRegistrationChange}
                               className='regisInput'
                               placeholder='username'
                             />
@@ -232,14 +256,14 @@ export default function App() {
                               type='text'
                               name='newPassword'
                               value={newUserData.newPassword}
-                              onChange={handleRegistrationInputChange}
+                              onChange={handleRegistrationChange}
                               className='regisInput'
                               placeholder='password'
                             />
                           </label>
                         </Col>
                         <Col xs={6} md={4} className='regisCol'>
-                          <Button variant="primary" type='submit' id='registrationBtn'>
+                          <Button variant='primary' type='submit' id='registrationBtn'>
                             REGISTER
                           </Button>
                         </Col>
@@ -285,7 +309,7 @@ export default function App() {
                         </label>
                       </Col>
                       <Col xs={6} md={4} className='loginCol'>
-                        <Button variant="primary" type='submit'>
+                        <Button variant='primary' type='submit' onClick={login ? handleLogoutClick : appLogin}>
                           LOGIN
                         </Button>
                       </Col>
@@ -295,7 +319,7 @@ export default function App() {
               )}
               <Row id='pageToggleRow'>
                 <Col id='pageToggleBtn'>
-                  <Button variant="primary" type="submit" id='toggleBtn' onClick={togglePage}>
+                  <Button variant='primary' type='submit' id='toggleBtn' onClick={togglePage}>
                     {isRegistration ? 'Login Page' : 'Registration Page'}
                   </Button>
                 </Col>
@@ -318,7 +342,7 @@ export default function App() {
                           type='text'
                           name='username'
                           value={newTask.username}
-                          onChange={handleTaskInputChange}
+                          onChange={handleTaskInput}
                           placeholder='username'
                           autoComplete='on'
                           className='taskInput'
@@ -332,7 +356,7 @@ export default function App() {
                           type='text'
                           name='title'
                           value={newTask.title}
-                          onChange={handleTaskInputChange}
+                          onChange={handleTaskInput}
                           placeholder='task'
                           className='taskInput'
                           autoComplete='on'
@@ -340,7 +364,7 @@ export default function App() {
                       </label>
                     </Col>
                     <Col xs={6} md={4}>
-                      <Button variant="primary" type="submit" id='addTaskBtn'>
+                      <Button variant='primary' type='submit' id='addTaskBtn'>
                         ADD TASK
                       </Button>
                     </Col>
@@ -378,7 +402,7 @@ export default function App() {
               <div>
                 <Row id='logoutRow'>
                   <Col id='logoutCol'>
-                    <Button variant="primary" id='logoutBtn' onClick={logout}>
+                    <Button variant='primary' id='logoutBtn' onClick={logout}>
                       LOGOUT
                     </Button>
                   </Col>
