@@ -13,17 +13,30 @@ import LogoutBtn from './components/LogoutBtn';
 
 //App function component
 export default function App() {
+  //=======STATE VARIABLES=================
+  //Task variables
   const [taskData, setTaskData] = useState([]);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [newUsername, setNewUsername] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [newTask, setNewTask] = useState({
+    username: '',
+    title: '',    
+  })
+  //User variables
+  const [userData, setUserData] = useState({
+    username: '',
+    password: '',
+  });
+  const [newUserData, setNewUserData] = useState({
+    newUsername: '',
+    newPassword: '',
+  });
+  //Event variables
   const [error, setError] = useState(null);
   const [login, setLogin] = useState(false);
   const [loginStatus, setLoginStatus] = useState(true);
   const [isRegistration, setIsRegistration] = useState(false);
 
+   //==========USE EFFECT HOOK===============
+  //useEffect hook used to retrieve and update Task Data from localStorage
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks');
     if (storedTasks) {
@@ -50,21 +63,21 @@ export default function App() {
         if (response.ok) {
           const fetchedData = await response.json();
           setTaskData(fetchedData.tasks);
-          setIsLoaded(true);
           console.log(fetchedData.tasks);
-        } else {
+        } 
+        else {
           throw new Error('Failed to fetch tasks');
         }
-      } catch (error) {
+      } 
+      catch (error) {
         setError(`Error fetching data: ${error.message}`);
-        setIsLoaded(true);
         console.error('Error fetching data:');
       }
     }
+ 
 
-  //   fetchTasks();
-  // }, []);
-
+  //------------POST REQUESTS----------------------
+  //Function to submit login
   const submitLogin = async () => {
   try {
     const response = await fetch('http://localhost:3001/users/login', {
@@ -76,24 +89,34 @@ export default function App() {
       body: JSON.stringify({ username, password }),
     });
 
-    if (response.status >= 200 && response.status < 300) {
+    if (response.ok) {
       const data = await response.json();
+          if (data.token) {
+          console.log('Successfully logged in');
+          setLogin(true)
+          setLoginStatus(true)
+          localStorage.setItem('loginStatus', JSON.stringify(true));
+          localStorage.setItem('token', data.token);
+          setTaskData([]);
 
-      console.log('Successfully logged in');
+          fetchTasks()
+        } 
+        else {
+          throw new Error('Invalid response from server')
+        }  
 
-      setLogin(true);
-      setLoginStatus(true);
-      localStorage.setItem('loginStatus', JSON.stringify(true));
-      localStorage.setItem('username', username);
-      localStorage.setItem('token', data.token);
     } else {
       throw new Error('Failed to login');
     }
-  } catch (error) {
+  } 
+  catch (error) {
     setError(`Login Failed: ${error.message}`);
+    console.error('Login Failed', error.message);
+
   }
 };
 
+  //useEffect hook to for retrieving Login Status and username from localStorage
   useEffect(() => {
     const storedLoginStatus = localStorage.getItem('loginStatus');
     const storedUsername = localStorage.getItem('username');
@@ -103,6 +126,7 @@ export default function App() {
     }
   }, []);
 
+  //useEffect hook used to retrieve and update Task Data from localStorage
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks');
     if (storedTasks) {
@@ -110,14 +134,7 @@ export default function App() {
     }
   }, [taskData]);
 
-  useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) {
-      setTaskData(JSON.parse(storedTasks));
-    }
-  }, [taskData, setTaskData]);
-
-  
+  //Function to add user
   const addUser = async () => {
   try {
     const token = localStorage.getItem('token');
@@ -128,15 +145,16 @@ export default function App() {
         'Content-type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({ newUsername, newPassword }),
+      body: JSON.stringify({ newUsername: newUserData.newUsername, newPassword: newUserData.newPassword }),
     });
 
-    if (response.status >= 200 && response.status < 300) {
+    if (response.ok) {
       const data = await response.json();
       if (data.token) {
         console.log('New user successfully added');
         const users = JSON.parse(localStorage.getItem('users')) || [];
         localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('token', data.token); 
       } else {
         throw new Error('Invalid server response');
       }
@@ -148,7 +166,8 @@ export default function App() {
     setError("Error adding new user", error.message);
   }
 };
-
+  
+//Function to add a newTask
   const addTask = async (newTask) => {
   try {
     const token = localStorage.getItem('token');
@@ -162,7 +181,7 @@ export default function App() {
       body: JSON.stringify({ username: newTask.username, title: newTask.title }),
     });
 
-    if (response.status >= 200 && response.status < 300) {
+    if (response.ok/*response.status >= 200 && response.status < 300*/) {
       const updatedList = await response.json();
       setTaskData(updatedList);
       localStorage.setItem('tasks', JSON.stringify(updatedList));
@@ -176,7 +195,8 @@ export default function App() {
   }
 };
 
-  
+ //-----------------PUT REQUEST----------------
+  //Function to edit a task
   const editTask = async (taskId) => {
     try {
       const token = localStorage.getItem('token');
@@ -208,7 +228,9 @@ export default function App() {
       localStorage.removeItem('token');
     }
   };
-
+  
+//---------------DELETE REQUEST----------------------
+  //Function to delete a task
   const deleteTask = async (taskId) => {
     try {
       const token = localStorage.getItem('token');
@@ -231,7 +253,7 @@ export default function App() {
       }
     } catch (error) {
       console.error('Error deleting task:', error.message);
-      setError('Error deleting task. Please try again.');
+      setError('Error deleting task', error.message);
       localStorage.removeItem('token');
     }
   };
@@ -240,46 +262,43 @@ export default function App() {
 
    // Function to set login status to false, indicating that the user is in the process of logging in
     const appLogin = () => {
-        setLoginStatus(false);//Set the loginStatus to false
+        setLoginStatus(false);
     };
     
-    // Function to handle logout button click
-    const handleLogoutClick = () => {
-        // Remove stored login information and trigger logout process
-        localStorage.removeItem('loginStatus');//Remove the loginStatus from localStorage 
-        localStorage.removeItem('username');//Remove the username from localStorage
-        localStorage.removeItem('token'); //Remove the stored token from localStorage
+    // Function to handle logout button click  
+  const handleLogoutClick = () => {
+    localStorage.removeItem('loginStatus')
+    localStorage.removeItem('username')
+    localStorage.removeItem('token')
 
-    };
+  }
 
-    const togglePage = () => {
-        setIsRegistration(!isRegistration); // Toggle the isRegistration state
-        setNewUsername(''); // Reset new username input
-        setNewPassword(''); // Reset new password input
-        setUsername(''); // Reset username input
-        setPassword(''); // Reset password input
-    };
+  //Function to toggle between login and registration page
+  const togglePage = () => {
+    setIsRegistration(!isRegistration)
+    setNewUserData({newUsername: '', newPassword: ''})
+    setUserData({username: '', password: ''})
+  }
 
     //Function to trigger logout button
-    const logout = () => {
-        // Reset login status 
-        setLoginStatus(true);
-        setLogin(false);
-
-        localStorage.removeItem('token');//Remove the stored token from localStorage
-    };
-
+ const logout = () => {
+    setLoginStatus(true);
+    setLogin(false)
+    localStorage.removeItem('token')
+  }
   //================JSX RENDERING==================
 
   return (
     <>
+    {/* App body */}
       <div id='appBody'>
+    {/* Container */}
         <Container id='appContainer'>
+         {/* Header */}  
           <Header />
           { loginStatus ? (
             <div>
               <section id='section1'>
-                <div>
                   {isRegistration ? (
                     <RegistrationForm
                       newUsername={newUsername}
@@ -290,39 +309,22 @@ export default function App() {
                     />
                   ) : (
                     <LoginForm
+                       submitLogin={submitLogin}
                       login={login}
-                      setLoginStatus={setLoginStatus}
-                      loginStatus={loginStatus}
-                      setLogin={setLogin}
-                      setError={setError}
-                      username={username}
-                      password={password}
-                      setUsername={setUsername}
-                      setPassword={setPassword}
+                      handleLogoutClick={handleLogoutClick}
+                      userData={userData}
+                      setUserData={setUserData}
+                      appLogin={appLogin}
                     />
                   )}
-                  <ToggleBtn
-                    isRegistration={isRegistration}
-                    setIsRegistration={setIsRegistration}
-                    setNewPassword={setNewPassword}
-                    setNewUsername={setNewUsername}
-                    newUsername={newUsername}
-                    newPassword={newPassword}
-                    username={username}
-                    password={password}
-                    setUsername={setUsername}
-                    setPassword={setPassword}
-                  />
-                </div>
+                  <ToggleBtn isRegistration={isRegistration} togglePage={togglePage}/>
               </section>
-            </div>
           ) : (
             <section id='section2'>
+            {/* Form to add task */}
               <TaskForm setTaskData={setTaskData} setError={setError} />
               {error ? (
                 <div>{error}</div>
-              ) : !isLoaded ? (
-                <p>Loading...</p>
               ) : (
                 <div>
                   <ul>
