@@ -123,35 +123,38 @@ module.exports = router;
 
 ```javascript
 
-
+//Function to add a new User
 const addUser = async () => {
     try {
-        const token = localStorage.getItem('token');
-        
+        const token = localStorage.getItem('token');// Retrieve the authentication token from local storage
+        //Send a POST request to the server
         const response = await fetch('http://localhost:3001/users/register', {
-            method: 'POST',
-            mode: 'cors',
+            method: 'POST',//Request method
+            mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing)
             headers: {
-                'Content-type': 'application/json',
-                'Authorization': `Bearer ${token}`,
+                'Content-type': 'application/json',//Specify the type of content being passed
+                'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
             },
+            // Convert new user data to JSON and send it in the request body
             body: JSON.stringify({ newUsername: newUserData.newUsername, newPassword: newUserData.newPassword }),
         });
-
+        // Conditional rendering to check if the response status is in the successful range (200-299)
         if (response.status >= 200 && response.status < 300) {
-            const data = await response.json();
+            const data = await response.json();// Parse the response data as JSON
+            // Conditional rendering to check if the response contains a valid token
             if (data.token) {
-                console.log('New user successfully added');
-                // You might want to handle users locally in your React app
+                console.log('New user successfully added');//Log a success message in the console
             } else {
-                throw new Error('Invalid server response');
+                throw new Error('Invalid server response');// Throw an error if the response status is not in the successful range
             }
         } else {
-            throw new Error('Failed to add new user');
+            throw new Error('Failed to add new user');//Throw an error message if the GET request is unsuccessful
         }
     } catch (error) {
-        console.error('Error adding new user:', error.message);
-        setError(`Error adding new user: ${error.message}`);
+        // Handle any errors that occur during the request
+        console.error('Error adding new user:', error.message);//Log an error message in the console for debugging purposes
+        setError(`Error adding new user: ${error.message}`);// Set an error message in the state
+
     }
 };
 ```
