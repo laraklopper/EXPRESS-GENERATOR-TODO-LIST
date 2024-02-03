@@ -127,7 +127,7 @@ export default function App() {
     const storedTasks = localStorage.getItem('tasks');
     
     if (storedTasks) {
-      setTaskData(JSON.parse(storedTasks)
+      setTaskData(JSON.parse(storedTasks))
     }
   }, [taskData]);
   
@@ -289,7 +289,17 @@ export default function App() {
     //         [name]:value
     //     }))
     // }
-  
+
+  //Function to handle input change in the registrationForm
+  // const handleRegistration = (event) => {
+    //     const {name, value} = event.target;
+    //     //update newTask state based on the input change
+    //     setNewUserData ((prevData) => ({
+    //         ...prevData,
+    //         [name]: value
+    //     }))
+    // } 
+
      // Function to set login status to false, indicating that the user is in the process of logging in
     const appLogin = () => {
         setLoginStatus(false);//Set the loginStatus to false
@@ -314,7 +324,14 @@ export default function App() {
     };
 
   
-
+ // Function to toggle between registration and login pages
+    const togglePage = () => {
+        setIsRegistration(!isRegistration); // Toggle the isRegistration state
+        setNewUsername(''); // Reset new username input
+        setNewPassword(''); // Reset new password input
+        setUsername(''); // Reset username input
+        setPassword(''); // Reset password input
+    };
   //==============JSX RENDERING======================
   
   return (
