@@ -40,38 +40,60 @@ module.exports = {
 ### users.js (Backend):
 
 ```javascript
-// users.js
-
-const { limitTaskLength, enforceContentType } = require('./middleware');
-
+// Route to add a new Task
 router.post('/addTask', limitTaskLength, enforceContentType, (req, res) => {
     try {
-        const { newTask } = req.body;
+        const { newTask } = req.body;//Extract the newTask from the request body
 
+        // Check if 'newTask' or its 'title' property is missing
         if (!newTask || !newTask.title) {
+            // Respond with a 400 Bad Request status and an error message
             return res.status(400).json({ message: 'Task title is required' });
         }
 
+        // Check if a task with the same title already exists in the 'tasks' array
         if (tasks.some((task) => task.title === newTask.title)) {
+            // Respond with a 409 Conflict status and an error message
             return res.status(409).json({ message: 'Task title already exists' });
         }
 
+        // Create a new task object with an 'id' and 'title'
         const newTaskObject = {
             id: tasks.length + 1,
             title: newTask.title,
         };
 
+        // Add the new task object to the 'tasks' array
         tasks.push(newTaskObject);
+
+        // Respond with the updated 'tasks' array
         res.json(tasks);
+
+        // Log a success message to the console
         console.log('Task added successfully:', newTaskObject);
     } catch (error) {
+        // Catch any errors that occur during the execution of the try block
         console.error('Error adding task:', error.message);
+
+        // Respond with a 500 Internal Server Error status and an error message
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
-
-module.exports = router;
 ```
+
+Explanation:
+
+1. The code defines a route handler for the POST request to '/addTask'.
+2. It uses middleware functions like `limitTaskLength` and `enforceContentType` to perform specific checks before executing the route handler.
+3. The route handler first destructures the `newTask` property from the request body.
+4. It checks if `newTask` or its `title` property is missing. If so, it responds with a 400 Bad Request status and an error message.
+5. It then checks if a task with the same title already exists in the `tasks` array. If found, it responds with a 409 Conflict status and an error message.
+6. If the checks pass, a new task object is created with an 'id' and 'title'.
+7. The new task object is pushed to the `tasks` array.
+8. The server responds with the updated `tasks` array.
+9. A success message is logged to the console.
+10. In case of any errors during the execution of the try block, an error message is logged to the console, and the server responds with a 500 Internal Server Error status and an error message.
+
 ## FRONTEND
 
 ### REACT.js 
