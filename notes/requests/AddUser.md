@@ -26,6 +26,56 @@ module.exports = {
 };
 ```
 
+```javascript
+// middleware.js
+
+// Middleware function to validate the format of a username 
+const validateUsername = (req, res, next) => {
+    // Extract the newUsername from the request body
+    const username = req.body.newUsername;
+
+    // Regular expression to check if the username follows a basic email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Check if the username is provided and matches the email format
+    if (username && emailRegex.test(username)) {
+        // If the username is valid, proceed to the next middleware or route handler
+        next();
+    } else {
+        // If the username is missing or does not match the format, respond with a 403 Forbidden status
+        // and a JSON object containing an error message
+        res.status(403).json({ message: 'Access Forbidden: Invalid email format' });
+    }
+};
+
+// Export the validateUsername middleware to make it available for use in other parts of the application
+module.exports = {
+    validateUsername,
+};
+```
+
+Explanation:
+
+1. **Middleware Purpose:**
+   The `validateUsername` middleware is designed to check if a provided username (assumed to be an email address) follows a basic email format. It is commonly used as a pre-processing step before handling user registration or similar actions.
+
+2. **Extracting Username:**
+   The middleware extracts the `newUsername` from the request body. This assumes that the client is sending the new username as part of the request body.
+
+3. **Regular Expression Check:**
+   A regular expression (`emailRegex`) is used to check if the provided username follows a basic email format. This regex ensures that the username contains the "@" symbol and a domain with a dot.
+
+4. **Validation Check:**
+   The code checks if the username is provided and matches the email format. If the validation passes, the middleware calls the `next()` function, allowing the request to move to the next middleware or route handler in the chain.
+
+5. **Error Response:**
+   If the username is missing or does not match the expected format, the middleware responds with a 403 Forbidden status and a JSON object containing an error message. This communicates to the client that the provided username is not in the expected format.
+
+6. **Exporting Middleware:**
+   Finally, the middleware is exported to make it available for use in other files (typically in the user registration route).
+
+This middleware enhances the robustness of your application by ensuring that usernames, assumed to be email addresses, meet a basic format requirement before proceeding with further actions.
+
 ### users.js (Backend):
 
 ```javascript
