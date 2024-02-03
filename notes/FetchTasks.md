@@ -1,36 +1,15 @@
 # FETCH TASKS
 
 
-### Backend:
-
+## Backend:
+### USERS.js
 ```javascript
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { authenticateToken } = require('./middleware');
 const router = express.Router();
 
-router.use(express.json());
-
-// Middleware function to authenticate a JWT token from the 'Authorization' header
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers.authorization; // Extract the token from the header
-    const token = authHeader && authHeader.split(' ')[1]; // Corrected the variable name and extracted the token
-
-    // Conditional rendering to check if the token is missing
-    if (!token) return res.status(401).json({ message: 'Token missing in the request header' }); // If no token is found, send a 401 Unauthorized response
-
-    // Verify the JWT token using the 'verify' method
-    jwt.verify(token, "secretKey", (err, decoded) => {
-        if (err) {
-           
-            return res.status(401).json({ message: 'Invalid or expired token' });
-        }
-
-      
-        req.decoded = decoded;
-        next(); // Move to the next middleware in the chain
-    });
-}
+router.use(express.json()); 
 
 // Protected route to retrieve tasks
 router.get('/findTasks', authenticateToken, (req, res) => {
@@ -40,9 +19,36 @@ router.get('/findTasks', authenticateToken, (req, res) => {
 // ... (other routes)
 
 module.exports = router;
+
+```
+### MIDDLEWARE
+```
+// Middleware function to authenticate a JWT token from the 'Authorization' header
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers.authorization; // Extract the token from the header
+    const token = authHeader && authHeader.split(' ')[1]; // Corrected the variable name and extracted the token
+
+    // Conditional rendering to check if the token is missing
+    if (!token) return res.status(401).json({ message: 'Token missing in the request header' });
+    // If no token is found, send a 401 Unauthorized response
+
+    // Verify the JWT token using the 'verify' method
+    jwt.verify(token, "secretKey", (err, decoded) => {
+        if (err) {      
+            return res.status(401).json({ message: 'Invalid or expired token' });
+        }
+
+        req.decoded = decoded;
+        next(); // Move to the next middleware in the chain
+    });
+}
+
+
 ```
 
-### Frontend:
+## Frontend:
+
+### APP.JS
 
 ```javascript
 // Function to fetchTasks
