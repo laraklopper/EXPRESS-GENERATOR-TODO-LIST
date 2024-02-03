@@ -15,6 +15,7 @@ function authenticateToken(req, res, next) {
         if (err) {
             // If there's an error during token verification, send a 403 Forbidden response
             return res.sendStatus(403);
+            // return res.status(401).json({ message: 'Invalid or expired token' });
         }
 
         // If verification succeeds, store the decoded user information in the request object
@@ -24,7 +25,7 @@ function authenticateToken(req, res, next) {
 }
 
 //Middleware function to check if the provided username is valid
-const validateUsername = (req, res, next) => {
+function validateUsername = (req, res, next) => {
     const username = req.body.newUsername;    // Extract 'username' in the request body or query parameters
     console.log(username);
 
@@ -37,6 +38,23 @@ const validateUsername = (req, res, next) => {
         res.status(403).json({ message: 'Access Forbidden: Invalid username' });
     }
 };
+// const validateUsername = (req, res, next) => {
+//     // Extract the newUsername from the request body
+//     const username = req.body.newUsername;
+
+//     // Regular expression to check if the username follows a basic email format
+//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+//     // Conditional rendering to check if the username is provided and matches the email format
+//     if (username && emailRegex.test(username) && username.endsWith('@gmail.com')) {
+//         // If the username is valid, proceed to the next middleware
+//         next();
+//     } else {
+//         /* If the username is missing or does not match the format, respond with a 403 Forbidden status
+//          and a JSON object containing an error message*/
+//         res.status(403).json({ message: 'Access Forbidden: Invalid email format' });
+//     }
+// };
 
 // Middleware function to limit the length of a task title
 function limitTaskLength(req, res, next) {
@@ -53,6 +71,18 @@ function limitTaskLength(req, res, next) {
     // If the task title length is within the limit, proceed to the next middleware/route
     next();
 }
+// function limitTaskLength(req, res, next) {
+//     const { newTask } = req.body;
+//     const maxLength = 140;//Max length
+
+//     if (newTask && newTask.title.length > maxLength) {
+//         return res.status(400).json({
+//             message: `Task title exceeds the maximum length of ${maxLength} characters.`,
+//         });
+//     }
+
+//     next();
+// }
 
 // Middleware function to enforce the 'Content-Type' header to be 'application/json'
 function enforceContentType(req, res, next) {
