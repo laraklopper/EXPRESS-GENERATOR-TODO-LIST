@@ -42,23 +42,33 @@ let tasks = [
 
 //===========ROUTES=================
 // Protected route to retrieve tasks
-router.get('/findTasks', authenticateToken, (req, res) => {//Define the route for the HTTP request
-  try {
-    /
-    // Respond with a JSON object containing login status, user data, and tasks
-    res.json({
-      login: true,               // Indicate successful login
-      data: req.user,           // Include user data obtained from authentication middleware
-      tasks: tasks,              // Include the array of tasks
-    });
-  } catch (error) {
-    // If an error occurs in the try block, execute the catch block
-    res.status(401).json({ // Respond with a 401 Unauthorized status and an error message
-      login: false,              // Indicate unsuccessful login
-      message: 'Invalid Token',  // Error message for invalid token
-    });
-  }
+
+router.get('/findTasks', authenticateToken, (req, res) => {
+    try {
+        res.json({ tasks });
+        console.log(tasks);
+    } catch (error) {
+        console.error('Error finding tasks:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 });
+// router.get('/findTasks', authenticateToken, (req, res) => {//Define the route for the HTTP request
+//   try {
+//     /
+//     // Respond with a JSON object containing login status, user data, and tasks
+//     res.json({
+//       login: true,               // Indicate successful login
+//       data: req.user,           // Include user data obtained from authentication middleware
+//       tasks: tasks,              // Include the array of tasks
+//     });
+//   } catch (error) {
+//     // If an error occurs in the try block, execute the catch block
+//     res.status(401).json({ // Respond with a 401 Unauthorized status and an error message
+//       login: false,              // Indicate unsuccessful login
+//       message: 'Invalid Token',  // Error message for invalid token
+//     });
+//   }
+// });
 
 //Protected route for userLogin
 router.post("/login", (req, res) => {//Define the route for the HTTP request
