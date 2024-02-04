@@ -17,12 +17,12 @@ import LogoutBtn from './components/LogoutBtn';
 export default function App() {
   //===========STATE VARIABLES=================
  //Task variables
-  const [taskData, setTaskData] = useState([]);//State to store the array of tasks 
-  const [taskInput, setTaskInput] = useState("")
-  // const [newTask, setNewTask] = useState({
-  //   username: '',
-  //   title: ''
-  // })
+  const [taskData, setTaskData] = useState([]);
+  // const [taskInput, setTaskInput] = useState("")
+  const [newTask, setNewTask] = useState({
+    username: '',
+    title: ''
+  })
   //User variables
   // const [userData, setUserData] = useState({//State to store userData
   //   username: '',
@@ -38,10 +38,10 @@ export default function App() {
   const [newPassword, setNewPassword] = useState('');
   //Event variables
   const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState(null);//State to store any error that may occur during data fetching or operations
-  const [login, setLogin] = useState(false);//State to represent the login status
-  const [loginStatus, setLoginStatus] = useState(true);//State used to indicate the login status
-  const [isRegistration, setIsRegistration] = useState(false);//State to indicate whether the user is using the registration form
+  const [error, setError] = useState(null);
+  const [login, setLogin] = useState(false);
+  const [loginStatus, setLoginStatus] = useState(true);
+  const [isRegistration, setIsRegistration] = useState(false);
   
   //============USE EFFECT HOOK===================
   //useEffect hook used to retrieve and update Task Data from localStorage
@@ -55,82 +55,77 @@ export default function App() {
 
   //===============REQUESTS==================
   //------------GET REQUESTS-----------------
-  //Function to fetch tasks
-  useEffect(() => {
+useEffect(() => {
     const fetchTasks = async () => {
-      try {
-        const token = localStorage.getItem('token');// Retrieve the authentication token from localStorage
-        ////Conditional rendering to check if authentication token is missing
-        // if (!token) {
-        //     // Handle the case when the token is missing
-        //     setError('Authentication token not found. Please log in.');
-        //     return;
-        // }
-        //send a get request to the server
-        const response = await fetch('http://localhost:3001/users/findTasks', {
-          method: 'GET',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setError('Authentication token not found.');
+                return;
+            }
 
-        if (response.ok) {
-          const fetchedData = await response.json();
-          setTaskData(fetchedData.tasks);
-          setIsLoaded(true);
-        } else {
-          throw new Error('Failed to fetch tasks');
+            const response = await fetch('http://localhost:3001/users/findTasks', {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const fetchedData = await response.json();
+                setTaskData(fetchedData.tasks);
+                setIsLoaded(true);
+                console.log(fetchedData.tasks);
+            } else {
+                throw new Error('Failed to fetch tasks');
+            }
+        } catch (error) {
+            setError(`Error fetching data: ${error.message}`);
+            setIsLoaded(true);
+            console.error('Error fetching data:');
         }
-      } catch (error) {
-        setError(`Error fetching data: ${error.message}`);
-        setIsLoaded(true);
-        console.error('Error fetching data:');
-      }
     }
 
     fetchTasks();
-  }, []);
+}, []);
+
   
 //----------------POST REQUEST--------------------------
   //Function to submit login
-    const submitLogin = async () => {//Define async function to submit login
-        try {
-            //Send a POST request to the server
-            const response = await fetch('http://localhost:3001/users/login', {
-                method: 'POST',//Request method
-                mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
-                headers: {//Set request headers
-                    'Content-Type': 'application/json',//Specify the content-type for the request body 
-                },
-                body: JSON.stringify({ username, password }),// Convert user credentials to JSON format for the request body
-            });
+const submitLogin = async () => {
+    try {
+        const response = await fetch('http://localhost:3001/users/login', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+        });
 
-            // Conditional rendering to check if the server response is in the successful range (200-299)
-            if (response.status >= 200 && response.status < 300) {
-                const data = await response.json();// Parse the response JSON data
+        if (response.status >= 200 && response.status < 300) {
+            const data = await response.json();
 
-                console.log('Successfully logged in');// Display a success message in the console
-
-                setLogin(true);// Set the 'login' state to true, indicating that the user is logged in
-                setLoginStatus(true);// Set the 'loginStatus' state to true, indicating the overall login status
-                localStorage.setItem('loginStatus', JSON.stringify(true));// Store the login status in localStorage as a string
-                localStorage.setItem('username', username);// Store the username in localStorage
-                localStorage.setItem('token', data.token);// Store the authentication token received from the server in localStorage
-            }
-            else {
-                throw new Error('Failed to login');//Throw an error message if the POST request is unsuccessful
-            }
+            console.log('Successfully logged in');
+            setLogin(true);
+            setLoginStatus(true);
+            localStorage.setItem('loginStatus', JSON.stringify(true));
+            localStorage.setItem('username', username);
+            localStorage.setItem('token', data.token);
+        } else {
+            throw new Error('Failed to login');
         }
-        catch (error) {
-            // Handle any errors that occur during the request
-            // console.error('Login Failed', error.message);//Log an error message in the console for debugging purposes
-            setError(`Login Failed: ${error.message}`);//Set the error state with an error message
-        }
-    };
+    } catch (error) {
+        console.error('Login Failed', error.message);
+        setError(`Login Failed: ${error.message}`);
+    }
+};
+
 
   
+  //UseEffect hook to retrieve the login status and username from local storage
   useEffect(() => {
     const storedLoginStatus = localStorage.getItem('loginStatus');
     const storedUsername = localStorage.getItem('username');
@@ -140,91 +135,78 @@ export default function App() {
     }
   }, []);
 
-    useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks');
-    
+    //UseEffect hook to retrieve  and update task data from local storage
+  useEffect(() => {
+    const storedTasks = localStorage.getItem('tasks'); 
     if (storedTasks) {
-      setTaskData(JSON.parse(storedTasks))
-    }
+      setTaskData(JSON.parse(storedTasks)
+  )}
   }, [taskData]);
   
   //Function to add a newUser
-    const addUser = async () => {//Define an async funciton to add a new User
-        try {
-            const token = localStorage.getItem('token'); // Retrieve the JWT token from localStorage
-            //Send a POST request to the server
-            const response = await fetch('http://localhost:3001/users/register', {
-                method: 'POST',//Request method
-                mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
-                headers: {
-                    'Content-type': 'application/json',//Specify the content type
-                    'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
-                },
-                //Request body
-                body: JSON.stringify({ newUsername, newPassword }),// Send the new username and password as JSON in the request body
-                //body: JSON.stringify ({newUsername: newUserData.newUsername, newPassword: newUserData.newPassword}),
-            });
+    const addUser = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:3001/users/register', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ newUsername, newPassword }),
+        });
 
-            // Conditional rendering to check if the server response is in the successful range (200-299)
-            if (response.ok) {
-                const data = await response.json()
-                if (data.token) {
-                    console.log('New user successfully added');// If successful, log a success message and update the localStorage with the new user
-                    const users = JSON.parse(localStorage.getItem('users')) || [];// Retrieve existing users from localStorage or initialize an empty array
-                    localStorage.setItem('users', JSON.stringify(users));      // Update the localStorage with the updated users array
-
-                } else {
-                    throw new Error('Invalid server response')
-                }
+        if (response.ok) {
+            const data = await response.json();
+            if (data.token) {
+                console.log('New user successfully added');
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                localStorage.setItem('users', JSON.stringify(users));
+            } else {
+                throw new Error('Invalid server response');
             }
-            else {
-                throw new Error('Failed to add new user');//Throw an error message if the POST request is unsuccessful
-            }
+        } else {
+            throw new Error('Failed to add new user');
         }
-        catch (error) {
-            // Handle any errors that occur during the request
-            console.error('Error adding new user', error.message);//Display an error message in the console for debugging purposes
-            setError("Error adding new user", error.message);// Sets the error state with an error message.
-        }
-    };
- 
+    } catch (error) {
+        console.error('Error adding new user', error.message);
+        setError("Error adding new user", error.message);
+    }
+};
 
+
+  
   //Function to add a task
-    const addTask = async (taskInput) => {
-        try {
-            const token = localStorage.getItem('token');//Retrieve the authentication from localStorage
-            // Make a POST request to the server
-            const response = await fetch('http://localhost:3001/addTask', {
-                method: 'POST',//Request method
-                mode: "cors",// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
-                headers: {
-                    'Content-type': 'application/json',//Specify the content type
-                    'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
-                },
-                body: JSON.stringigy({ value: taskInput })
-                // body: JSON.stringify({ username: newTask.username, title: newTask.title }),
-            });
+const addTask = async (taskInput) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:3001/addTask', {
+            method: 'POST',
+            mode: "cors",
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            // body: JSON.stringify({ value: taskInput })
+            body: JSON.stringify({ username: newTask.username, title: newTask.title }),
+        });
 
-            // Conditional rendering to check if the server response is in the successful range (200-299)
-            if (response.status >= 200 && response.status < 300) {
-                // If successful, parse the response JSON and update the taskData state
-                const updatedList = await response.json();
-                setTaskData(updatedList);
-                // Update the local storage with the updated taskData
-                localStorage.setItem('tasks', JSON.stringify(updatedList));
-                console.log('Task added successfully');//Log a success message in the console
-            }
-            else {
-                throw new Error('Failed to add task');//Throw an error message if the POST request is unsuccessful
-            }
+        if (response.status >= 200 && response.status < 300) {
+            const updatedList = await response.json();
+            setTaskData(updatedList);
+            localStorage.setItem('tasks', JSON.stringify(updatedList));
+            console.log('Task added successfully');
+        } else {
+            throw new Error('Failed to add task');
         }
-        catch (error) {
-            // Handle any errors that occur during the request
-            console.error('Error adding task:', error.message);//Display a error message in the console for debugging purposes
-            setError('Error adding task', error.message);//Set the error state
-            // localStorage.removeItem('token');//Remove the token from local storage if an error occurs.
-        }
-    };
+    } catch (error) {
+        console.error('Error adding task:', error.message);
+        setError('Error adding task', error.message);
+        // localStorage.removeItem('token');
+    }
+};
+
 
   //-------------PUT REQUEST---------------------
   //Function to edit a task
@@ -325,9 +307,9 @@ export default function App() {
    // Function to handle logout button click
     const handleLogoutClick = () => {
         // Remove stored login information and trigger logout process
-        localStorage.removeItem('loginStatus');//Remove the loginStatus from localStorage 
-        localStorage.removeItem('username');//Remove the username from localStorage
-        localStorage.removeItem('token'); //Remove the stored token from localStorage
+        localStorage.removeItem('loginStatus');
+        localStorage.removeItem('username');
+        localStorage.removeItem('token'); 
 
     };
 
