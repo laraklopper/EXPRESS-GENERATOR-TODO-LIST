@@ -378,18 +378,7 @@ export default function App() {
                       setPassword={setPassword}
                     />
                   )}
-                  <ToggleBtn
-                    isRegistration={isRegistration}
-                    setIsRegistration={setIsRegistration}
-                    setNewPassword={setNewPassword}
-                    setNewUsername={setNewUsername}
-                    newUsername={newUsername}
-                    newPassword={newPassword}
-                    username={username}
-                    password={password}
-                    setUsername={setUsername}
-                    setPassword={setPassword}
-                  />
+                   <ToggleBtn isRegistration={isRegistration}  togglePage={togglePage}/>
                 </div>
               </section>
             </div>
