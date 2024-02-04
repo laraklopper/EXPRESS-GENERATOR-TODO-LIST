@@ -16,19 +16,34 @@ import LogoutBtn from './components/LogoutBtn';
 //App function component
 export default function App() {
   //===========STATE VARIABLES=================
-  const [taskData, setTaskData] = useState([]);
-  const [taskInput, setTaskInput] = useState("");
+ //Task variables
+  const [taskData, setTaskData] = useState([]);//State to store the array of tasks 
+  const [taskInput, setTaskInput] = useState("")
+  // const [newTask, setNewTask] = useState({
+  //   username: '',
+  //   title: ''
+  // })
+  //User variables
+  // const [userData, setUserData] = useState({//State to store userData
+  //   username: '',
+  //   password: '',
+  // })
+  // const [newUserData, setNewUserData] = useState({//State to store newUser Data
+  //   newUsername: '',
+  //   newPassword: '',
+  // })
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  //Event variables
   const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState(null);
-  const [login, setLogin] = useState(false);
-  const [loginStatus, setLoginStatus] = useState(true);
-  const [isRegistration, setIsRegistration] = useState(false);
-
-  //============USE EFFECT HOOK
+  const [error, setError] = useState(null);//State to store any error that may occur during data fetching or operations
+  const [login, setLogin] = useState(false);//State to represent the login status
+  const [loginStatus, setLoginStatus] = useState(true);//State used to indicate the login status
+  const [isRegistration, setIsRegistration] = useState(false);//State to indicate whether the user is using the registration form
+  
+  //============USE EFFECT HOOK===================
   useEffect(() => {
     const storedTasks = localStorage.getItem('tasks');
     if (storedTasks) {
