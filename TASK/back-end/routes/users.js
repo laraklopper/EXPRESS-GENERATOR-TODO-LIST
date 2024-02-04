@@ -29,15 +29,7 @@ let tasks = [
   },
 ];
 
-// router.get('/findTasks', authenticateToken, (res, req) => {
-//   try {
-//     res.json(JSON.stringify(tasks))
-//     console.log(JSON.stringify(tasks));
-//   } catch (error) {
-//     console.error('Error finding tasks,')
-//     res.status(500).json('Internal server error')
-//   }
-// })
+
 
 
 //===========ROUTES=================
@@ -52,7 +44,18 @@ router.get('/findTasks', authenticateToken, (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-// router.get('/findTasks', authenticateToken, (req, res) => {//Define the route for the HTTP request
+
+// router.get('/findTasks', authenticateToken, (res, req) => {
+//   try {
+//     res.json(JSON.stringify(tasks))
+//     console.log(JSON.stringify(tasks));
+//   } catch (error) {
+//     console.error('Error finding tasks,')
+//     res.status(500).json('Internal server error')
+//   }
+// })
+
+// router.get('/findTasks', authenticateToken, (req, res) => {//Route for the HTTP findTasks endpoint
 //   try {
 //     /
 //     // Respond with a JSON object containing login status, user data, and tasks
@@ -70,8 +73,15 @@ router.get('/findTasks', authenticateToken, (req, res) => {
 //   }
 // });
 
+// router.get("/", (req, res) => {
+//     res.json(tasks);
+// });
+// router.get("/:id", (req, res) => {
+//     const results = users.filter(user => user.id == req.params.id);
+//     res.json(results);
+// })
 //Protected route for userLogin
-router.post("/login", (req, res) => {//Define the route for the HTTP request
+router.post("/login", (req, res) => {//Route for the HTTP login endpoint
   const { username, password } = req.body;//Extract the username and password from the request body
 
   // Find a user in the 'users' array whose username and password match the provided credentials
@@ -102,7 +112,7 @@ router.post("/login", (req, res) => {//Define the route for the HTTP request
 
 
 // Define a route to register a new user
-router.post('/register', (req, res) => {//Define the route for the HTTP request
+router.post('/register', (req, res) => {//Route for the HTTP register endpoint
   try {
     const { newUsername, newPassword } = req.body;//Extract the newUsername and newPassword from the request body
 
@@ -172,13 +182,29 @@ router.post('/addTask', (req, res) => {//Define the route for the HTTP request
   }
 });
 
+// Route for handling PUT requests to "/editTask/:id"
 
-r// Define a route for handling DELETE requests to "/deleteTask/:id"
+router.put('/editTask/:taskId', limitUpdatedTaskLength, (req, res) => {
+  try {
+    const taskId = parseInt (req.params.taskId)
+    const updatedTitle = req.body.value;
+
+    tasks = tasks.map((task) => task.id === taskId ? { ...task, title: updatedTitle } : task);
+
+
+    res.status(200).json({success: true, tasks})
+  } catch (error) {
+    console.error('Error editing tasks', error.message);
+    res.status(500).json({message: 'Internal Server Error'})
+  }
+})
+
+// Route for handling DELETE requests to "/deleteTask/:id"
 router.delete('/deleteTask/:id', authenticateToken, (req, res) => {
   try {
-    const taskId = parseInt(req.params.id);// Extract the task ID from the request parameters and convert it to an integer
+    const taskId = parseInt(req.params.taskId);// Extract the task ID from the request parameters and convert it to an integer
     
-    const taskToDeleteIndex = tasks.findIndex((task) => task.id === taskId);// Find the index of the task to delete in the 'tasks' array
+    const taskToDeleteIndex = tasks.findIndex((task) => task.taskId === taskId);// Find the index of the task to delete in the 'tasks' array
     
     // Conditional rendering to check if the task to delete is not found or the user does not have permission
     if (taskToDeleteIndex === -1 || tasks[taskToDeleteIndex].username !== req.user.username) {
