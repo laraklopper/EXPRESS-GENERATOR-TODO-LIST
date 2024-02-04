@@ -23,7 +23,31 @@ function authenticateToken(req, res, next) {
         next();// Move to the next middleware in the chain
     });
 }
+// Middleware function to check and verify a JWT token from the 'token' header
+const checkJwtToken = (req, res, next) => {
+    // Conditional rendering to check if the 'token' header is present in the request
+    if (req.headers.token) {
+        let token = req.headers.token;// Extract the token from the 'token' header
+        // Verify the token using the provided 'secretKey'
+        jwt.verify(token, "secretKey", function (error, user) {
+            if (error) {
+                //Error handling if there's an error during verification
+                console.error('JWT Verification Error:', error);// Log a the JWT verification error in the console for debugging purposes
+               
+                res.send({ message: 'Invalid Token' });// Send a response indicating that the token is invalid
+                next();// Move to the next middleware or route handler
 
+            } 
+            else {
+                req.user = user;// If the token is valid, attach user information to the request object for later use
+
+                next();// Move to the next middleware or route handler
+            }
+        })
+    } else {
+        // If no 'token' header is attached, return a 401 Unauthorized response
+        res.status(401).json({ message: 'No token attached to the request' });
+    }
 //Middleware function to check if the provided username is valid
 function validateUsername = (req, res, next) => {
     const username = req.body.newUsername;    // Extract 'username' in the request body or query parameters
@@ -71,18 +95,6 @@ function limitTaskLength(req, res, next) {
     // If the task title length is within the limit, proceed to the next middleware/route
     next();
 }
-// function limitTaskLength(req, res, next) {
-//     const { newTask } = req.body;
-//     const maxLength = 140;//Max length
-
-//     if (newTask && newTask.title.length > maxLength) {
-//         return res.status(400).json({
-//             message: `Task title exceeds the maximum length of ${maxLength} characters.`,
-//         });
-//     }
-
-//     next();
-// }
 
 // Middleware function to enforce the 'Content-Type' header to be 'application/json'
 function enforceContentType(req, res, next) {
@@ -102,8 +114,11 @@ function enforceContentType(req, res, next) {
 
 // Export the middleware functions for use in other parts of the application
 module.exports = {
-    authenticateToken,//// Middleware function to authenticate a JWT token from the 'Authorization' header
+    authenticateToken,// Middleware function to authenticate a JWT token from the 'Authorization' header
+    checkJwtToken,// Middleware function to check and verify a JWT token from the 'token' header
+    validateUsername,// Middleware function to validate the format of a username
     limitTaskLength,// Middleware function to limit the length of a task title
-    enforceContentType,// Middleware function to enforce the 'Content-Type' header to be 'application/json'
-    validateUsername,//Middleware function to check if the provided username is valid
-};
+    enforceContentType,// Middleware function to enforce the 'Content-Type' header to be 'application/json'   
+}}
+
+
