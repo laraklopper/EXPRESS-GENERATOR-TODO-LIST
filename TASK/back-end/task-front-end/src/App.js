@@ -44,10 +44,12 @@ export default function App() {
   const [isRegistration, setIsRegistration] = useState(false);//State to indicate whether the user is using the registration form
   
   //============USE EFFECT HOOK===================
+  //useEffect hook used to retrieve and update Task Data from localStorage
   useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks');
+    const storedTasks = localStorage.getItem('tasks');// Retrieve tasks from localStorage
     if (storedTasks) {
-      setTaskData(JSON.parse(storedTasks));
+      // Conditional rendering to check if the tasks are present in localStorage
+      setTaskData(JSON.parse(storedTasks));// If present, parse the JSON and update the taskData state
     }
   }, []);
 
