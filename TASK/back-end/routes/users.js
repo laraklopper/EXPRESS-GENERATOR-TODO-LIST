@@ -1,8 +1,20 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const router = express.Router();
+const {
+  authenticateToken,// Middleware function to authenticate a JWT token from the 'Authorization' header
+  checkJwtToken,// Middleware function to check and verify a JWT token from the 'token' header
+  validateUsername,// Middleware function to validate the format of a username
+  limitTaskLength,// Middleware function to limit the length of a task title
+  enforceContentType,
+  limitUpdatedTaskLength,// Middleware function to enforce the 'Content-Type' header to be 'application/json'
+} = require('./middleware');
 
 router.use(express.json());
+
 
 //Sample Data
 const users = [
@@ -47,13 +59,29 @@ router.get('/findTasks', authenticateToken, (req, res) => {
 
 // router.get('/findTasks', authenticateToken, (res, req) => {
 //   try {
-//     res.json(JSON.stringify(tasks))
-//     console.log(JSON.stringify(tasks));
+//     res.json(JSON.parse(tasks))
+//     console.log(JSON.parse(tasks));
 //   } catch (error) {
 //     console.error('Error finding tasks,')
 //     res.status(500).json('Internal server error')
 //   }
 // })
+
+// router.get("/", (req, res) => {
+//     res.json(tasks);
+// });
+router.get('/findTasks', authenticationToken, (req, res) => {
+  try {
+    setTimeout(() => {
+      res.json(JSON.parse(tasks));
+      console.log(JSON.parse(tasks));
+    }, 1000);
+  } catch (error) {
+    console.error('Error finding tasks:', error);
+    res.status(500).json('Internal server error');
+  }
+});
+
 
 // router.get('/findTasks', authenticateToken, (req, res) => {//Route for the HTTP findTasks endpoint
 //   try {
@@ -73,9 +101,7 @@ router.get('/findTasks', authenticateToken, (req, res) => {
 //   }
 // });
 
-// router.get("/", (req, res) => {
-//     res.json(tasks);
-// });
+
 // router.get("/:id", (req, res) => {
 //     const results = users.filter(user => user.id == req.params.id);
 //     res.json(results);
@@ -183,10 +209,9 @@ router.post('/addTask', (req, res) => {//Define the route for the HTTP request
 });
 
 // Route for handling PUT requests to "/editTask/:id"
-
 router.put('/editTask/:taskId', limitUpdatedTaskLength, (req, res) => {
   try {
-    const taskId = parseInt (req.params.taskId)
+    const taskId = parseInt(req.params.taskId)// Extract the task ID from the request parameters and convert it to an integer
     const updatedTitle = req.body.value;
 
     tasks = tasks.map((task) => task.id === taskId ? { ...task, title: updatedTitle } : task);
@@ -194,10 +219,11 @@ router.put('/editTask/:taskId', limitUpdatedTaskLength, (req, res) => {
 
     res.status(200).json({success: true, tasks})
   } catch (error) {
-    console.error('Error editing tasks', error.message);
+    console.error('Error editing tasks', error.message);//Log an error message in the console for deb
     res.status(500).json({message: 'Internal Server Error'})
   }
 })
+
 
 // Route for handling DELETE requests to "/deleteTask/:id"
 router.delete('/deleteTask/:id', authenticateToken, (req, res) => {
