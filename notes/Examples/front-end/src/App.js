@@ -31,6 +31,7 @@ export default function App() {//Export default App function component
     newUsername: '',
     newPassword: '',
   })
+  const [token, setToken] = useState(null)
   //Event variables  
   const [error, setError] = useState(null);//State to store any error that may occur during data fetching or operations
   const [login, setLogin] = useState(false);//State to represent the login status
@@ -38,29 +39,30 @@ export default function App() {//Export default App function component
   const [isRegistration, setIsRegistration] = useState(false);//State to indicate whether the user is using the registration form
 
   //===============USE EFFECT HOOKS==============
-  //useEffect hook used to retrieve and update Task Data from localStorage
-  useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks');  // Retrieve tasks from localStorage
+  // //useEffect hook used to retrieve and update Task Data from localStorage
+  // useEffect(() => {
+  //   const storedTasks = localStorage.getItem('tasks');  // Retrieve tasks from localStorage
 
-    // Conditional rendering to check if the tasks are present in localStorage
-    if (storedTasks) {
-      setTaskData(JSON.parse(storedTasks));// If present, parse the JSON and update the taskData state
-    }
-  }, []);
+  //   // Conditional rendering to check if the tasks are present in localStorage
+  //   if (storedTasks) {
+  //     setTaskData(JSON.parse(storedTasks));// If present, parse the JSON and update the taskData state
+  //   }
+  // }, []);
 
   //===============REQUESTS=====================
   //------------GET REQUEST-----------
+  useEffect(() => {
     //Function to fetchTasks
     const fetchTasks = async () => {//Define a async function to fetch tasks
       try {
-        const token = localStorage.getItem('token');//Retrieve the authentication token from localStorage
+        // const token = localStorage.getItem('token');//Retrieve the authentication token from localStorage
         
-        //Conditional rendering to check if the authentication token is not present
-        if (!token) {
-          //Set an error message and exit the function
-          setError('Authentication token not found.Please log in.');// Set an the error state with an error message
-          return
-        }
+        // //Conditional rendering to check if the authentication token is not present
+        // if (!token) {
+        //   //Set an error message and exit the function
+        //   setError('Authentication token not found.Please log in.');// Set an the error state with an error message
+        //   return
+        // }
 
         //Send a GET request to the server
         const response = await fetch('http://localhost:3001/users/findTasks', {
@@ -68,19 +70,29 @@ export default function App() {//Export default App function component
           mode: "cors",// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
           headers: {//Set the request headers            
             'Content-Type': 'application/json',//Specify the type of content being passed
-            'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
+            'Authorization': token ? `Bearer ${token}`,//Authorization header as the bearer token
           }
         });
-      
-        // Conditional rendering to check if the server response is in the successful range (200-299)
-        if (response.status >= 200 && response.status < 300) {
-          const fetchedData = await response.json()// Parse the response body as JSON
-          setTaskData(fetchedData.tasks);//Update the taskData state
-          console.log(fetchedData.tasks);// Log the fetched tasks data to the console
-        } 
+
+        const fetchedTasks = await response.json()
+
+        if(respnse.ok/*(response.status >= 200 && response.status < 300)*/){
+          setTaskData(fetchedTasks)
+          console.log(fetchedData);
+        }
         else {
           throw new Error('Failed to fetch tasks'); //Throw an error message if the GET request is unsuccessful
         }
+      
+        // Conditional rendering to check if the server response is in the successful range (200-299)
+        // if (response.status >= 200 && response.status < 300) {
+        //   const fetchedData = await response.json()// Parse the response body as JSON
+        //   setTaskData(fetchedData.tasks);//Update the taskData state
+        //   console.log(fetchedData.tasks);// Log the fetched tasks data to the console
+        // } 
+        // else {
+        //   throw new Error('Failed to fetch tasks'); //Throw an error message if the GET request is unsuccessful
+        // }
       } 
       catch (error) {
         // Handle any errors that occur during the request
@@ -88,6 +100,8 @@ export default function App() {//Export default App function component
        console.error('Error fetching data:');//Display an error message in the console for debugging purposes
       }
     }
+    fetchTasks()
+  },[token])
  
   //------------POST REQUESTS----------------------
 //Function to submit login
@@ -107,21 +121,20 @@ export default function App() {//Export default App function component
       if (response.status >= 200 && response.status < 300) {
         // Handle the response
         const data = await response.json();
+        setToken(data.token)
 
-        if (data.token) {
+        // if (data.token) {
           console.log('Successfully logged in');//Log a message in the console if the login response is successful
+          
           setLogin(true);// Set login state to true
           setLoginStatus(true);// Set the 'loginStatus' state to true, indicating the overall login status
-          localStorage.setItem('loginStatus', JSON.stringify(true));// Store the login status in localStorage as a string
-          // localStorage.setItem('username', username);// Store the username in localStorage
-          localStorage.setItem('token', data.token);// Store the authentication token received from the server in localStorage
-          setTaskData([])
+          // setTaskData([])
 
-          fetchTasks()// Call fetchTasks after successful login
+          // fetchTasks()// Call fetchTasks after successful login
 
-        } else {
-          throw new Error ('Invalid response from server')
-        }
+        // } else {
+        //   throw new Error ('Invalid response from server')
+        // }
       } 
       else {
         throw new Error('Failed to login');//Throw an error message if the POST request is unsuccessful
@@ -129,45 +142,46 @@ export default function App() {//Export default App function component
     } 
     catch (error) {
        // Handle any errors that occur during the request
-      // console.error('Login Failed', error.message);//Log an error message in the console for debugging purposes
+      console.error('Login Failed', error.message);//Log an error message in the console for debugging purposes
       setError(`Login Failed: ${error.message}`);//Set the error state with an error message
     }
   };
 
   //useEffect hook to for retrieving Login Status and username from localStorage
-  useEffect(() => {
-    const storedLoginStatus = localStorage.getItem('loginStatus');
-    const storedUsername = localStorage.getItem('username');
+  // useEffect(() => {
+  //   const storedLoginStatus = localStorage.getItem('loginStatus');
+  //   const storedUsername = localStorage.getItem('username');
 
-    if (storedLoginStatus && storedUsername) {
-      setLogin(JSON.parse(storedLoginStatus));
-      setUserData(storedUsername);
-    }
-  }, []);
+  //   if (storedLoginStatus && storedUsername) {
+  //     setLogin(JSON.parse(storedLoginStatus));
+  //     setUserData(storedUsername);
+  //   }
+  // }, []);
 
   //useEffect hook used to retrieve and update Task Data from localStorage
-  useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks');  // Retrieve tasks from localStorage
+  // useEffect(() => {
+  //   const storedTasks = localStorage.getItem('tasks');  // Retrieve tasks from localStorage
 
-    // Conditional rendering to check if the tasks are present in localStorage
-    if (storedTasks) {
-      setTaskData(JSON.parse(storedTasks));// If present, parse the JSON and update the taskData state
-    }
-  }, []);
+  //   // Conditional rendering to check if the tasks are present in localStorage
+  //   if (storedTasks) {
+  //     setTaskData(JSON.parse(storedTasks));// If present, parse the JSON and update the taskData state
+  //   }
+  // }, []);
   //   /* The useEffect hook takes a second argument, which is an array of dependencies. 
   // The [taskData] means that the effect will run whenever the taskData state changes.*/
 
   //Function to add a new User
   const addUser = async () => {//Define an async funciton to add a new User
     try {
-      const token = localStorage.getItem('token');// Retrieve the JWT token from localStorage
+      // const token = localStorage.getItem('token');// Retrieve the JWT token from localStorage
       //Send a POST request to the server
       const response = await fetch('http://localhost:3001/users/register', {
         method: 'POST',//Request method
         mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
         headers: {
           'Content-type': 'application/json',//Specify the content type
-          'Authorization': `Bearer ${token}`,// Include the token in the Authorization header
+          // 'Authorization': `Bearer ${token}`,// Include the token in the Authorization header
+          'Authorization': token ? `Bearer ${token}`,//Authorization header as the bearer token
         },
         //Request body
         body: JSON.stringify({ newUsername : newUserData.newUsername, newPassword: newUserData.newPassword }),// Send the new username and password as JSON in the request body
@@ -178,9 +192,10 @@ export default function App() {//Export default App function component
         const data = await response.json();
         if (data.token) {
           console.log('New user successfully added');// If successful, log a success message and update the localStorage with the new user
-          const users = JSON.parse(localStorage.getItem('users')) || [];// Retrieve existing users from localStorage or initialize an empty array
-          localStorage.setItem('users', JSON.stringify(users));      // Update the localStorage with the updated users array
-          localStorage.setItem('token', data.token);
+          // const users = JSON.parse(localStorage.getItem('users')) || [];// Retrieve existing users from localStorage or initialize an empty array
+          const users= JSON.parse('userData') || []
+          // localStorage.setItem('users', JSON.stringify(users));      // Update the localStorage with the updated users array
+          // localStorage.setItem('token', data.token);
         } else {
           throw new Error('Invalid server response');
         }
@@ -206,7 +221,8 @@ export default function App() {//Export default App function component
         mode: "cors",// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
         headers: {
          'Content-type': 'application/json',//Specify the content type
-          'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
+          // 'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
+          'Authorization': token ? `Bearer ${token}`,//Authorization header as the bearer token
         },
         //Request body
         body: JSON.stringify({ username: newTask.username, title: newTask.title }),
@@ -218,7 +234,7 @@ export default function App() {//Export default App function component
         const updatedList = await response.json();
         setTaskData(updatedList);
          // Update the local storage with the updated taskData
-        localStorage.setItem('tasks', JSON.stringify(updatedList));
+        // localStorage.setItem('tasks', JSON.stringify(updatedList));
         console.log('Task added successfully');//Log a success message in the console
       }
       else {
@@ -245,7 +261,8 @@ export default function App() {//Export default App function component
         mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
         headers: {
           'Content-type': 'application/json',//Specify the content type
-          'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
+          // 'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
+          'Authorization': token ? `Bearer ${token}`,//Authorization header as the bearer token
         },
         body: JSON.stringify({
           value: taskToUpdate.value,
@@ -257,7 +274,7 @@ export default function App() {//Export default App function component
         console.log('Task successfully updated');
         const updatedList = await response.json();
         setTaskData(updatedList);
-        localStorage.setItem('tasks', JSON.stringify(updatedList));
+        // localStorage.setItem('tasks', JSON.stringify(updatedList));
       } else {
         throw new Error('Failed to edit task');//Throw an error message if the PUT request is unsuccessful
       }
