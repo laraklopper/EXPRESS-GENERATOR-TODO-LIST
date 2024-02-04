@@ -43,12 +43,12 @@ export default function App() {
     const fetchTasks = async () => {
       try {
         const token = localStorage.getItem('token');// Retrieve the authentication token from localStorage
-        //Conditional rendering to check if authentication token is missing
-        if (!token) {
-            // Handle the case when the token is missing
-            setError('Authentication token not found. Please log in.');
-            return;
-        }
+        ////Conditional rendering to check if authentication token is missing
+        // if (!token) {
+        //     // Handle the case when the token is missing
+        //     setError('Authentication token not found. Please log in.');
+        //     return;
+        // }
         //send a get request to the server
         const response = await fetch('http://localhost:3001/users/findTasks', {
           method: 'GET',
