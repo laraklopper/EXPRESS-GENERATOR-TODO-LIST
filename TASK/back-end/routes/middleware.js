@@ -23,6 +23,8 @@ function authenticateToken(req, res, next) {
         next();// Move to the next middleware in the chain
     });
 }
+
+
 // Middleware function to check and verify a JWT token from the 'token' header
 const checkJwtToken = (req, res, next) => {
     // Conditional rendering to check if the 'token' header is present in the request
@@ -110,8 +112,27 @@ function enforceContentType(req, res, next) {
     next();
 }
 
+   const authenticateUser = (req, res, next) => {
+        try {
+            const token = req.headers.authorization.split(' ')[1];
+            req.body.username = jwt.verify(token, tokenSecret);
+            next();
+        } catch (error) {
+            res.status(401).json({ message: 'Authentication failed' });
+        }
+    }
 
-
+// const authenticate = (req, res, next) => {
+//     if(req.body.username === users.username && req.body.password === users.password){
+//         console.log("user authenticated");
+//         next()
+        
+//     }{
+//         console.error("User Authentication failed")
+//         res.status(401).json({ message: 'Invalid or expired token' });
+        
+//     }
+// }
 // Export the middleware functions for use in other parts of the application
 module.exports = {
     authenticateToken,// Middleware function to authenticate a JWT token from the 'Authorization' header
