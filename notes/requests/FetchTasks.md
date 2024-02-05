@@ -21,12 +21,37 @@ router.get('/findTasks', authenticateToken, (req, res) => {
 module.exports = router;
 
 ```
+```
+router.get('/findTasks', authenticateToken, (req, res) => {
+  try {
+    const userTasks = tasks.filter((task) => task.userId === req.user.userId);
+
+    if (userTasks.length > 0) {
+      res.json({
+        login: true,
+        userTasks: req.user,
+        tasks: userTasks
+      });
+    } else {
+      res.status(401).json({
+        login: false,
+        message: 'No tasks found for the authenticated user',
+      });
+    }
+
+    console.log('Tasks:', userTasks); // Avoid logging sensitive information in production
+  } catch (error) {
+    console.error('Error finding tasks:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+```
 ### MIDDLEWARE
 ```
 // Middleware function to authenticate a JWT token from the 'Authorization' header
 function authenticateToken(req, res, next) {
     const authHeader = req.headers.authorization; // Extract the token from the header
-    const token = authHeader && authHeader.split(' ')[1]; // Corrected the variable name and extracted the token
+    const token = authHeader && authHeader.split(' ')[1];
 
     // Conditional rendering to check if the token is missing
     if (!token) return res.status(401).json({ message: 'Token missing in the request header' });
@@ -88,4 +113,38 @@ const fetchTasks = async () => {
     }
 };
 ```
+
+```javascript
+useEffect(() => {
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/users/findTasks', {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const fetchedData = await response.json();
+	// Set only the tasks associated with the authenticated user
+        setTaskData(fetchedData.tasks); 
+        console.log(fetchedData);
+      } else {
+        throw new Error('Failed to fetch tasks');
+      }
+    } catch (error) {
+      setError(`Error fetching data: ${error.message}`);
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  fetchTasks();
+}, [token, setTaskData, setError]);
+```
+
+
 
