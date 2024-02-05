@@ -16,24 +16,28 @@ import LogoutBtn from './components/LogoutBtn';//Import the LogoutBtn component
 //App function component
 export default function App() {
   //===========STATE VARIABLES=================
-  //Task variables
-  const [taskData, setTaskData] = useState([]);
-  const [newTask, setNewTask] = useState({
+//Task variables
+  const [taskData, setTaskData] = useState([]);//State used to store the tasks retrieved from the server
+  const [newTask, setNewTask] = useState({//Object state variable that holds the information for a new task
     username: '',
     title: ''
   });
-  //User variables 
+  //User variables
+  //String state variables used to store the user's input for login credentials
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  //String state variables used to store the user's input for new user registration credentials
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  //Event variables
-  // const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null);//State variable used to store any error messages that may occur during the API requests
+  //Variables used to manage user login 
   const [login, setLogin] = useState(false);
   const [loginStatus, setLoginStatus] = useState(true);
+  /*Boolean state variable that determines whether the user is in the registration mode and 
+  is used to toggle between login and registration forms. */
   const [isRegistration, setIsRegistration] = useState(false);
-  const [token, setToken] = useState(null)
+  //State used to hold the authentication token recieved from the user upon successful login
+  const [token, setToken] = useState(null);
 
   //============USE EFFECT HOOK============
   //useEffect hook used to retrieve and update Task Data from localStorage
@@ -45,8 +49,7 @@ export default function App() {
   // }, []);
 
 
-  //===============REQUESTS==================
-  //------------GET REQUESTS-----------------
+  //============USE EFFECT HOOK TO FETCH TASK DATA============
   useEffect(() => {
     //Function to fetch tasks
     const fetchTasks = async () => {
@@ -379,16 +382,18 @@ export default function App() {
                           </Col>
                           <Col className='tasksCol'>
                             <label className='taskLabel'>
-                              <p>TASK:</p>
+                              <p className='labelText'>TASK:</p>
                             </label>
-                            <p>{task.title}</p>
+                            <p className='labelText'>{task.title}</p>
                           </Col>
                           <Col className='tasksCol'>
+                            {/* Button to edit a task */}
                             <Button variant="primary" onClick={() => editTask(task.taskId)}>
                               EDIT
                             </Button>
                           </Col>
                           <Col className='tasksCol'>
+                                {/* Button to delete a task */}
                             <Button variant="primary" onClick={() => deleteTask(task.taskId)}>
                               DELETE
                             </Button>
