@@ -25,8 +25,8 @@ export default  function FetchTasks {
           throw new Error('Network response was not ok');
         }
 
-        // Parse the JSON data from the response
-        const data = await response.json();
+        
+        const data = await response.json();// Parse the JSON data from the response
         
         // Update the state with the fetched user data and tasks
         setUserData(data.data);
