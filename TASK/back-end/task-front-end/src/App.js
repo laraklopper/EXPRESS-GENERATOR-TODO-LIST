@@ -41,12 +41,12 @@ export default function App() {
 
   //============USE EFFECT HOOK============
   //useEffect hook used to retrieve and update Task Data from localStorage
-  // useEffect(() => {
-  //   const storedTasks = localStorage.getItem('tasks');
-  //   if (storedTasks) {
-  //     setTaskData(JSON.parse(storedTasks));
-  //   }
-  // }, []);
+  useEffect(() => {
+    const storedTasks = localStorage.getItem('tasks');
+    if (storedTasks) {
+      setTaskData(JSON.parse(storedTasks));
+    }
+  }, []);
 
 
   //============USE EFFECT HOOK TO FETCH TASK DATA============
@@ -80,7 +80,7 @@ export default function App() {
       } 
       catch (error) {
         setError(`Error fetching data: ${error.message}`);
-        // setIsLoaded(true);
+        
         console.error('Error fetching data:');
       }
     }
@@ -116,6 +116,7 @@ export default function App() {
         localStorage.setItem('token', data.token);// Store the authentication token received from the server in localStorage
       }
       else {
+        const errorData = await response.json();
         throw new Error('Failed to login');//Throw an error message if the POST request is unsuccessful
       }
     }
@@ -126,29 +127,29 @@ export default function App() {
     }
   };
 
-//  // UseEffect hook to retrieve the login status and username from local storage
-  // useEffect(() => {
-  //   const storedLoginStatus = localStorage.getItem('loginStatus');
-  //   const storedUsername = localStorage.getItem('username');
+ // UseEffect hook to retrieve the login status and username from local storage
+  useEffect(() => {
+    const storedLoginStatus = localStorage.getItem('loginStatus');
+    const storedUsername = localStorage.getItem('username');
 
-  //   if (storedLoginStatus && storedUsername) {
-  //     setLogin(JSON.parse(storedLoginStatus));
-  //   }
-  // }, []);
+    if (storedLoginStatus && storedUsername) {
+      setLogin(JSON.parse(storedLoginStatus));
+    }
+  }, []);
 
-  // //UseEffect hook to retrieve  and update task data from local storage
-  // useEffect(() => {
-  //   const storedTasks = localStorage.getItem('tasks'); // Retrieve tasks from localStorage
-  //   // Conditional rendering to check if the tasks are present in localStorage
-  //   if (storedTasks) {
-  //     setTaskData(JSON.parse(storedTasks)// If present, parse the JSON and update the taskData state
-  // )}
-  // }, [taskData]);
+  //UseEffect hook to retrieve  and update task data from local storage
+  useEffect(() => {
+    const storedTasks = localStorage.getItem('tasks'); // Retrieve tasks from localStorage
+    // Conditional rendering to check if the tasks are present in localStorage
+    if (storedTasks) {
+      setTaskData(JSON.parse(storedTasks)// If present, parse the JSON and update the taskData state
+  )}
+  }, [taskData]);
 
   //Function to add a newUser
   const addUser = async () => {//Define an async funciton to add a new User
     try {
-      // const token = localStorage.getItem('token'); // Retrieve the JWT token from localStorage
+      const token = localStorage.getItem('token'); // Retrieve the JWT token from localStorage
       //Send a POST request to the server
       const response = await fetch('http://localhost:3001/users/register', {
         method: 'POST',//Request method
