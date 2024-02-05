@@ -55,10 +55,10 @@ export default function App() {
     const fetchTasks = async () => {
       try {
         // const token = localStorage.getItem('token');
-        if (!token) {
-          setError('Authentication token not found.');
-          return;
-        }
+        // if (!token) {
+        //   setError('Authentication token not found.');
+        //   return;
+        // }
 
         const response = await fetch('http://localhost:3001/users/findTasks', {
           method: 'GET',
@@ -173,7 +173,7 @@ export default function App() {
           localStorage.setItem('token', data.token);
 
         } else {
-          throw new Error('Invalid server response')
+          throw new Error('Invalid server response')// If the server response does not contain a token, throw an error
         }
       }
       else {
@@ -209,7 +209,7 @@ export default function App() {
         const updatedList = await response.json();
         setTaskData(updatedList);
         // Update the local storage with the updated taskData
-        // localStorage.setItem('tasks', JSON.stringify(updatedList));
+        // localStorage.setItem('tasks', JSON.stringify(updatedList));// Update the task data state with the updated list of tasks
         console.log('Task added successfully');//Log a success message in the console
       }
       else {
@@ -218,7 +218,7 @@ export default function App() {
     }
     catch (error) {
       // Handle any errors that occur during the request
-      console.error('Error adding task:', error.message);//Display a error message in the console for debugging purposes
+      console.error('Error adding task:', error.message);//Log an error message in the console for debugging purposes
       setError('Error adding task', error.message);//Set the error state
       // localStorage.removeItem('token');//Remove the token from local storage if an error occurs.
     }
@@ -226,14 +226,14 @@ export default function App() {
 
   //-------------PUT REQUEST---------------------
   //Function to edit a task
-  const editTask = async (taskId) => {
+  const editTask = async (taskId) => {//Define an async function to edit a task
     try {
-      const token = localStorage.getItem('token');
+      // const token = localStorage.getItem('token');
       const taskToUpdate = taskData.find((task) => task.id === taskId);
-
+      //Send a PUT request to the server
       const response = await fetch(`http://localhost:3001/editTask/${taskId}`, {
         method: 'PUT',//Request method
-        mode: 'cors',
+        mode: 'cors',// Set the CORS mode to enable cross-origin requests
         headers: {
           'Content-type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -244,46 +244,53 @@ export default function App() {
       });
     // Conditional rendering to check if the server response is in the successful range (200-299)
       if (response.status >= 200 && response.status < 300) {
-        console.log('Task successfully updated');
-        const updatedList = await response.json();
-        setTaskData(updatedList);
-        localStorage.setItem('tasks', JSON.stringify(updatedList));
+        console.log('Task successfully updated');//Log a success message in the Console
+        const updatedList = await response.json();// Parse the response data as JSON
+        setTaskData(updatedList);      // Update the task data state with the updated list of tasks
+
+        // localStorage.setItem('tasks', JSON.stringify(updatedList));
       } else {
-        throw new Error('Failed to edit task');
+        throw new Error('Failed to edit task');//Throw an error message if the PUT request is unsuccessful
       }
     } catch (error) {
-      console.error('Error editing task:', error.message);
-      setError('Error editing task. Please try again.');
-      localStorage.removeItem('token');
+            // Handle any errors that occur during the request
+
+      console.error('Error editing task:', error.message);//Log an error message in the console for debugging purposes
+      setError('Error editing task. Please try again.');//Set the error state with an error message
+      // localStorage.removeItem('token');
     }
   };
 
   // ----------------DELETE REQUEST---------------------
   // Function to delete a task
-  const deleteTask = async (taskId) => {
+  const deleteTask = async (taskId) => {//Define an async function to delete a task
     try {
-      const token = localStorage.getItem('token');
+      // const token = localStorage.getItem('token');
+      
+      const token = ''; // Set an initial empty token
+      //Send a DELETE request to the server
       const response = await fetch(`http://localhost:3001/users/deleteTask/${taskId}`, {
-        method: 'DELETE',
-        mode: 'cors',
+        method: 'DELETE',//Request method
+        mode: 'cors',// Set the CORS mode to enable cross-origin requests
         headers: {
-          'Content-type': 'application/json',
+          'Content-type': 'application/json',//Specify the Content-Type being passed
           'Authorization': `Bearer ${token}`,
         },
       });
-
+// Conditional rendering to check if the server response is in the successful range (200-299)
       if (response.status >= 200 && response.status < 300) {
-        const updatedList = await response.json();
-        setTaskData(updatedList);
-        localStorage.setItem('tasks', JSON.stringify(updatedList));
-        console.log('Task successfully deleted');
+        const updatedList = await response.json();      // Parse the response data as JSON
+
+        setTaskData(updatedList);// Update the task data state with the updated list of tasks
+        // localStorage.setItem('tasks', JSON.stringify(updatedList));
+        console.log('Task successfully deleted');//Log a success message in the console
       } else {
-        throw new Error('Failed to delete task');
+        throw new Error('Failed to delete task');//Throw an error message if the DELETE request is unsuccessful
       }
     } catch (error) {
-      console.error('Error deleting task:', error.message);
-      setError('Error deleting task. Please try again.');
-      localStorage.removeItem('token');
+      console.error('Error deleting task:', error.message);//Log an error message in the console for debugging purposes
+      setError('Error deleting task. Please try again.');//Set the error state
+      // localStorage.removeItem('token');
     }
   };
 
