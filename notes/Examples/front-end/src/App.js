@@ -1,45 +1,44 @@
-import React, { useEffect, useState } from 'react';// Import the React module to use React functionalities
-import './App.css';//Import CSS stylesheet
+import React, { useEffect, useState } from 'react';
+import './App.css';
 //Bootstrap
-import Container from 'react-bootstrap/Container';//Import bootstrap container
-import Row from 'react-bootstrap/Row';//Import bootstrap row 
-import Col from 'react-bootstrap/Col';//Import bootstrap coloumn
-import Button from 'react-bootstrap/Button';// Import button component from bootstrap library
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 //Components
-import Header from './components/Header';//Import Header function component
-import RegistrationForm from './components/RegistrationForm';//Import RegistrationForm function component
-import LoginForm from './components/LoginForm';//Import LoginForm function component
-import TaskForm from './components/TaskForm';//Import TaskForm Function component
-import ToggleBtn from './components/ToggleBtn';//Import the ToggleBtn component
-import LogoutBtn from './components/LogoutBtn';//Import the LogoutBtn component
+import Header from './components/Header';
+import RegistrationForm from './components/RegistrationForm';
+import LoginForm from './components/LoginForm';
+import TaskForm from './components/TaskForm';
+import ToggleBtn from './components/ToggleBtn';
+import LogoutBtn from './components/LogoutBtn';
 
 //App function component
 export default function App() {//Export default App function component
   //===========STATE VARIABLES=================
   //Task variables
-  const [taskData, setTaskData] = useState([]);//State to store the array of tasks 
-  const [newTask, setNewTask] = useState({//State to store newTaskInput
+  const [taskData, setTaskData] = useState([]); 
+  const [newTask, setNewTask] = useState({
     username: '',
     title: '',
   })
   //User variables
-  const [userData, setUserData] = useState({//State to store userData
+  const [userData, setUserData] = useState({
     username: '',
     password: '',
-  })
-  const [newUserData, setNewUserData] = useState({//State to store newUser Data
+  });
+  const [newUserData, setNewUserData] = useState({
     newUsername: '',
     newPassword: '',
-  })
+  });
   //Event variables  
-  const [error, setError] = useState(null);//State to store any error that may occur during data fetching or operations
-  const [login, setLogin] = useState(false);//State to represent the login status
-  const [loginStatus, setLoginStatus] = useState(true);//State used to indicate the login status
-  const [isRegistration, setIsRegistration] = useState(false);//State to indicate whether the user is using the registration form
-  const [token, setToken] = useState(null)
-
+  const [error, setError] = useState(null);
+  const [login, setLogin] = useState(false);
+  const [loginStatus, setLoginStatus] = useState(true);
+  const [isRegistration, setIsRegistration] = useState(false);
+  const [token, setToken] = useState(null);
+ 
   //===============USE EFFECT HOOKS==============
-  
   useEffect(() => {
     //Function to fetch tasks
     const fetchTasks = async () => {
@@ -77,43 +76,34 @@ export default function App() {//Export default App function component
  //===================REQUESTS====================
   //------------POST REQUESTS----------------------
 //Function to submit login
-  const submitLogin = async () => {//Define async function to submit login
+  const submitLogin = async () => {
     try {
-      //Send a POST request to the server
       const response = await fetch('http://localhost:3001/users/login', {
-        method: 'POST',//request method
-        mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
+        method: 'POST',
+        mode: 'cors',
         headers: {
-          'Content-Type': 'application/json',//Specify the content-type for the request body 
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username: userData.username, password: userData.password }),// Convert user credentials to JSON format for the request body
+        body: JSON.stringify({ username: userData.username, password: userData.password }),
       });
 
-      // Conditional rendering to check if the server response is in the successful range (200-299)
       if (response.status >= 200 && response.status < 300) {
-        // Handle the response
         const data = await response.json();
-        setToken(data.token)
+        setToken(data.token);
 
         if (data.token) {
-          console.log('Successfully logged in');//Log a message in the console if the login response is successful
-          
-          setLogin(true);// Set login state to true
-          setLoginStatus(true);// Set the 'loginStatus' state to true, indicating the overall login status
-          
-
+          console.log('Successfully logged in');
+          setLogin(true);
+          setLoginStatus(true);
         } else {
-          throw new Error ('Invalid response from server')
+          throw new Error('Invalid response from server');
         }
-      } 
-      else {
-        throw new Error('Failed to login');//Throw an error message if the POST request is unsuccessful
+      } else {
+        throw new Error('Failed to login');
       }
-    } 
-    catch (error) {
-       // Handle any errors that occur during the request
-      console.error('Login Failed', error.message);//Log an error message in the console for debugging purposes
-      setError(`Login Failed: ${error.message}`);//Set the error state with an error message
+    } catch (error) {
+      console.error('Login Failed', error.message);
+      setError(`Login Failed: ${error.message}`);
     }
   };
 
@@ -164,7 +154,6 @@ export default function App() {//Export default App function component
         mode: "cors",// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
         headers: {
          'Content-type': 'application/json',//Specify the content type
-          // 'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
           'Authorization': token ? `Bearer ${token}`,//Authorization header as the bearer token
         },
         //Request body
@@ -225,6 +214,7 @@ export default function App() {//Export default App function component
     }
   };
   //------------DELETE REQUEST-----------------
+  //Function to delete a task
   const deleteTask = async (taskId) => {//Define an async funciton to Delete a task
     try {
       const response = await fetch(`http://localhost:3001/users/deleteTask/${taskId}`, {
@@ -254,27 +244,24 @@ export default function App() {//Export default App function component
   };
 
   //==========EVENT LISTENERS=================
+  
   // Function to set login status to false, indicating that the user is in the process of logging in
   const appLogin = () => {
-    setLoginStatus(false);//Set the loginStatus to false
+    setLoginStatus(false);
   };
-
-
+  
   // Function to toggle between registration and login pages
   const togglePage = () => {
-    setIsRegistration(!isRegistration)// Toggle the isRegistration state
-    setNewUserData({newUsername: '', newPassword: ''})//reset the newUserData state
-    setUserData({username: '', password: ''})//reset the userData state
-  }
-
+    setIsRegistration(!isRegistration);
+    setNewUserData({ newUsername: '', newPassword: '' });
+    setUserData({ username: '', password: '' });
+  };
+  
   //Function to trigger logout button
   const logout = () => {
-    // Reset login status 
     setLoginStatus(true);
     setLogin(false);
   };
-
-
 //==========================JSX RENDERING=========================
 
   return (
@@ -302,7 +289,6 @@ export default function App() {//Export default App function component
                     <LoginForm
                     submitLogin={submitLogin}
                     login={login}
-                    // handleLogoutClick={handleLogoutClick}
                     userData={userData}
                     setUserData={setUserData}
                     appLogin={appLogin}
