@@ -31,12 +31,12 @@ export default function App() {//Export default App function component
     newUsername: '',
     newPassword: '',
   })
-  const [token, setToken] = useState(null)
   //Event variables  
   const [error, setError] = useState(null);//State to store any error that may occur during data fetching or operations
   const [login, setLogin] = useState(false);//State to represent the login status
   const [loginStatus, setLoginStatus] = useState(true);//State used to indicate the login status
   const [isRegistration, setIsRegistration] = useState(false);//State to indicate whether the user is using the registration form
+  const [token, setToken] = useState(null)
 
   //===============USE EFFECT HOOKS==============
   
