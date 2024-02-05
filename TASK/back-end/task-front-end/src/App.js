@@ -16,7 +16,7 @@ import LogoutBtn from './components/LogoutBtn';//Import the LogoutBtn component
 //App function component
 export default function App() {
   //===========STATE VARIABLES=================
-//Task variables
+ //Task variables
   const [taskData, setTaskData] = useState([]);//State used to store the tasks retrieved from the server
   const [newTask, setNewTask] = useState({//Object state variable that holds the information for a new task
     username: '',
@@ -24,11 +24,11 @@ export default function App() {
   });
   //User variables
   //String state variables used to store the user's input for login credentials
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');//State used to store the username
+  const [password, setPassword] = useState('');//State used to store the password
   //String state variables used to store the user's input for new user registration credentials
-  const [newUsername, setNewUsername] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [newUsername, setNewUsername] = useState('');//State used to store newUsername
+  const [newPassword, setNewPassword] = useState('');//State used to store the ne
   const [error, setError] = useState(null);//State variable used to store any error messages that may occur during the API requests
   //Variables used to manage user login 
   const [login, setLogin] = useState(false);
@@ -37,7 +37,7 @@ export default function App() {
   is used to toggle between login and registration forms. */
   const [isRegistration, setIsRegistration] = useState(false);
   //State used to hold the authentication token recieved from the user upon successful login
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(null);//State used to store the authentication token
 
   //============USE EFFECT HOOK============
   //useEffect hook used to retrieve and update Task Data from localStorage
