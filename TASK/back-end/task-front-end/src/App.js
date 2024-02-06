@@ -40,53 +40,59 @@ export default function App() {
   const [token, setToken] = useState(null);//State used to store the authentication token
 
   //============USE EFFECT HOOK============
-  //useEffect hook used to retrieve and update Task Data from localStorage
-  useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) {
-      setTaskData(JSON.parse(storedTasks));
-    }
-  }, []);
+// useEffect hook to load task data from local storage when the component mounts
+useEffect(() => {
+  const storedTasks = localStorage.getItem('tasks');  // Retrieve task data from local storage
+
+  // Conditional rendering to check if task data exists in local storage
+  if (storedTasks) {
+    // If task data exists, parse the JSON string into a JavaScript object
+    const parsedTasks = JSON.parse(storedTasks);// Parse the response data as JSON
+    setTaskData(parsedTasks);// Update the taskData state with the parsed task data
+
+  }
+}, []); // Empty dependency array ensures this effect runs only once after initial component mount
 
 
   //============USE EFFECT HOOK TO FETCH TASK DATA============
   useEffect(() => {
-    //Function to fetch tasks
+//Function to fetch tasks
     const fetchTasks = async () => {
-      try {
-        // const token = localStorage.getItem('token');
-        // if (!token) {
-        //   setError('Authentication token not found.');
-        //   return;
-        // }
+    try {
+      
+      const token = localStorage.getItem('token');// Retrieve the authentication token from localStorage
+      
+      // Send a GET request to the `/findTasks` endpoint
+      const response = await fetch('http://localhost:3001/users/findTasks', {
+        method: 'GET',//Request method
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',//Specify the content-type
+          'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+        },
+      });
 
-        const response = await fetch('http://localhost:3001/users/findTasks', {
-          method: 'GET',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const fetchedData = await response.json();
-          setTaskData(fetchedData);
-          // setIsLoaded(true);
-          console.log(fetchedData);
-        } else {
-          throw new Error('Failed to fetch tasks');
-        }
-      } 
-      catch (error) {
-        setError(`Error fetching data: ${error.message}`);
+      // Conditional rendering if the response is successful (status code in the range of 200-299)
+      if (response.ok) {
         
-        console.error('Error fetching data:');
-      }
-    }
+        const fetchedData = await response.json();// If successful, parse the response JSON data
+      
+        setTaskData(fetchedData);// Update the taskData state with the fetched data
+      } else {
+        throw new Error('Failed to fetch tasks');// If the response is not successful, throw an error
 
-    fetchTasks();
-  }, [token]);
+      }
+    } catch (error) {
+      // Handle any errors that occur during the request
+      setError(`Error fetching data: ${error.message}`);//Set the error state
+      console.error('Error fetching data:', error);//Log an error message in the console for debugging purposes
+    }
+  }
+
+  // Call the fetchTasks function when the component mounts or when the 'token' state changes
+  fetchTasks();
+}, [token]); // Dependency array with 'token' ensures the effect is re-run whenever the 'token' state changes
+
   //----------------POST REQUEST--------------------------
 
   //Function to submit login
@@ -103,7 +109,7 @@ export default function App() {
       });
 
       // Conditional rendering to check if the server response is in the successful range (200-299)
-      if (response.status >= 200 && response.status < 300) {
+      if (response.ok) {
         const data = await response.json();// Parse the response JSON data
         setToken(data.token)
 
@@ -114,6 +120,7 @@ export default function App() {
         localStorage.setItem('loginStatus', JSON.stringify(true));// Store the login status in localStorage as a string
         localStorage.setItem('username', username);// Store the username in localStorage
         localStorage.setItem('token', data.token);// Store the authentication token received from the server in localStorage
+        // The login status is also stored in localStorage along with the username and token for persistence across sessions.
       }
       else {
         const errorData = await response.json();
@@ -209,7 +216,7 @@ export default function App() {
         const updatedList = await response.json();
         setTaskData(updatedList);
         // Update the local storage with the updated taskData
-        // localStorage.setItem('tasks', JSON.stringify(updatedList));// Update the task data state with the updated list of tasks
+        localStorage.setItem('tasks', JSON.stringify(updatedList));// Update the task data state with the updated list of tasks
         console.log('Task added successfully');//Log a success message in the console
       }
       else {
@@ -220,7 +227,7 @@ export default function App() {
       // Handle any errors that occur during the request
       console.error('Error adding task:', error.message);//Log an error message in the console for debugging purposes
       setError('Error adding task', error.message);//Set the error state
-      // localStorage.removeItem('token');//Remove the token from local storage if an error occurs.
+      localStorage.removeItem('token');//Remove the token from local storage if an error occurs.
     }
   };
 
@@ -257,7 +264,7 @@ export default function App() {
 
       console.error('Error editing task:', error.message);//Log an error message in the console for debugging purposes
       setError('Error editing task. Please try again.');//Set the error state with an error message
-      // localStorage.removeItem('token');
+      localStorage.removeItem('token');
     }
   };
 
