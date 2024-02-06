@@ -39,7 +39,16 @@ export default function App() {//Export default App function component
   const [token, setToken] = useState(null);
  
   //===============USE EFFECT HOOKS==============
-  useEffect(() => {
+
+  
+useEffect(() => {
+  const storedTasks = localStorage.getItem(''loginStatus');
+
+  if (storedTasks){
+    setTasks(JSON.parse(storedTasks))
+  }
+},[taskData])
+  
     //Function to fetch tasks
     const fetchTasks = async () => {
       try {
@@ -70,9 +79,6 @@ export default function App() {//Export default App function component
       }
     };
 
-    fetchTasks();
-  }, [token]);
-  
  //===================REQUESTS====================
   //------------POST REQUESTS----------------------
 //Function to submit login
@@ -87,10 +93,11 @@ export default function App() {//Export default App function component
         body: JSON.stringify({ username: userData.username, password: userData.password }),
       });
 
-      if (response.status >= 200 && response.status < 300) {
+      if (response.ok) {
         const data = await response.json();
         setToken(data.token);
 
+        fetchTasks()
         if (data.token) {
           console.log('Successfully logged in');
           setLogin(true);
