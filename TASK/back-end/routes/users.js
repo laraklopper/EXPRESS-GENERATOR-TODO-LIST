@@ -1,21 +1,18 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-const router = express.Router();
-const express = require('express');
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');// Import the 'jsonwebtoken' library for handling JSON Web Tokens
 const router = express.Router();
 const {
   authenticateToken,// Middleware function to authenticate a JWT token from the 'Authorization' header
   checkJwtToken,// Middleware function to check and verify a JWT token from the 'token' header
   validateUsername,// Middleware function to validate the format of a username
   limitTaskLength,// Middleware function to limit the length of a task title
-  enforceContentType,
-  limitUpdatedTaskLength,// Middleware function to enforce the 'Content-Type' header to be 'application/json'
+  enforceContentType,// Middleware function to enforce the 'Content-Type' header to be 'application/json'
+  limitUpdatedTaskLength,//Middleware function to limit the length of an updated task
 } = require('./middleware');
 
 router.use(express.json());
 
-
+// 
 //Sample Data
 const users = [
   {
