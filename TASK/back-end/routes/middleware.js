@@ -42,7 +42,6 @@ const checkJwtToken = (req, res, next) => {
             } 
             else {
                 req.user = user;// If the token is valid, attach user information to the request object for later use
-
                 next();// Move to the next middleware or route handler
             }
         })
