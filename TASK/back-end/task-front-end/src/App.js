@@ -51,21 +51,6 @@ export default function App() {
   //State used to hold the authentication token recieved from the user upon successful login
   const [token, setToken] = useState(null);//State used to store the authentication token
 
-  //============USE EFFECT HOOK============
-// // useEffect hook to load task data from local storage when the component mounts
-// useEffect(() => {
-//   const storedTasks = localStorage.getItem('tasks');  // Retrieve task data from local storage
-
-//   // Conditional rendering to check if task data exists in local storage
-//   if (storedTasks) {
-//     // If task data exists, parse the JSON string into a JavaScript object
-//     const parsedTasks = JSON.parse(storedTasks);// Parse the response data as JSON
-//     setTaskData(parsedTasks);// Update the taskData state with the parsed task data
-
-//   }
-// }, []); // Empty dependency array ensures this effect runs only once after initial component mount
-
-
   //============USE EFFECT HOOK TO FETCH TASK DATA============
   useEffect(() => {
 //Function to fetch tasks
@@ -117,6 +102,7 @@ export default function App() {
           'Content-Type': 'application/json',//Specify the content-type for the request body 
         },
         body: JSON.stringify({ username, password }),// Convert user credentials to JSON format for the request body
+        // body: JSON.stringify({ username: userData.username, password: userData.password }),
       });
 
       // Conditional rendering to check if the server response is in the successful range (200-299)
@@ -145,25 +131,6 @@ export default function App() {
     }
   };
 
- // // UseEffect hook to retrieve the login status and username from local storage
- //  useEffect(() => {
- //    const storedLoginStatus = localStorage.getItem('loginStatus');
- //    const storedUsername = localStorage.getItem('username');
-
- //    if (storedLoginStatus && storedUsername) {
- //      setLogin(JSON.parse(storedLoginStatus));
- //    }
- //  }, []);
-
- //  //UseEffect hook to retrieve  and update task data from local storage
- //  useEffect(() => {
- //    const storedTasks = localStorage.getItem('tasks'); // Retrieve tasks from localStorage
- //    // Conditional rendering to check if the tasks are present in localStorage
- //    if (storedTasks) {
- //      setTaskData(JSON.parse(storedTasks)// If present, parse the JSON and update the taskData state
- //  )}
- //  }, [taskData]);
-
   //Function to add a newUser
   const addUser = async () => {//Define an async funciton to add a new User
     try {
@@ -179,6 +146,7 @@ export default function App() {
         },
         //Request body
         body: JSON.stringify({ newUsername, newPassword }),// Send the new username and password as JSON in the request body
+         // body: JSON.stringify({newUsername: newUserData.newUsername, newPassword: newUserData.newPassword}),
       });
 
       // Conditional rendering to check if the server response is in the successful range (200-299)
@@ -187,9 +155,10 @@ export default function App() {
         if (data.token) {
           console.log('New user successfully added');// If successful, log a success message and update the localStorage with the new user
           const users = JSON.parse(localStorage.getItem('users')) || [];// Retrieve existing users from localStorage or initialize an empty array
+          // const newUser = { username: newUserData.newUsername, password: newUserData.newPassword, userId: users.length + 1 };
           localStorage.setItem('users', JSON.stringify(users));      // Update the localStorage with the updated users array
           localStorage.setItem('token', data.token);
-
+          // setNewUserData({ newUsername: '', newPassword: '' });
         } else {
           throw new Error('Invalid server response')// If the server response does not contain a token, throw an error
         }
@@ -217,8 +186,8 @@ export default function App() {
           'Content-type': 'application/json',//Specify the content type
           'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
         },
-        // body: JSON.stringigy({ value: taskInput })
         body: JSON.stringify({ username: newTask.username, title: newTask.title }),
+        // body: JSON.stringify({ user: newTask.user, title: newTask.newTaskTitle }),
       });
 
       // Conditional rendering to check if the server response is in the successful range (200-299)
