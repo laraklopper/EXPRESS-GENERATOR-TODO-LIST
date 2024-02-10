@@ -54,15 +54,15 @@ router.get('/findTasks', authenticateToken, (req, res) => {
     }
 });
 
-// router.get('/findTasks', authenticateToken, (res, req) => {
-//   try {
-//     res.json(JSON.parse(tasks))
-//     console.log(JSON.parse(tasks));
-//   } catch (error) {
-//     console.error('Error finding tasks,')
-//     res.status(500).json('Internal server error')
-//   }
-// })
+/*router.get('/findTasks', authenticateToken, (res, req) => {
+  try {
+    res.json(JSON.parse(tasks))
+    console.log(JSON.parse(tasks));
+  } catch (error) {
+    console.error('Error finding tasks,')
+    res.status(500).json('Internal server error')
+  }
+})*/
 
 // router.get("/", (req, res) => {
 //     res.json(tasks);
