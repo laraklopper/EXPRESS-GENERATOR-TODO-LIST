@@ -22,10 +22,22 @@ export default function App() {
     username: '',
     title: ''
   });
+   const [taskToUpdate, setTaskToUpdate] = useState({
+    updatedUser: '',
+    updatedTitle: '',
+  })
   //User variables
   //String state variables used to store the user's input for login credentials
   const [username, setUsername] = useState('');//State used to store the username
   const [password, setPassword] = useState('');//State used to store the password
+  //  const [userData, setUserData] = useState({
+  //   username: '',
+  //   password: '',
+  // });
+  // const [newUserData, setNewUserData] = useState({
+  //   newUsername: '',
+  //   newPassword: '',
+  // });
   //String state variables used to store the user's input for new user registration credentials
   const [newUsername, setNewUsername] = useState('');//State used to store newUsername
   const [newPassword, setNewPassword] = useState('');//State used to store the ne
@@ -40,26 +52,25 @@ export default function App() {
   const [token, setToken] = useState(null);//State used to store the authentication token
 
   //============USE EFFECT HOOK============
-// useEffect hook to load task data from local storage when the component mounts
-useEffect(() => {
-  const storedTasks = localStorage.getItem('tasks');  // Retrieve task data from local storage
+// // useEffect hook to load task data from local storage when the component mounts
+// useEffect(() => {
+//   const storedTasks = localStorage.getItem('tasks');  // Retrieve task data from local storage
 
-  // Conditional rendering to check if task data exists in local storage
-  if (storedTasks) {
-    // If task data exists, parse the JSON string into a JavaScript object
-    const parsedTasks = JSON.parse(storedTasks);// Parse the response data as JSON
-    setTaskData(parsedTasks);// Update the taskData state with the parsed task data
+//   // Conditional rendering to check if task data exists in local storage
+//   if (storedTasks) {
+//     // If task data exists, parse the JSON string into a JavaScript object
+//     const parsedTasks = JSON.parse(storedTasks);// Parse the response data as JSON
+//     setTaskData(parsedTasks);// Update the taskData state with the parsed task data
 
-  }
-}, []); // Empty dependency array ensures this effect runs only once after initial component mount
+//   }
+// }, []); // Empty dependency array ensures this effect runs only once after initial component mount
 
 
   //============USE EFFECT HOOK TO FETCH TASK DATA============
   useEffect(() => {
 //Function to fetch tasks
     const fetchTasks = async () => {
-    try {
-      
+    try {      
       const token = localStorage.getItem('token');// Retrieve the authentication token from localStorage
       
       // Send a GET request to the `/findTasks` endpoint
@@ -79,7 +90,7 @@ useEffect(() => {
       
         setTaskData(fetchedData);// Update the taskData state with the fetched data
       } else {
-        throw new Error('Failed to fetch tasks');// If the response is not successful, throw an error
+        throw new Error('Failed to fetch tasks');// Throw an error if the GET request is unsuccessful
 
       }
     } catch (error) {
@@ -134,24 +145,24 @@ useEffect(() => {
     }
   };
 
- // UseEffect hook to retrieve the login status and username from local storage
-  useEffect(() => {
-    const storedLoginStatus = localStorage.getItem('loginStatus');
-    const storedUsername = localStorage.getItem('username');
+ // // UseEffect hook to retrieve the login status and username from local storage
+ //  useEffect(() => {
+ //    const storedLoginStatus = localStorage.getItem('loginStatus');
+ //    const storedUsername = localStorage.getItem('username');
 
-    if (storedLoginStatus && storedUsername) {
-      setLogin(JSON.parse(storedLoginStatus));
-    }
-  }, []);
+ //    if (storedLoginStatus && storedUsername) {
+ //      setLogin(JSON.parse(storedLoginStatus));
+ //    }
+ //  }, []);
 
-  //UseEffect hook to retrieve  and update task data from local storage
-  useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks'); // Retrieve tasks from localStorage
-    // Conditional rendering to check if the tasks are present in localStorage
-    if (storedTasks) {
-      setTaskData(JSON.parse(storedTasks)// If present, parse the JSON and update the taskData state
-  )}
-  }, [taskData]);
+ //  //UseEffect hook to retrieve  and update task data from local storage
+ //  useEffect(() => {
+ //    const storedTasks = localStorage.getItem('tasks'); // Retrieve tasks from localStorage
+ //    // Conditional rendering to check if the tasks are present in localStorage
+ //    if (storedTasks) {
+ //      setTaskData(JSON.parse(storedTasks)// If present, parse the JSON and update the taskData state
+ //  )}
+ //  }, [taskData]);
 
   //Function to add a newUser
   const addUser = async () => {//Define an async funciton to add a new User
@@ -212,10 +223,9 @@ useEffect(() => {
 
       // Conditional rendering to check if the server response is in the successful range (200-299)
       if (response.status >= 200 && response.status < 300) {
-        // If successful, parse the response JSON and update the taskData state
+        
         const updatedList = await response.json();
         setTaskData(updatedList);
-        // Update the local storage with the updated taskData
         localStorage.setItem('tasks', JSON.stringify(updatedList));// Update the task data state with the updated list of tasks
         console.log('Task added successfully');//Log a success message in the console
       }
@@ -235,8 +245,8 @@ useEffect(() => {
   //Function to edit a task
   const editTask = async (taskId) => {//Define an async function to edit a task
     try {
-      // const token = localStorage.getItem('token');
-      const taskToUpdate = taskData.find((task) => task.id === taskId);
+      const token = localStorage.getItem('token');
+      // const taskToUpdate = taskData.find((task) => task.id === taskId);
       //Send a PUT request to the server
       const response = await fetch(`http://localhost:3001/editTask/${taskId}`, {
         method: 'PUT',//Request method
@@ -245,12 +255,11 @@ useEffect(() => {
           'Content-type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          value: taskToUpdate.title, 
-        }),
+        body: JSON.stringify(taskToUpdate),
+        // body: JSON.stringify({ value: taskToUpdate.title,}),
       });
     // Conditional rendering to check if the server response is in the successful range (200-299)
-      if (response.status >= 200 && response.status < 300) {
+      if (response.ok) {
         console.log('Task successfully updated');//Log a success message in the Console
         const updatedList = await response.json();// Parse the response data as JSON
         setTaskData(updatedList);      // Update the task data state with the updated list of tasks
@@ -285,7 +294,7 @@ useEffect(() => {
         },
       });
 // Conditional rendering to check if the server response is in the successful range (200-299)
-      if (response.status >= 200 && response.status < 300) {
+      if (response.ok) {
         const updatedList = await response.json();      // Parse the response data as JSON
 
         setTaskData(updatedList);// Update the task data state with the updated list of tasks
@@ -311,6 +320,12 @@ useEffect(() => {
     setUsername(''); 
     setPassword(''); 
   };
+
+  //  const togglePage = () => {
+  //   setIsRegistration(!isRegistration); // Toggle the registration state between true and false
+  //   setNewUserData({ newUsername: '', newPassword: '' });// Reset the new user data state to empty strings
+  //   setUserData({ username: '', password: '' });// Reset the user data state to empty strings
+  // }
 
   // Function to set login status to false, indicating that the user is in the process of logging in
   const appLogin = () => {
