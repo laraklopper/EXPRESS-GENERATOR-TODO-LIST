@@ -75,6 +75,19 @@ const validateUsername = (req, res, next) => {
     }
 };
 
+// const validateUsername = (req, res, next) => {
+//     const username = req.body.newUsername;
+//
+//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//
+//     if (username && emailRegex.test(username) && username.endsWith('@gmail.com')) {
+//
+//         next();
+//     } 
+//     else {
+//         res.status(403).json({ message: 'Access Forbidden: Invalid email format' });
+//     }
+//  };
 
 // Middleware function to limit the length of a task title
 const limitTaskLength =(req, res, next) => {
