@@ -3,63 +3,60 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 
-//Login function component
-export default function Login(
-    {//=======PROPS PASSED FROM THE PARENT COMPONENT==========
-        submitLogin,
-        userData,
-        setUserData,
-        appLogin,
-        login,
-        handleLogoutClick
-    }
-) {
-
-    //==============JSX RENDERING===========
-    
+//Registration function component
+export default function Registration(
+  {
+    addUser,
+    newUserData,
+    setNewUserData
+  }
+) 
+{
+  //=============JSX RENDERING===========
   return (
-      <div id='login'>
-              <Row className='loginRow'>
-                  <Col className='loginCol' id='loginHeader'>
-                      <h2 className='h2'>LOGIN</h2>
-                  </Col>
-              </Row>
-          <form onSubmit={submitLogin} id='loginForm'>
-              <Row className='loginRow'>
-                  <Col xs={6} md={4} className='loginCol'>
-                      <label className='loginLabel'>
-                          <p className='labelText'>USERNAME:</p>
-                          <input
-                              type='text'
-                              value={userData.username}
-                              onChange={(e) => setUserData({ ...userData, username: e.target.value })}
-                              placeholder='USERNAME'
-                              className='loginInput'
-                          />
-                      </label>
-                  </Col>
-                  <Col xs={6} md={4} className='loginCol'>
-                      <label className='loginLabel'>
-                          <p className='labelText'>PASSWORD:</p>
-                          <input
-                              type='password'
-                              value={userData.password}
-                              onChange={(e) => setUserData(
-                                { ...userData, 
-                                    password: e.target.value })}
-                              placeholder='PASSWORD'
-                              className='loginInput'
-                          />
-                      </label>
-                  </Col>
-                  <Col xs={6} md={4} className='loginCol'>
-                      <Button variant="primary" type="submit" id='loginBtn' onClick={login ? handleLogoutClick : appLogin}>
-                          {login ? 'Logout': 'Login'}
-                      </Button>
-
-                  </Col>
-              </Row>
-          </form>
-      </div>
+    <div>
+      <Row className='regisRow'>
+        <Col id='regisHeading'>
+          <h2 className='h2'>REGISTRATION:</h2>
+        </Col>
+      </Row>
+      <form onSubmit={addUser} id='registrationForm'>
+        <Row className='regisRow'>
+          <Col xs={6} md={4} className='regisCol'>
+            <label className='regisLabel'>
+              <p className='labelText'>USERNAME:</p>
+              <input
+                type='text'
+                value={newUserData.newUsername}
+                onChange={(e) => setNewUserData(
+                  {
+                    ...newUserData,
+                    newUsername: e.target.value
+                  })}
+                placeholder='USERNAME'
+                className='regisInput'
+              />
+            </label>
+          </Col>
+          <Col xs={6} md={4} className='regisCol'>
+            <label className='regisLabel'>
+              <p className='labelText'>PASSWORD:</p>
+              <input
+                type='password'
+                value={newUserData.newPassword}
+                onChange={(e) => setNewUserData({...newUserData, newPassword: e.target.value})}
+                placeholder='PASSWORD'
+                className='regisInput'
+              />
+            </label>
+          </Col>
+          <Col xs={6} md={4} className='regisBtn'>
+            <Button variant="primary" type="submit" id='registrationBtn'>
+              REGISTER
+            </Button>
+          </Col>
+        </Row>
+      </form>
+    </div>
   )
 }
