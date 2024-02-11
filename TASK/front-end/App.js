@@ -8,24 +8,39 @@ import Col from 'react-bootstrap/Col';//Import bootstrap coloumn
 import Button from 'react-bootstrap/Button';// Import button component from bootstrap library
 //Components
 import Header from './components/Header';//Import Header function component
-import RegistrationForm from './components/RegistrationForm';//Import RegistrationForm function component
 import LoginForm from './components/LoginForm';//Import LoginForm function component
-import TaskForm from './components/TaskForm';//Import TaskForm Function component
+import RegistrationForm from './components/RegistrationForm';//Import RegistrationForm function component
 import ToggleBtn from './components/ToggleBtn';//Import the ToggleBtn component
+import TaskForm from './components/TaskForm';//Import TaskForm Function component
 import LogoutBtn from './components/LogoutBtn';//Import the LogoutBtn component
 
 //App function component
 export default function App() {//Export default App function component
   //===========STATE VARIABLES=================
-  const [taskData, setTaskData] = useState([]);
+  //Task Variables
+  const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({ 
     user: '', 
     title: '' 
   });
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [newUsername, setNewUsername] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [taskToUpdate, setTaskToUpdate] = useState({
+    updatedUser: '',
+    updatedTitle: '',
+  })
+  //UserVariable
+  // const [username, setUsername] = useState('');
+  // const [password, setPassword] = useState('');
+  // const [newUsername, setNewUsername] = useState('');
+  // const [newPassword, setNewPassword] = useState('');
+  const [userData, setUserData] = useState({
+    username: '',
+    password: ''
+  });
+  const [newUserData, setNewUserData] = useState({
+    newUsername: '',
+    newPassword: ''
+  });
+  //Event Variables
   const [error, setError] = useState(null);
   const [login, setLogin] = useState(false);
   const [loginStatus, setLoginStatus] = useState(true);
@@ -34,16 +49,17 @@ export default function App() {//Export default App function component
 
 
   //============USE EFFECT HOOK TO FETCH TASK DATA============
+  // Fetch tasks from the server on component mount
   useEffect(() => {
     //Function to fetch tasks
     const fetchTasks = async () => {//Define an async function to fetchTasks
       try {
         const token = localStorage.getItem('token');
 
-        if (!token) {
-          setError('Authentication token not found.');
-          return;
-        }
+        // if (!token) {
+        //   setError('Authentication token not found.');
+        //   return;
+        // }
 
         //Send a GET request to the server
         const response = await fetch('http://localhost:3001/users/findTasks', {
@@ -57,7 +73,7 @@ export default function App() {//Export default App function component
 
         if (response.ok) {
           const fetchedData = await response.json();
-          setTaskData(fetchedData);
+          setTasks(fetchedData);
           console.log(fetchedData);
         } else {
           throw new Error('Failed to fetch tasks');;
@@ -76,6 +92,7 @@ export default function App() {//Export default App function component
 
   //Function to submit login
   const submitLogin = async () => {//Define async function to submit login
+    // e.preventDefault();
     try {
       //Send a POST request to the server
       const response = await fetch('http://localhost:3001/users/login', {
@@ -84,7 +101,8 @@ export default function App() {//Export default App function component
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        // body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username: userData.username, password: userData.password }),
       });
 
     
@@ -96,7 +114,7 @@ export default function App() {//Export default App function component
         setLogin(true);
         setLoginStatus(true); 
         localStorage.setItem('loginStatus', JSON.stringify(true));
-        localStorage.setItem('username', username);
+        localStorage.setItem('username', userData.username);
         localStorage.setItem('token', data.token);
       } else {
         throw new Error('Failed to login');;
@@ -120,7 +138,8 @@ export default function App() {//Export default App function component
           'Content-type': 'application/json',
           'Authorization': token ? `Bearer ${token}` : '',
         },
-        body: JSON.stringify({ newUsername, newPassword }),
+        body: JSON.stringify({ newUsername: newUserData.newUsername, newPassword: newUserData.newPassword }),
+        // body: JSON.stringify({ newUsername, newPassword }),
       });
 
       if (response.ok) {
@@ -129,6 +148,8 @@ export default function App() {//Export default App function component
         if (data.token) {
           console.log('New user successfully added');
           const users = JSON.parse(localStorage.getItem('users')) || [];
+          const newUser = { username: newUserData.newUsername, password: newUserData.newPassword, userId: users.length + 1 };
+          users.push(newUser)
           localStorage.setItem('users', JSON.stringify(users));     
           localStorage.setItem('token', data.token);
         } 
@@ -149,8 +170,8 @@ export default function App() {//Export default App function component
   //Function to add a task
   const addTask = async (newTask) => {//Define an async funciton to add a new Task
     try {
-      //const token = localStorage.getItem('token')
-      const token = ''; 
+      const token = localStorage.getItem('token')
+      // const token = ''; 
       //Send a POST request to the server
       const response = await fetch('http://localhost:3001/users/addTask', {
         method: 'POST',
@@ -164,10 +185,10 @@ export default function App() {//Export default App function component
       
       if (response.ok) {
         const updatedList = await response.json();
-        setTaskData(updatedList);
+        setTasks(updatedList);
         console.log('Task added successfully');      
 
-        // setNewTask({ username: '', title: '' });
+        setNewTask({ user: '', title: '' });
         localStorage.setItem('tasks', JSON.stringify(updatedList));
       } else {
         throw new Error('Failed to add task');
@@ -183,9 +204,9 @@ export default function App() {//Export default App function component
   // Function to edit a task
   const editTask = async (taskId) => {//Define an async function to edit tasks
     try {
-      const token = '';
-    // const token = localStorage.getItem('token');
-      const taskToUpdate = taskData.find((task) => task.id === taskId);
+      // const token = '';
+      const token = localStorage.getItem('token');
+      // const taskToUpdate = tasks.find((task) => task.id === taskId);
 
       const response = await fetch(`http://localhost:3001/editTask/${taskId}`, {
         method: 'PUT',
@@ -194,17 +215,17 @@ export default function App() {//Export default App function component
           'Content-type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          value: taskToUpdate.title,
-        }),
+        body: JSON.stringify(taskToUpdate),
+        // body: JSON.stringify({value: taskToUpdate.title,}),
       });
 
-      if (response.status >= 200 && response.status < 300) {
+      if (response.ok) {
         console.log('Task successfully updated');
         const updatedList = await response.json();
-        setTaskData(updatedList);
-     localStorage.setItem('tasks', JSON.stringify(updatedList));
-      } else {
+        setTasks(updatedList);
+        localStorage.setItem('tasks', JSON.stringify(updatedList));
+      } 
+      else {
         throw new Error('Failed to edit task');
       }
     } 
@@ -233,7 +254,7 @@ export default function App() {//Export default App function component
 
       if (response.ok) {
         const updatedList = await response.json();
-        setTaskData(updatedList);
+        setTasks(updatedList);
         console.log('Task successfully deleted');
       } else {
         throw new Error('Failed to delete task');
@@ -241,20 +262,20 @@ export default function App() {//Export default App function component
     } catch (error) {
       console.error('Error deleting task:', error.message);
       setError('Error deleting task. Please try again.');
-  localStorage.removeItem('token');
+      localStorage.removeItem('token');
     }
   };
 
   //===============Event Listeners===========
 
   // Function to toggle between registration and login pages
-  const togglePage = () => {
-    setIsRegistration(!isRegistration);
-    setNewUsername('');
-    setNewPassword('');
-    setUsername('');
-    setPassword('');
-  };
+  // const togglePage = () => {
+  //   setIsRegistration(!isRegistration);
+  //   setNewUsername('');
+  //   setNewPassword('');
+  //   setUsername('');
+  //   setPassword('');
+  // };
 
   /* Function to set login status to false, 
   indicating that the user is in the process of logging in*/
@@ -268,6 +289,13 @@ export default function App() {//Export default App function component
     localStorage.removeItem('username');
     localStorage.removeItem('token'); 
   };
+
+  //Function to toggle between Registration and logout page
+  const togglePage = () => {
+    setIsRegistration(!isRegistration)
+    setNewUserData({ newUsername: '', newPassword: '' })
+    setUserData({ username: '', password: '' })
+  }
 
   //Function to trigger logout button
   const logout = () => {
@@ -290,15 +318,16 @@ export default function App() {//Export default App function component
             <div>
               <section id='section1'>
                 <div>
-                  
                   {isRegistration ? (
                     // Registration Form
                     <RegistrationForm
                       addUser={addUser}
-                      newUsername={newUsername}
-                      setNewUsername={setNewUsername}
-                      newPassword={newPassword}
-                      setNewPassword={setNewPassword}
+                      newUserData={newUserData}
+                      setNewUserData={setNewUserData}
+                      // newUsername={newUsername}
+                      // setNewUsername={setNewUsername}
+                      // newPassword={newPassword}
+                      // setNewPassword={setNewPassword}
                     />
                   ) : (
                     // Login Form
@@ -307,10 +336,12 @@ export default function App() {//Export default App function component
                       submitLogin={submitLogin}
                       appLogin={appLogin}
                       handleLogoutClick={handleLogoutClick}
-                      username={username}
-                      password={password}
-                      setUsername={setUsername}
-                      setPassword={setPassword}
+                      userData={userData}
+                      setUserData={setUserData}
+                      // username={username}
+                      // password={password}
+                      // setUsername={setUsername}
+                      // setPassword={setPassword}
                     />
                   )}
                   {/* Button to toggle between the login and registration page */}
@@ -333,9 +364,9 @@ export default function App() {//Export default App function component
                 <div>
                   {/* Task output */}
                   <ul>
-                    {taskData.map((task) => (
+                    {tasks.map((task) => (
                       <li key={task.taskId} className='taskList'>
-                        <Row id='taskOutputRow'>
+                        <Row className='taskOutputRow'>
                           <Col className='tasksCol'>
                             <label className='taskLabel'>
                               <p className='labelText'>USER:</p>
@@ -348,11 +379,32 @@ export default function App() {//Export default App function component
                             </label>
                             <p className='outputText'>{task.title}</p>
                           </Col>
+                          
+                        </Row>
+                        <Row className='taskOutputRow'>
                           <Col className='tasksCol'>
                             {/* Button to edit a task */}
                             <Button variant="primary" onClick={() => editTask(task.taskId)}>
                               EDIT
                             </Button>
+                            <label>
+                              <p className='labelText'>UPDATE USER</p>
+                              <input
+                                value={taskToUpdate.updatedUser}
+                                onChange={(e) => setTaskToUpdate({ ...taskToUpdate, updatedUser: e.target.value })}
+                                type='text'
+                              />
+                            </label>
+                          </Col>
+                          <Col>
+                            <label>
+                              <p className='labelText'>UPDATE USER</p>
+                              <input
+                                value={taskToUpdate.updatedTitle}
+                                onChange={(e) => setTaskToUpdate({ ...taskToUpdate, updatedTitle: e.target.value })}
+                                type='text'
+                              />
+                            </label>
                           </Col>
                           <Col className='tasksCol'>
                             {/* Button to delete a task */}
