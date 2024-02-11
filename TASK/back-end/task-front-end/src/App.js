@@ -18,30 +18,30 @@ import LogoutBtn from './components/LogoutBtn';
 export default function App() {//Export default App function component
   //===========STATE VARIABLES=================
   //Task Variables
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState({ 
-    user: '', 
-    newTaskTitle: '' 
+  const [tasks, setTasks] = useState([]);//State used to store tasks
+  const [newTask, setNewTask] = useState({ //State used to store details of a newTask
+    user: '', // User associated with the new task
+    newTaskTitle: '' // Title of the new task
   });
-  const [taskToUpdate, setTaskToUpdate] = useState({
-    updatedUser: '',
-    updatedTitle: '',
+  const [taskToUpdate, setTaskToUpdate] = useState({// State variable to store details of the task to be updated
+    updatedUser: '',// Updated user for the task
+    updatedTitle: '',// Updated title for the task
   })
   //UserVariable
-  const [userData, setUserData] = useState({
-    username: '',
-    password: ''
+  const [userData, setUserData] = useState({// State variable to store user login credentials
+    username: '',// Username for authentication
+    password: ''// Password for authentication
   });
-  const [newUserData, setNewUserData] = useState({
-    newUsername: '',
-    newPassword: ''
+  const [newUserData, setNewUserData] = useState({//State used to store new UserDetails
+    newUsername: '',// New username for registration
+    newPassword: ''// New password for registration
   });
   //Event Variables
-  const [error, setError] = useState(null);
-  const [login, setLogin] = useState(false);
-  const [loginStatus, setLoginStatus] = useState(true);
-  const [isRegistration, setIsRegistration] = useState(false);
-  const [token, setToken] = useState(null);
+  const [error, setError] = useState(null);// State variable to store any errors that occur
+  const [login, setLogin] = useState(false);// State variable to track user login status
+  const [loginStatus, setLoginStatus] = useState(true);// State variable to track the status of the login process
+  const [isRegistration, setIsRegistration] = useState(false);// State variable to track whether the user is in registration mode
+  const [token, setToken] = useState(null);// State variable to store the JWT token for authentication
 
 
   //============USE EFFECT HOOK TO FETCH TASK DATA============
@@ -50,17 +50,18 @@ export default function App() {//Export default App function component
     //Function to fetch tasks
     const fetchTasks = async () => {//Define an async function to fetchTasks
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token');//Retrieve the JWT token from local storage
         //Send a GET request to the server
         const response = await fetch('http://localhost:3001/users/findTasks', {
-          method: 'GET',
+          method: 'GET',//Request method
           mode: 'cors',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json',//Specify the Content-Type
             'Authorization': `Bearer ${token}`,
           },
         });
 
+        
         if (response.ok) {
           const fetchedData = await response.json();
           setTasks(fetchedData);
@@ -82,42 +83,47 @@ export default function App() {//Export default App function component
 
   //Function to submit login
   const submitLogin = async () => {//Define async function to submit login
-    // e.preventDefault();
+    e.preventDefault();
     try {
       //Send a POST request to the server
       const response = await fetch('http://localhost:3001/users/login', {
-        method: 'POST',
-        mode: 'cors', 
+        method: 'POST',//HTTP request method
+        mode: 'cors', // Cross-origin resource sharing mode
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json',//Specify the Content-Type
         },
-        body: JSON.stringify({ username: userData.username, password: userData.password }),
+        body: JSON.stringify({ // Request body containing user login credentials
+                username: userData.username, // Username entered by the user
+                password: userData.password, // Password entered by the user
+            }),
       });
 
-    
+    // Conditional rendering to check if the server response is in the successful range (200-299)
       if (response.ok) {
-        const data = await response.json(); 
-        setToken(data.token);      
+         // If successful, parse the response body as JSON
+        const data = await response.json(); // JSON data received from the server
+        setToken(data.token); // Set the JWT token received from the server in the state
 
-        console.log('Successfully logged in');
-        setLogin(true);
-        setLoginStatus(true); 
-        localStorage.setItem('loginStatus', JSON.stringify(true));
-        localStorage.setItem('username', userData.username);
-        localStorage.setItem('token', data.token);
+        console.log('Successfully logged in');// Log a success message to the console
+        setLogin(true);// Update login state to indicate successful login
+        setLoginStatus(true);  // Update login status state to indicate successful login
+          // Store login status, username, and token in local storage for persistence
+          localStorage.setItem('loginStatus', JSON.stringify(true)); // Login status
+          localStorage.setItem('username', userData.username); // Username
+         localStorage.setItem('token', data.token); // JWT token
       } else {
-        throw new Error('Failed to login');;
+        throw new Error('Failed to login'); //Throw an error message if the POST request is unsuccessful
       }
     } catch (error) {
-      console.error('Login Failed', error.message);
-      setError(`Login Failed: ${error.message}`);
+      console.error('Login Failed', error.message);//Log an error message in the cosole for debugging purposes
+      setError(`Login Failed: ${error.message}`);// Set the error state with an error message
     }
   };
 
   //Function to add a newUser
   const addUser = async () => {//Define an async funciton to add a newUser
     try {
-      const token = localStorage.getItem('token'); 
+      const token = localStorage.getItem('token'); //Retrieve the JWT token from localStorage
       // const token = '';// Set an initial empty token
       //Send a POST request to the server
       const response = await fetch('http://localhost:3001/users/register', {
@@ -127,26 +133,36 @@ export default function App() {//Export default App function component
           'Content-type': 'application/json',
           'Authorization': token ? `Bearer ${token}` : '',
         },
-        body: JSON.stringify({ newUsername: newUserData.newUsername, newPassword: newUserData.newPassword }),
+          body: JSON.stringify({ // Request body containing new user's username and password
+                newUsername: newUserData.newUsername, // New username entered by the user
+                newPassword: newUserData.newPassword, // New password entered by the user
+            }),
       });
-
+      // Conditional rendering to check if the server response is in the successful range (200-299)
       if (response.ok) {
         const data = await response.json();
 
         if (data.token) {
           console.log('New user successfully added');
           const users = JSON.parse(localStorage.getItem('users')) || [];
-          const newUser = { username: newUserData.newUsername, password: newUserData.newPassword, userId: users.length + 1 };
-          users.push(newUser)
-          localStorage.setItem('users', JSON.stringify(users));     
-          localStorage.setItem('token', data.token);
+          // Create a new user object with username, password, and unique userId
+                const newUser = { 
+                    username: newUserData.newUsername, // New username
+                    password: newUserData.newPassword, // New password
+                    userId: users.length + 1 // Generate unique userId
+                };
+          users.push(newUser)// Push the new user object to the existing users array
+                
+          localStorage.setItem('users', JSON.stringify(users));// Store updated users array in local storage
+          localStorage.setItem('token', data.token);// Store the token from the response in local storage
+
         } 
         else {
-          throw new Error('Invalid server response'); 
+          throw new Error('Invalid server response'); // If the response does not contain a token, throw an error
         }
       } 
       else {
-        throw new Error('Failed to add new user');
+        throw new Error('Failed to add new user'); //Throw an error message if the POST request is unsuccessful
       }
     } 
     catch (error) {      
