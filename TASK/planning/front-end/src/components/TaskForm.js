@@ -3,60 +3,57 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 
-//Registration function component
-export default function Registration(
-  {
-    addUser,
-    newUserData,
-    setNewUserData
-  }
-) 
-{
-  //=============JSX RENDERING===========
+//TaskForm function component
+export default function TaskForm(
+    {//=======PROPS PASSED FROM THE PARENT COMPONENT==========
+        addTask, 
+        newTask,
+        setNewTask,
+    }
+) {
+
+    //=============JSX RENDERING===========
+
   return (
-    <div>
-      <Row className='regisRow'>
-        <Col id='regisHeading'>
-          <h2 className='h2'>REGISTRATION:</h2>
-        </Col>
-      </Row>
-      <form onSubmit={addUser} id='registrationForm'>
-        <Row className='regisRow'>
-          <Col xs={6} md={4} className='regisCol'>
-            <label className='regisLabel'>
-              <p className='labelText'>USERNAME:</p>
-              <input
-                type='text'
-                value={newUserData.newUsername}
-                onChange={(e) => setNewUserData(
-                  {
-                    ...newUserData,
-                    newUsername: e.target.value
-                  })}
-                placeholder='USERNAME'
-                className='regisInput'
-              />
-            </label>
-          </Col>
-          <Col xs={6} md={4} className='regisCol'>
-            <label className='regisLabel'>
-              <p className='labelText'>PASSWORD:</p>
-              <input
-                type='password'
-                value={newUserData.newPassword}
-                onChange={(e) => setNewUserData({...newUserData, newPassword: e.target.value})}
-                placeholder='PASSWORD'
-                className='regisInput'
-              />
-            </label>
-          </Col>
-          <Col xs={6} md={4} className='regisBtn'>
-            <Button variant="primary" type="submit" id='registrationBtn'>
-              REGISTER
-            </Button>
-          </Col>
-        </Row>
-      </form>
-    </div>
+      <div id='form'>
+          <Row className='formRow'>
+              <Col className='formCol'>
+                  <h3 className='h3'>ADD TASK</h3>
+              </Col>
+          </Row>
+          <form id='newTaskForm' onSubmit={addTask}>
+              <Row className='formRow'>
+                  <Col xs={6} md={4} className='formCol'>
+                      <label className='formLabel'>
+                          <p className='labelText'>USER:</p>
+                          <input
+                              type='text'
+                              value={newTask.user}
+                              onChange={(e) => setNewTask({ ...newTask, user: e.target.value })}
+                              placeholder='USER'
+                              className='formInput'
+                          />
+                      </label>
+                  </Col>
+                  <Col xs={6} md={4} className='formCol'>
+                      <label className='formLabel'>
+                          <p className='labelText'>TASK TITLE:</p>
+                          <input
+                              type='text'
+                              value={newTask.newTaskTitle}
+                              onChange={(e) => setNewTask({ ...newTask, newTaskTitle: e.target.value })}
+                              placeholder='TASK TITLE'
+                              className='formInput'
+                          />
+                      </label>
+                  </Col>
+                  <Col xs={6} md={4} className='formCol'>
+                      <Button variant="primary" type="submit" id='addTaskBtn'>
+                          ADD TASK
+                      </Button>
+                  </Col>
+              </Row>
+          </form>
+      </div>
   )
 }
