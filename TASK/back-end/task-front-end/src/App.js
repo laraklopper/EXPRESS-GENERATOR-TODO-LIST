@@ -56,38 +56,34 @@ export default function App() {
 //Function to fetch tasks
     const fetchTasks = async () => {
     try {      
-      const token = localStorage.getItem('token');// Retrieve the authentication token from localStorage
-      
+      const token = localStorage.getItem('token');      
       // Send a GET request to the `/findTasks` endpoint
       const response = await fetch('http://localhost:3001/users/findTasks', {
         method: 'GET',//Request method
         mode: 'cors',
         headers: {
-          'Content-Type': 'application/json',//Specify the content-type
-          'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, 
         },
       });
-
-      // Conditional rendering if the response is successful (status code in the range of 200-299)
-      if (response.ok) {
-        
-        const fetchedData = await response.json();// If successful, parse the response JSON data
       
-        setTaskData(fetchedData);// Update the taskData state with the fetched data
-      } else {
-        throw new Error('Failed to fetch tasks');// Throw an error if the GET request is unsuccessful
-
+      if (response.ok) {        
+        const fetchedData = await response.json();
+        setTaskData(fetchedData);
+      } 
+      else {
+        throw new Error('Failed to fetch tasks');
       }
-    } catch (error) {
-      // Handle any errors that occur during the request
-      setError(`Error fetching data: ${error.message}`);//Set the error state
-      console.error('Error fetching data:', error);//Log an error message in the console for debugging purposes
+    } 
+    catch (error) {
+      setError(`Error fetching data: ${error.message}`);
+      console.error('Error fetching data:', error);
     }
   }
 
-  // Call the fetchTasks function when the component mounts or when the 'token' state changes
   fetchTasks();
-}, [token]); // Dependency array with 'token' ensures the effect is re-run whenever the 'token' state changes
+}, [token]); 
+  
 
   //----------------POST REQUEST--------------------------
 
@@ -96,13 +92,13 @@ export default function App() {
     try {
       //Send a POST request to the server
       const response = await fetch('http://localhost:3001/users/login', {
-        method: 'POST',//Request method
-        mode: 'cors',// Set the mode to 'cors'(cross-origin resource sharing), indicating that the request is a cross-origin request.
-        headers: {//Set request headers
-          'Content-Type': 'application/json',//Specify the content-type for the request body 
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),// Convert user credentials to JSON format for the request body
-        // body: JSON.stringify({ username: userData.username, password: userData.password }),
+        // body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username: userData.username, password: userData.password }),
       });
 
       // Conditional rendering to check if the server response is in the successful range (200-299)
@@ -177,7 +173,8 @@ export default function App() {
   //Function to add a task
   const addTask = async (taskInput) => {//Define an async funciton to add a new Task
     try {
-      const token = localStorage.getItem('token');//Retrieve the authentication token from localStorage
+      // const token = localStorage.getItem('token');//Retrieve the authentication token from localStorage
+      const token = ''; 
       // Make a POST request to the server
       const response = await fetch('http://localhost:3001/addTask', {
         method: 'POST',//Request method
@@ -186,12 +183,13 @@ export default function App() {
           'Content-type': 'application/json',//Specify the content type
           'Authorization': `Bearer ${token}`,//Authorization header as the bearer token
         },
-        body: JSON.stringify({ username: newTask.username, title: newTask.title }),
-        // body: JSON.stringify({ user: newTask.user, title: newTask.newTaskTitle }),
+        // Convert the new task details to a JSON string and include in the request body\
+        // body: JSON.stringify({ username: newTask.user, title: newTask.title }),
+        body: JSON.stringify({ user: newTask.user, title: newTask.newTaskTitle }),
       });
 
       // Conditional rendering to check if the server response is in the successful range (200-299)
-      if (response.status >= 200 && response.status < 300) {
+      if (response.ok) {
         
         const updatedList = await response.json();
         setTaskData(updatedList);
@@ -199,14 +197,14 @@ export default function App() {
         console.log('Task added successfully');//Log a success message in the console
       }
       else {
-        throw new Error('Failed to add task');//Throw an error message if the POST request is unsuccessful
+        throw new Error('Failed to add task');
       }
     }
     catch (error) {
       // Handle any errors that occur during the request
-      console.error('Error adding task:', error.message);//Log an error message in the console for debugging purposes
-      setError('Error adding task', error.message);//Set the error state
-      localStorage.removeItem('token');//Remove the token from local storage if an error occurs.
+      console.error('Error adding task:', error.message);
+      setError('Error adding task', error.message);
+      localStorage.removeItem('token');
     }
   };
 
@@ -301,6 +299,11 @@ export default function App() {
     setLoginStatus(false);
   };
 
+  // Function to handle logout button click
+  // const handleLogoutClick = () => {
+  //   setLoginStatus(false);
+  //   setUsername('');
+  // };
   // Function to handle logout button click
   const handleLogoutClick = () => {
     localStorage.removeItem('loginStatus');//Remove the loginStatus from localStorage 
