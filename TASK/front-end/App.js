@@ -21,7 +21,7 @@ export default function App() {//Export default App function component
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({ 
     user: '', 
-    title: '' 
+    newTaskTitle: '' 
   });
   const [taskToUpdate, setTaskToUpdate] = useState({
     updatedUser: '',
@@ -180,7 +180,7 @@ export default function App() {//Export default App function component
           'Content-type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ user: newTask.user, title: newTask.title }),
+        body: JSON.stringify({ user: newTask.user, title: newTask.newTaskTitle }),
       });
       
       if (response.ok) {
