@@ -7,12 +7,13 @@ import Row from 'react-bootstrap/Row';//Import bootstrap row
 import Col from 'react-bootstrap/Col';//Import bootstrap coloumn
 import Button from 'react-bootstrap/Button';// Import button component from bootstrap library
 //Components
-import Header from './components/Header';//Import Header function component
-import LoginForm from './components/LoginForm';//Import LoginForm function component
-import RegistrationForm from './components/RegistrationForm';//Import RegistrationForm function component
-import ToggleBtn from './components/ToggleBtn';//Import the ToggleBtn component
-import TaskForm from './components/TaskForm';//Import TaskForm Function component
-import LogoutBtn from './components/LogoutBtn';//Import the LogoutBtn component
+import Login from './components/Login';
+import Registration from './components/Registration';
+import Header from './components/Header';
+import TaskForm from './components/TaskForm';
+import LogoutBtn from './components/LogoutBtn';
+import ToggleBtn from './components/ToggleBtn';
+
 
 //App function component
 export default function App() {//Export default App function component
