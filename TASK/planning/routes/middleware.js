@@ -103,10 +103,9 @@ const enforceContentType = (req, res, next) => {
 
 //Middleware function to limit the length of an updated task
 const limitUpdatedTaskLength = (req, res, next) => {
-    const { updatedTitle } = req.body; // Extract the title from the request body
-    const maxLength = 140;//Max length
+    const { updatedTitle } = req.body; 
+    const maxLength = 140;
 
-    // Conditional rendering to check if the task title exceeds the maximum length
     if (updatedTitle && updatedTitle.length > maxLength) {
         return res.status(400).json({
             message: `The updatedTitle exceeds the maximum length of ${maxLength} characters.`,
