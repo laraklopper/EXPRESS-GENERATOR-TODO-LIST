@@ -82,43 +82,37 @@ export default function App() {//Export default App function component
   //----------------POST REQUEST--------------------------
 
   //Function to submit login
-  const submitLogin = async () => {//Define async function to submit login
+  const submitLogin = async () => {
     e.preventDefault();
     try {
-      //Send a POST request to the server
-      const response = await fetch('http://localhost:3001/users/login', {
-        method: 'POST',//HTTP request method
-        mode: 'cors', // Cross-origin resource sharing mode
-        headers: {
-          'Content-Type': 'application/json',//Specify the Content-Type
-        },
-        body: JSON.stringify({ // Request body containing user login credentials
-                username: userData.username, // Username entered by the user
-                password: userData.password, // Password entered by the user
+        const response = await fetch('http://localhost:3001/users/login', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: userData.username,
+                password: userData.password,
             }),
-      });
+        });
 
-    // Conditional rendering to check if the server response is in the successful range (200-299)
-      if (response.ok) {
-         // If successful, parse the response body as JSON
-        const data = await response.json(); // JSON data received from the server
-        setToken(data.token); // Set the JWT token received from the server in the state
-
-        console.log('Successfully logged in');// Log a success message to the console
-        setLogin(true);// Update login state to indicate successful login
-        setLoginStatus(true);  // Update login status state to indicate successful login
-          // Store login status, username, and token in local storage for persistence
-          localStorage.setItem('loginStatus', JSON.stringify(true)); // Login status
-          localStorage.setItem('username', userData.username); // Username
-         localStorage.setItem('token', data.token); // JWT token
-      } else {
-        throw new Error('Failed to login'); //Throw an error message if the POST request is unsuccessful
-      }
+        if (response.ok) {
+            const data = await response.json();
+            setToken(data.token);
+            setLogin(true);
+            setLoginStatus(true);
+            localStorage.setItem('loginStatus', JSON.stringify(true));
+            localStorage.setItem('username', userData.username);
+            localStorage.setItem('token', data.token);
+        } else {
+            throw new Error('Failed to login');
+        }
     } catch (error) {
-      console.error('Login Failed', error.message);//Log an error message in the cosole for debugging purposes
-      setError(`Login Failed: ${error.message}`);// Set the error state with an error message
+        console.error('Login Failed', error.message);
+        setError(`Login Failed: ${error.message}`);
     }
-  };
+};
 
   //Function to add a newUser
   const addUser = async () => {//Define an async funciton to add a newUser
@@ -146,11 +140,7 @@ export default function App() {//Export default App function component
           console.log('New user successfully added');
           const users = JSON.parse(localStorage.getItem('users')) || [];
           // Create a new user object with username, password, and unique userId
-                const newUser = { 
-                    username: newUserData.newUsername, // New username
-                    password: newUserData.newPassword, // New password
-                    userId: users.length + 1 // Generate unique userId
-                };
+                const newUser = { username: newUserData.newUsername, password: newUserData.newPassword, userId: users.length + 1 };
           users.push(newUser)// Push the new user object to the existing users array
                 
           localStorage.setItem('users', JSON.stringify(users));// Store updated users array in local storage
