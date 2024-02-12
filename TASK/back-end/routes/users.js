@@ -15,14 +15,14 @@ router.use(express.json());
 //===========DATA==================
 //----------USER DATA---------------------
 // In-memory array used to store the data
-const users = [
+let users = [
   {
-    username: 'user1@gmail.com',
+    username: 'admin@gmail.com',
     userId: '0',
     password: 'passWord1',
   },
   {
-    username: 'user2@gmail.com',
+    username: 'user1@gmail.com',
     userId: 1,
     password: 'passWord2',
   },
@@ -32,12 +32,12 @@ const users = [
 // In-memory array used to store the data
 let tasks = [
   {
-    user: "admin@test.co.za",
+    user: "admin@gmail.com",
     taskId: 0,
     title: "Implement a Post route for logging in",
   },
   {
-    username: "admin@test.co.za",
+    username: "user1@gmail.com",
     taskId: 1,
     title: "Implement custom middleware to authenticate user",
   },
