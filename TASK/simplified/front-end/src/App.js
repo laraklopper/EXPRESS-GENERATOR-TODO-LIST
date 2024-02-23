@@ -53,7 +53,7 @@ export default function App() {//Export default App function component
             'Authorization': `Bearer ${token}`
           }
         });
-        //Conditional rendering to check if the response is successful
+//Conditional rendering to check if the response is successful (status code 200-299)
         if (response.ok) {
           const fetchedData = await response.json();// Parse the response data as JSON
           setTasks(fetchedData); // Set the tasks state with the fetched data
@@ -93,7 +93,7 @@ export default function App() {//Export default App function component
       }),
     });
 
-    //Conditional rendering to check if the response is successful
+    //Conditional rendering to check if the response is successful (status code 200-299)
     if (response.ok) { 
       const data = await response.json(); // Parse the response body as JSON
       //Conditional rendering to check if a token is present in the response data
@@ -146,7 +146,7 @@ const addUser = async (e) => {//Define an async function to add a new User
       }),
     });
 
-        //Conditional rendering to check if the response is successful
+        //Conditional rendering to check if the response is successful (status code 200-299)
     if (response.ok) { 
       const data = await response.json(); // Parse the response body as JSON
       // Conditional rendering to check if a token is present in the response data
@@ -191,8 +191,8 @@ const addUser = async (e) => {//Define an async function to add a new User
         title: newTask.title, // Get the task title from the newTask object
       }),
     });
-    
-    if (response.ok) { // Check if the response is successful
+    //Conditional rendering to check if the response is successful (status code 200-299)
+    if (response.ok) { 
       const newTaskObject = await response.json(); // Parse the response body as JSON
       setTasks(tasks => [...tasks, newTaskObject]); // Add the new task to the tasks state
       console.log('Task added successfully'); // Log a success message 
