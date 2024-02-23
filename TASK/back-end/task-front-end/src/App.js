@@ -263,16 +263,9 @@ export default function App() {//Export default App function component
   //===============Event Listeners===========
 
   /* Function to set login status to false, 
-  indicating that the user is in the process of logging in*/
+  indicating that the user is logged in*/
   const appLogin = () => {
     setLoginStatus(false);
-  };
-
-  // Function to handle logout button click
-  const handleLogoutClick = () => {
-    localStorage.removeItem('loginStatus');
-    localStorage.removeItem('username');
-    localStorage.removeItem('token'); 
   };
 
   //Function to toggle between Registration and logout page
