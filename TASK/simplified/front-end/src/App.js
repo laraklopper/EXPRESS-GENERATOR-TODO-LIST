@@ -1,5 +1,5 @@
 // Import React and necessary components from Bootstrap
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';// Import the React module to use React functionalities
 import './App.css';//Import CSS File
 //Bootstrap
 import Container from 'react-bootstrap/Container';//Import bootstrap container
