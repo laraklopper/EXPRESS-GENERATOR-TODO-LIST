@@ -153,11 +153,9 @@ export default function App() {//Export default App function component
     } 
     catch (error) {
       setError(`Error adding new user: ${error.message}`);
+      console.error('Registration Failed:', error.message);
     }
   }
-
-
-
 
   //Function to add new task
   const addTask = async (newTask) => {
