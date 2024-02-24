@@ -72,7 +72,7 @@ router.post("/login", (req, res) => {
   // let foundUser = users.find(user => user.username === username && user.password === password);
 
   // Iterate through the users array to find a user with matching credentials
-  for (let i = 0; i < users.length; i++) {
+  for (let i = 0; i < users.length; i++) {// Loop through the users array to find matching username and password
     if (users[i].username === username && users[i].password === password) {
       foundUser = users[i]; // Set foundUser to the matching user object
       break; // Exit the loop once a matching user is found
