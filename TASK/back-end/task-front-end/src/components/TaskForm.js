@@ -1,9 +1,8 @@
-import React from 'react';
+import React from 'react';// Import the React module to use React functionalities
 //Bootstrap
-import Form from 'react-bootstrap/Form';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';//Import Bootstrap Row
+import Col from 'react-bootstrap/Col';//Import bootstrap Colomn
+import Button from 'react-bootstrap/Button';//Import bootstrap Button component
 
 //TaskForm function component
 export default function TaskForm(//Export default TaskForm function component
@@ -15,56 +14,50 @@ export default function TaskForm(//Export default TaskForm function component
    
     //===========JSX RENDERING==================
 
-    return (
-        <div id='form'>
-            <Row className='formRow' >
-                <Col id='formHeader'>
-                    <h3 className='h3'>ADD TASK</h3>
-                </Col>
-            </Row>
-            {/* Form to add new task */}
-            <Form onSubmit={addTask} id='taskForm'>
-                <Row className='formRow'>
-                    <Col className='formCol'>
-                        {/* Task Input */}
-                        <label className='formLabel'>
-                            <p className='labelText'>USER</p>
-                            <Form.Control
-                                placeholder="username"
-                                type='text'
-                                name='username'                                
-                                value={newTask.username}
-                                onChange={(e) => setNewTask({ ...newTask, user: e.target.value })}
-                            className='taskInput'
-                            />
-                        </label>
-                    </Col>
-                    <Col>
-                        <Row>
-                            <Col className=''>
-                                <label className='formLabel'>
-                                    <p className='labelText'>TASK:</p>
-                                    <Form.Control
-                                        placeholder='Task'
-                                        type='text'
-                                        name='title'
-                                        value={newTask.title}
-                                        onChange={(e) => setNewTask({ ...newTask, newTaskTitle: e.target.value })}
-                                    className='taskInput'
-                        />
-                                </label>
-                            </Col>
-                        </Row>
-                    </Col>
-                    <Col className='formCol'>
-                        <Button type="submit" variant="primary" id='addTaskBtn'>
-                            ADD TASK
+   return (
+      <div id='form'>
+          <Row className='formRow'>
+              <Col className='formCol'>
+                  <h3 className='h3'>ADD TASK</h3>
+              </Col>
+          </Row>
+          <form onSubmit={addTask} id='taskform'>
+              <Row className='formRow'>
+                  <Col xs={6} md={4} className='formCol'>
+                      <label className='formLabel'>
+                          <p className='labelText'>USER:</p>
+                          <input
+                              type='text' 
+                              placeholder='USER'
+                              value={newTask.user}
+                              onChange={(e) => 
+                                setNewTask({ ...newTask, 
+                                    user: e.target.value })}
+                              className='taskInput'
+                          />
+                      </label>
+                  </Col>
+                  <Col xs={6} md={4} className='formCol'>
+                      <label className='formLabel'>
+                          <p className='labelText'>TASK</p>
+                          <input
+                              className='taskInput'
+                              type='text'
+                              placeholder='task'
+                              value={newTask.task}
+                              onChange={(e) => 
+                                setNewTask({ ...newTask, 
+                                    title: e.target.value })}
+                          />
+                      </label>
+                  </Col>
+                  <Col xs={6} md={4} className='formCol'>
+                      <Button variant="primary" type='submit'>
+                        ADD TASK
                         </Button>
-                    </Col>
-                    <Col className='formCol'>
-                    </Col>
-                </Row>
-            </Form>
-        </div>
-    );
+                  </Col>
+              </Row>
+          </form>
+      </div>
+  )
 }
