@@ -21,7 +21,7 @@ export default function RegistrationForm(//Import default RegistrationForm funct
         <div id='registration'>
             <Row className='formRow' >
                 <Col md={12} className='formHeadingText'>
-                    <h2 className='h2'>REGISTER</h2>
+                    <h3 className='h3'>ENTER DETAILS:</h3>
                 </Col>
             </Row>
             {/* RegistrationForm */}
