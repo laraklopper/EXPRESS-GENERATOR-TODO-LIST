@@ -1,18 +1,18 @@
 // Import React and necessary components from Bootstrap
-import React, { useEffect, useState } from 'react';
-import './App.css';
+import React, { useEffect, useState } from 'react';// Import the React module to use React functionalities
+import './App.css';//Import CSS File
 //Bootstrap
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';//Import bootstrap container
+import Row from 'react-bootstrap/Row';//Import Bootstrap Row
+import Col from 'react-bootstrap/Col';//Import bootstrap Colomn
+import Button from 'react-bootstrap/Button';//Import bootstrap Button component
 //Components
-import Header from './components/Header';
-import LoginForm from './components/LoginForm';
-import RegistrationForm from './components/RegistrationForm';
-import ToggleBtn from './components/ToggleBtn';
-import TaskForm from './components/TaskForm';
-import LogoutBtn from './components/LogoutBtn';
+import Header from './components/Header';// Import the Header component
+import LoginForm from './components/LoginForm';// Import the loginForm component
+import RegistrationForm from './components/RegistrationForm';// Import the Registration component
+import ToggleBtn from './components/ToggleBtn';// Import the ToggleBtn component
+import TaskForm from './components/TaskForm';// Import the AddTask component
+import LogoutBtn from './components/LogoutBtn';// Import the LogoutBtn component
 
 //App function component
 export default function App() {//Export default App function component
@@ -40,9 +40,10 @@ export default function App() {//Export default App function component
   const [error, setError] = useState(null);// State variable to store any errors that occur
   const [login, setLogin] = useState(false);// State variable to track user login status
   const [loginStatus, setLoginStatus] = useState(true);// State variable to track the status of the login process
+  const [loggedIn, setLoggedIn] = useState(false);//State to indicate if the user is logged in
+  const [loggedOut, setLoggedOut] = useState(true)//State to indicate if the user is logged out
   const [isRegistration, setIsRegistration] = useState(false);// State variable to track whether the user is in registration mode
   const [token, setToken] = useState(null);// State variable to store the JWT token for authentication
-
 
   //============USE EFFECT HOOK TO FETCH TASK DATA============
   // Fetch tasks from the server on component mount
@@ -100,8 +101,12 @@ export default function App() {//Export default App function component
         if (response.ok) {
             const data = await response.json();
             setToken(data.token);
-            setLogin(true);
-            setLoginStatus(true);
+            localStorage.setItem('username', userData.username);
+            localStorage.setItem('token', data.token);
+          // Update state variables to indicate successful login
+            setLoggedIn(true);
+            setLoggedOut(false);
+          // setError('');//Clear previous error messages
             localStorage.setItem('loginStatus', JSON.stringify(true));
             localStorage.setItem('username', userData.username);
             localStorage.setItem('token', data.token);
@@ -116,9 +121,10 @@ export default function App() {//Export default App function component
 
   //Function to add a newUser
   const addUser = async () => {//Define an async funciton to add a newUser
+    e.preventDefault();
     try {
       const token = localStorage.getItem('token'); //Retrieve the JWT token from localStorage
-      // const token = '';// Set an initial empty token
+      const token = '';// Set an initial empty token
       //Send a POST request to the server
       const response = await fetch('http://localhost:3001/users/register', {
         method: 'POST',
@@ -140,7 +146,7 @@ export default function App() {//Export default App function component
           console.log('New user successfully added');
           const users = JSON.parse(localStorage.getItem('users')) || [];
           // Create a new user object with username, password, and unique userId
-                const newUser = { username: newUserData.newUsername, password: newUserData.newPassword, userId: users.length + 1 };
+          const newUser = { username: newUserData.newUsername, password: newUserData.newPassword, userId: users.length + 1 };
           users.push(newUser)// Push the new user object to the existing users array
                 
           localStorage.setItem('users', JSON.stringify(users));// Store updated users array in local storage
@@ -165,7 +171,7 @@ export default function App() {//Export default App function component
   const addTask = async (newTask) => {//Define an async funciton to add a new Task
     try {
       const token = localStorage.getItem('token')
-      // const token = ''; 
+      const token = ''; 
       //Send a POST request to the server
       const response = await fetch('http://localhost:3001/users/addTask', {
         method: 'POST',
@@ -174,7 +180,10 @@ export default function App() {//Export default App function component
           'Content-type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ user: newTask.user, title: newTask.newTaskTitle }),
+        body: JSON.stringify({ 
+          user: newTask.user, 
+          title: newTask.newTaskTitle 
+        }),
       });
       
       if (response.ok) {
@@ -184,12 +193,12 @@ export default function App() {//Export default App function component
 
         setNewTask({ user: '', title: '' });
         localStorage.setItem('tasks', JSON.stringify(updatedList));
-      } else {
+      } 
+      else {
         throw new Error('Failed to add task');
       }
     } 
     catch (error) {
-     
       console.error('Error adding task:', error.message);
       setError('Error adding task', error.message);
     }
@@ -198,7 +207,7 @@ export default function App() {//Export default App function component
   // Function to edit a task
   const editTask = async (taskId) => {//Define an async function to edit tasks
     try {
-      // const token = '';
+      const token = '';
       const token = localStorage.getItem('token');
       // const taskToUpdate = tasks.find((task) => task.id === taskId);
 
@@ -262,11 +271,11 @@ export default function App() {//Export default App function component
 
   //===============Event Listeners===========
 
-  /* Function to set login status to false, 
-  indicating that the user is logged in*/
+/*Function to set the loggedOut status to false 
+  stating that the user is logged in*/
   const appLogin = () => {
-    setLoginStatus(false);
-  };
+    setLoggedOut(false)
+  }
 
   //Function to toggle between Registration and logout page
   const togglePage = () => {
@@ -275,11 +284,14 @@ export default function App() {//Export default App function component
     setUserData({ username: '', password: '' })
   }
 
-  //Function to trigger logout button
+ //Function to trigger logoutbtn
   const logout = () => {
-    setLoginStatus(true);
-    setLogin(false);
-  };
+    localStorage.removeItem('token');
+    setLoggedIn(false)
+    setLoggedOut(true)
+    setUserData({username:'', password:''});
+  }
+
 
 
   //===========JSX RENDERING==================
@@ -292,46 +304,67 @@ export default function App() {//Export default App function component
         <Container id='appContainer'>
           {/* Header */}
           <Header />
-          {loginStatus ? (
-            <div>
-              {/* Section1 */}
-              <section id='section1'>
-                <div>
-                  {isRegistration ? (
-                    // Registration Form
-                    <RegistrationForm
+          {loggedOut ? (
+            <Container className="appContainer">
+            {isRegistration ? (
+              <div id="registration"/>
+                {/* Header */}
+                <Header heading='REGISTRATION' />
+            {/* section1 */}
+            <section className="section1">
+             <RegistrationForm
                       addUser={addUser}
                       newUserData={newUserData}
                       setNewUserData={setNewUserData}
                     />
-                  ) : (
-                    // Login Form
-                    <LoginForm
-                      login={login}
+            </section>
+            ): (
+              <div> {/* Header */}
+                  <Header heading="LOGIN" />
+                  <section className='section1'>
+             <LoginForm
+                      loggedIn={loggedIn}
                       submitLogin={submitLogin}
                       appLogin={appLogin}
-                      handleLogoutClick={handleLogoutClick}
+                      // handleLogoutClick={handleLogoutClick}
                       userData={userData}
                       setUserData={setUserData}
                     />
-                  )}
-                  {/* Button to toggle between the login and registration page */}
-                  <ToggleBtn
-                    isRegistration={isRegistration}
-                    togglePage={togglePage}
-                  />
+            </section>
                 </div>
+            )}
+            <div>
+                  )}
+                
+                 {/* Section 2 */}
+              <section className='section2'>
+                 {/* Button to toggle between the login and registration page */}
+                <ToggleBtn 
+                togglePage={togglePage} 
+                isRegistration={isRegistration} />
               </section>
+            </Container>  
             </div>
           ) : (
-            // Section 2
-            <section id='section2'>
-                {/* Form to add a new task */}
+            <Container className='appContainer'>
+            {/* Header */}
+              <Header heading="TO DO LIST" />
+                {/* section1 */}
+            <section className="section1">
+                  {/* Form to add a new task */}
               <TaskForm newTask={newTask} setNewTask={setNewTask} addTask={addTask} />
+                </section>
+              {/* section 2 */}
+                <section className="section2">    
+                  <Row>
+                  <Col>
+                    <h3 className='h3'>TASKS</h3>
+                  </Col>
+                </Row>
                 {/* Error Message */}
               {error ? (
-                <div>{error}</div>
-              ) : (
+                  <div>{error && <p>{error}</p>}</div>
+                ) : (
                 <div>
                   {/* Task output */}
                   <ul id='taskList'>
@@ -340,16 +373,17 @@ export default function App() {//Export default App function component
                         <Row className='taskOutputRow'>
                           <Col className='tasksCol'>
                             <label className='taskLabel'>
-                              <p className='labelText'>USER:</p>
+                              <p className='labelText'>USER:</p> 
+                              <p className='outputText'>{task.user}</p>
                             </label>
                             <p className='outputText'>{task.username}</p>
                           </Col>
-                          <Col className='tasksCol'>
+                          <Col className='taskCol'>
                             <label className='taskLabel'>
-                              <p className='labelText'>TASK:</p>
-                            </label>
+                              <p className='labelText'>TASK:</p>                            
                             <p className='outputText'>{task.title}</p>
-                          </Col>
+                            </label>
+                          </Col> 
                         </Row>
                         <Row className='taskOutputRow'>
                           <Col className='tasksCol'>
@@ -366,7 +400,7 @@ export default function App() {//Export default App function component
                               />
                             </label>
                           </Col>
-                          <Col>
+                          <Col className="taskCol">
                             <label>
                               <p className='labelText'>UPDATE USER</p>
                               <input
@@ -388,9 +422,12 @@ export default function App() {//Export default App function component
                   </ul>
                 </div>
               )}
-              {/* Logout button */}
-              <LogoutBtn logout={logout} />
             </section>
+                {/* section3 */}
+              <section className='section3'>
+                {/* Logout button */}
+                <LogoutBtn logout={logout} />
+              </section>
           )}
         </Container>
       </div>
