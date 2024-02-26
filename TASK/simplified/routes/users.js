@@ -25,6 +25,7 @@ let users = [
     password: 'passWord2',
   },
 ];
+//JSON FORMAT
 // users = [
 //   {
 //     "id": "0",
@@ -52,7 +53,7 @@ let tasks = [
     title: "Implement custom middleware to authenticate user",
   },
 ];
-
+//JSON FORMAT
 // [
 //   {
 //     "id": 0,
@@ -115,18 +116,18 @@ router.post("/login", (req, res) => {
       break; // Exit the loop once a matching user is found
     }
   }
-
+//If a user is found, create and return a JWT token
   if (foundUser) {
     // If a matching user is found, generate a JWT token
     const jwtToken = jwt.sign({//Parameters:
      /*The payload: an object containing the data to be included in the token, the username and userId of the found user.*/      
-      username: foundUser.username,
-      userId: foundUser.id
+      username: foundUser.username,// Include the username in the JWT payload
+      userId: foundUser.id//Include the userId in the JWT payload
     },
     'secretKey',//The secret key  (string used to sign the token)
     {
       expiresIn: '12h',// Token expiration time
-      algorithm: 'HS256'
+      algorithm: 'HS256'//Algorithm used to sign the token
       //Options: optional object specifying additional settings for the token: This includes the expiration time for the token
     });
     res.json({ token: jwtToken }); // Send the token in the response
