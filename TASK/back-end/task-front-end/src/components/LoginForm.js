@@ -11,7 +11,6 @@ export default function LoginForm(//Export default LoginForm function component
         login,
         submitLogin,       
         appLogin,
-        handleLogoutClick,
         userData,
         setUserData
 
@@ -34,13 +33,17 @@ export default function LoginForm(//Export default LoginForm function component
                     <Col xs={6} md={4} className='loginCol'>
                         <Form.Group controlId="formUsername" className='formGroup'>
                             {/* Username Input */}
-                            <Form.Label><p className='labelText'>USERNAME:</p></Form.Label>
+                            <Form.Label htmlfor='username>
+                                <p className='labelText'>USERNAME:</p>
+                            </Form.Label>
                             <Form.Control
                                 type="text"
                                 name="username"
                                 value={userData.username}
                                 onChange={(e) => setUserData( {...userData, username: e.target.value })}
                                 placeholder="Enter your username"
+                                id='username'
+                              autoComplete='off'
                             />
                         </Form.Group>
                     </Col>
@@ -52,17 +55,18 @@ export default function LoginForm(//Export default LoginForm function component
                                 type="password"//Input type
                                 name="password"
                                 value={userData.password}
+                                id='password'
                                 onChange={(e) => setUserData({ ...userData, password: e.target.value })}
                                 placeholder="Enter your password"
+                                    autoComplete='current-password'
                             />
                         </Form.Group>
                     </Col>
                     <Col xs={6} md={4} className='loginCol'>
-                        <Button
-                            type="button"
-                            onClick={login ? handleLogoutClick : appLogin}>
-                            {'Login'}
-                        </Button>
+                       <Button variant="primary" type="submit" 
+                      id='loginBtn' onClick={appLogin}>
+                          {loggedIn ? 'LOGOUT' : 'LOGIN'}
+                      </Button>
                     </Col>
                 </Row>
             </Form>
