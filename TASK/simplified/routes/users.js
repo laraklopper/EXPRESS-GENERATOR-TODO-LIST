@@ -67,6 +67,11 @@ let tasks = [
 //   }
 // ]
 
+//Functions
+function generateUniqueId(){
+  const id = Math.floor(Math.random()*1000)
+  return id
+}
 //=========ROUTES============
 
 // Route to send a GET for the root endpoint '/'
@@ -74,15 +79,6 @@ router.get('/', (req, res, next) => {
   res.send('Respond with resource');
 });
 
-// router.get('/', (req, res) =>{
-//   try {
-//     res.send(tasks)
-//     console.log('Success message');
-
-//   } catch (error) {
-//     res.status(500).json('Internal Server Error')
-//   }
-// })
 
 // Route to send a GET request to the '/findTasks' endpoint
 router.get('/findTasks', /*checkJwtToken,*/ (req, res) => {
@@ -93,10 +89,6 @@ router.get('/findTasks', /*checkJwtToken,*/ (req, res) => {
     const task = tasks.find(task => task.id === parseInt(taskId)); // Find the task with the specified taskId
     //parseInt()  is used to accept the string and radix parameter and convert it into an integer.
     return task ? res.json(task) : res.status(404).json({ message: 'Task not found' }); // Returns the task if found, or a 404 error if not found
-   /* task ?: Check if the variable task evaluates to true or false. If task is truthy(it exists), the condition is true.
-   res.json(task): If task exists, this part executes, sending a JSON response with the task details.
- res.status(404).json({ message: 'Task not found' }): If task does not exist (i.e., the condition is false), it sets the HTTP status to 404 (Not Found) 
- and sends a JSON response with a message indicating that the task was not found.*/
   } 
 
   res.json(tasks); // If no taskId is not provided, return all tasks
@@ -140,6 +132,8 @@ router.post("/login", (req, res) => {
 
 //Route to send a POST request to the users/register endpoint
 router.post('/register', /*validateUsername,*/ (req, res) => {
+  console.log('register user');
+  console.log(req.body);
   try {
     const { newUsername, newPassword } = req.body; // Extracts new username and password from the request body
 
@@ -154,20 +148,19 @@ router.post('/register', /*validateUsername,*/ (req, res) => {
     else {
       // If username is unique, (the username does not yet already exist) generate a unique user ID and create a new user object
       const newUserId = generateUniqueId(); // This function generates a unique user ID 
-      /* This identifier is typically used to uniquely identify each user in the system and can be helpful 
-      for various purposes such as database storage, referencing users in the application, or ensuring that no two users have the same identifier. */
+     
        // Create a new user object with the provided username, password, and generated ID
       const newUser = { id: newUserId, username: newUsername, password: newPassword };
 
       // Generate a JWT token for the new user
-      const token = jwt.sign(
-        { username: newUser.username },
-        'secretKey',//Secret Key
-        { expiresIn: '12h' });//Token expiration time
+      // const token = jwt.sign(
+      //   { username: newUser.username },
+      //   'secretKey',//Secret Key
+      //   { expiresIn: '12h' });//Token expiration time
 
       users.push(newUser); // Add the new user to the users array
 
-      res.status(200).json({ token });// Send a 200 OK response with the JWT token
+      // res.status(200).json({ token });// Send a 200 OK response with the JWT token
 
       console.log(users);//Log the updated code in the console for debugging purposes
     }
