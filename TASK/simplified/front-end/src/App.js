@@ -123,27 +123,28 @@ export default function App() {//Export default App function component
   //Function to add a new user
 const addUser = async (e) => {//Define an async function to add a new User
   e.preventDefault(); // Prevent the default form submission behavior
-
+  const formData = new FormData(e.target)
+    const newUserData = {newUsername : formData.get("username"), newPassword: formData.get("password")}
   try {
-    const token = localStorage.getItem('token'); // Retrieve the token from local storage
-    //Conditional rendering to check if the token is available
-    if (!token) {
-      throw new Error('No token available'); // Throw an error if no token is available
-    }
+    // const token = localStorage.getItem('token'); // Retrieve the token from local storage
+    // //Conditional rendering to check if the token is available
+    // if (!token) {
+    //   throw new Error('No token available'); // Throw an error if no token is available
+    // }
     
     // Send a POST request to the register endpoint
     const response = await fetch('http://localhost:3001/users/register', {
       method: 'POST',//Request method
       mode: 'cors',
       headers: {
-        // 'Content-Type': 'application/json',
-        'Content-Type': 'application/json; charset=UTF-8', // Specify the content type as JSON
-        'Authorization': `Bearer ${token}`, // Include the token in the authorization header
+        'Content-Type': 'application/json',// Specify the content type as JSON
+        // 'Authorization': `Bearer ${token}`, // Include the token in the authorization header
       },
-      body: JSON.stringify({ // Convert the new user data to a JSON string
-        newUsername: newUserData.newUsername, // Get the new username from the newUserData state
-        newPassword: newUserData.newPassword, // Get the new password from the newUserData state
-      }),
+      body: JSON.stringify(newUserData),
+      // body: JSON.stringify({ // Convert the new user data to a JSON string
+      //   newUsername: newUserData.newUsername, // Get the new username from the newUserData state
+      //   newPassword: newUserData.newPassword, // Get the new password from the newUserData state
+      // }),
     });
 
         //Conditional rendering to check if the response is successful (status code 200-299)
