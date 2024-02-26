@@ -46,10 +46,9 @@ let tasks = [
 
 //===========ROUTES=================
 //Route for handling GET to users/ base route endpoint
-router.get('/', (req, res) => {
-  res.redirect('/login')// Redirect the client to the '/login' endpoint
-  //This ensures that when a user accesses the root endpoint /, they are automatically redirected to the login page.
-})
+router.get('/', (req, res, next) => {
+  res.send('Respond with resource');
+});
 
 // Route to send a GET requestt to the '/findTasks' endpoint
 router.get('/findTasks', checkJwtToken, (req, res) => {
