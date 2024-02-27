@@ -1,5 +1,18 @@
 const jwt = require('jsonwebtoken');// Import the 'jsonwebtoken' library for handling JSON Web Tokens
 
+const authenticationToken =(req,res, next) => {
+    const authHeader = req.headers.authorization;
+    const token =authHeader && authHeader.split('')[1]
+
+    if (!token) {
+        return res.status(401).json({message: 'Token missing in request header'})     
+    }
+    jwt.verify (token, 'secretKey', (err, decoded)=>{
+        return res.status(401).json({message: 'Invalid token or expired token'})
+    })
+    req.decoded = decoded
+    next();
+}
 
 //Middleware function to check and verify a JWT token from the 'token' header
 const checkJwtToken = (req, res, next) => {
@@ -64,11 +77,11 @@ const limitTaskLength = (req, res, next) => {
 
 //Middleware to enforce the content-type header to be application/json
 const enforceContentType = (req, res, next) => {
-    const contentType = req.headers['Content-Type'];// Get the value of 'Content-Type' header
+const contentType = req.headers['content-type']; // Get the value of 'Content-Type' header   
 
-    // Conditional rendering to check if 'Content-Type' header is missing or not 'application/json'
-    if (!contentType || !contentType.includes('application/json')) {
-        // If 'Content-Type' is missing or not 'application/json', send a 415 Unsupported Media Type response
+// Conditional rendering to check if 'Content-Type' header is missing or not 'application/json'
+  if (!contentType || contentType !== 'application/json') {
+      // If 'Content-Type' is missing or not 'application/json', send a 415 Unsupported Media Type response
         return res.status(415).send('Unsupported Media Type: Content-Type must be application/json');
     }
 
@@ -77,6 +90,7 @@ const enforceContentType = (req, res, next) => {
 
 // Export the middleware functions for use in other parts of the application
 module.exports = {
+    authenticationToken,
     checkJwtToken,
     validateUsername,
     limitTaskLength,
