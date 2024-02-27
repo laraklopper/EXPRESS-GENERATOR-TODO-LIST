@@ -233,13 +233,22 @@ const addUser = async (e) => {//Define an async function to add a new User
   const appLogin = () => {
     setLoggedOut(false)
   }
+  // //Function to toggle between login and registration page
+  // const togglePage = () => {
+  //   setIsRegistration(!isRegistration)
+  //   setNewUserData({ username: '', password: '' })
+  //   setUserData({ username: '', password: '' })
+  // }
+
   //Function to toggle between login and registration page
   const togglePage = () => {
-    setIsRegistration(!isRegistration)
-    setNewUserData({ username: '', password: '' })
-    setUserData({ username: '', password: '' })
-  }
-
+    setIsRegistration(!isRegistration);
+    if (isRegistration) {
+      setNewUserData({ newUsername: '', newPassword: '' });
+    } else {
+      setUserData({ username: '', password: '' });
+    }
+  };
   //Function to trigger logoutbtn
   const logout = () => {
     localStorage.removeItem('token');
