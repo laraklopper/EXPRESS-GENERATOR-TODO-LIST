@@ -77,13 +77,17 @@ export default function App() {//Export default App function component
       }
     }
 
-    fetchTasks();//Invoke callback function
-  }, [token]);
+    if(loggedIn = true && token){
+      fetchTasks();//Invoke callback function
+    }
+    
+  }, [token, loggedIn]);
 
   //----------------POST REQUEST--------------------------
 
   //Function to submit login
   const submitLogin = async () => {
+    console.log("user logged in");
     e.preventDefault();
     try {
         const response = await fetch('http://localhost:3001/users/login', {
@@ -121,32 +125,31 @@ export default function App() {//Export default App function component
 
   //Function to add a newUser
   const addUser = async () => {//Define an async funciton to add a newUser
+    console.log('register new user');
     e.preventDefault();
+    const formData = new FormData(e.target)
+    const newUserData = {newUsername : formData.get("username"), newPassword: formData.get("password")}
     try {
-      const token = localStorage.getItem('token'); //Retrieve the JWT token from localStorage
-      const token = '';// Set an initial empty token
       //Send a POST request to the server
       const response = await fetch('http://localhost:3001/users/register', {
         method: 'POST',
         mode: 'cors',
         headers: {
           'Content-type': 'application/json',
-          'Authorization': token ? `Bearer ${token}` : '',
         },
-          body: JSON.stringify({ // Request body containing new user's username and password
-                newUsername: newUserData.newUsername, // New username entered by the user
-                newPassword: newUserData.newPassword, // New password entered by the user
-            }),
+        body: JSON.stringify(newUserData);
       });
-      // Conditional rendering to check if the server response is in the successful range (200-299)
+  
       if (response.ok) {
         const data = await response.json();
-
         if (data.token) {
           console.log('New user successfully added');
           const users = JSON.parse(localStorage.getItem('users')) || [];
-          // Create a new user object with username, password, and unique userId
-          const newUser = { username: newUserData.newUsername, password: newUserData.newPassword, userId: users.length + 1 };
+           const newUser = {
+                    username: newUserData.newUsername,
+                    password: newUserData.newPassword,
+                    userId: users.length + 1
+                };
           users.push(newUser)// Push the new user object to the existing users array
                 
           localStorage.setItem('users', JSON.stringify(users));// Store updated users array in local storage
