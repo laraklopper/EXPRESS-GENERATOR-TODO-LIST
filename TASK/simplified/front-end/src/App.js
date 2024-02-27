@@ -75,50 +75,68 @@ export default function App() {//Export default App function component
   //=============REQUESTS=================
   //------------POST REQUESTS--------------------
 
-  //Function to submitLogin
-  const submitLogin = async (e) => { // Define an async function to submitLogin 
-  e.preventDefault(); // Prevent the default form submission behavior
-
-  try {
-    // Send a POST request to the login endpoint
-    const response = await fetch('http://localhost:3001/users/login', {
-      method: 'POST',//Request method
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json', // Specify the content type as JSON
-      },
-      body: JSON.stringify({ // Convert the user data to a JSON string
-        username: userData.username, // Get the username from the userData state
-        password: userData.password, // Get the password from the userData state
-      }),
-    });
-
-    //Conditional rendering to check if the response is successful (status code 200-299)
-    if (response.ok) { 
-      const data = await response.json(); // Parse the response body as JSON
-      //Conditional rendering to check if a token is present in the response data
-      if (data.token) { 
-        // Store the username and token in the local storage
-        localStorage.setItem('username', userData.username);
-        localStorage.setItem('token', data.token);
-        // Update state variables to indicate successful login
-        setLoggedIn(true);
-        setLoggedOut(false);
-        setError(''); // Clear any previous error messages
-      } 
-      else {
-        throw new Error('Invalid server response');// Throw an error if the server response does not contain a token
-      }
-    } else {
-      
-      throw new Error('Username or password are incorrect');// Throw an error if the server response indicates incorrect username or password
+    //Function to submitLogin
+  const submitLogin = async (e) => {//Define an async function to submitLogin 
+    console.log("user logged in");
+    e.preventDefault();
+    const loginData = new FormData(e.target)// Create a FormData object from the submitted form
+    const userData = {// Extract username and password from the form data
+      username : loginData.get("username"), 
+      password: loginData.get('password') 
     }
-  } catch (error) {
-    // Catch any errors that occur during the login process
-    setError(`Login Failed ${error.message}`); // Set error message in state
-    console.log(`Login Failed ${error.message}`); // Log the error message to the console for debugging purposes
+    
+    try {  
+      // Send a POST request to the login endpoint
+      const response =await fetch ('http://localhost:3001/users/login', {
+        method: 'POST',//Request method
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',// Set the content type header to JSON
+        },
+        body: JSON.stringify(userData),// Convert user data to JSON and send it in the request body
+      });
+
+      console.log(userData);
+      
+      // Conditional rendering to check if the response indicates failure (status code not in range 200-299)
+      if (!response.ok) {
+        throw new Error('Username or password are incorrect');// If response indicates failure, throw an error
+      }
+
+      const data = await response.json()// Parse the response body as JSON
+
+      //Conditional rendering to check if the response contains a token
+      if (!data.token) {
+        throw new Error('Internal server Error');// Throw an error indicating internal server error if no token exists
+      }
+
+          localStorage.setItem('username', userData.username);// Store username in local storage
+          localStorage.setItem('token', data.token);//store the token in local storage
+          setLoggedIn(true);//update the state to indicate that the user in logged in
+          setLoggedOut(false); // Update state to indicate user is not logged out
+          setError('');// Clear any previous error message
+      // if (response.ok) {
+      //   const data = await response.json()
+      //   if (data.token) {
+         
+      //     localStorage.setItem('username', userData.username);
+      //     localStorage.setItem('token', data.token)
+      //     setLoggedIn(true);
+      //     setLoggedOut(false);
+      //     setError('');
+      //   } else {
+      //     throw new Error('Internal server error')
+      //   }  
+      // } 
+      // else {
+      //   throw new Error('Username or password are incorrect');
+      // }
+    } 
+    catch (error) {
+      setError(`Login Failed ${error.message}`); // Set error message to be displayed to the user
+      console.log(`Login Failed ${error.message}`); // Log the error message to the console for debugging purposes
+    }
   }
-};
 
   //Function to add a new user
 const addUser = async (e) => {//Define an async function to add a new User
