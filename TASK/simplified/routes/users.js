@@ -96,39 +96,79 @@ router.get('/findTasks', /*checkJwtToken,*/ (req, res) => {
 
 //Route to send a POST request to the users/login endpoint
 router.post("/login", (req, res) => {
-  const { username, password } = req.body; // Extract username and password from the request body
+  console.log('Login User');
+  console.log(req.body);
+  try {
+    const { username, password } = req.body;//Extract the username and password from the request body
 
-  let foundUser = null; // Initialise a variable to store the found user
-  // let foundUser = users.find(user => user.username === username && user.password === password);
+    let foundUser = null; //Initialise a variable to store the found user
+    console.log('user login');
 
-  // Iterate through the users array to find a user with matching credentials
-  for (let i = 0; i < users.length; i++) {// Loop through the users array to find matching username and password
-    if (users[i].username === username && users[i].password === password) {
-      foundUser = users[i]; // Set foundUser to the matching user object
-      break; // Exit the loop once a matching user is found
+    // Loop through the users array to find matching username and password
+    for (let i = 0; i < users.length; i++) {
+      if (users[i].username === username && users[i].password === password) {
+        foundUser = users[i]; // If match found, assign user object to foundUser
+        break; // Exit the loop once a matching user is found
+      }
     }
-  }
-//If a user is found, create and return a JWT token
-  if (foundUser) {
-    // If a matching user is found, generate a JWT token
-    const jwtToken = jwt.sign({//Parameters:
-     /*The payload: an object containing the data to be included in the token, the username and userId of the found user.*/      
-      username: foundUser.username,// Include the username in the JWT payload
-      userId: foundUser.id//Include the userId in the JWT payload
-    },
-    'secretKey',//The secret key  (string used to sign the token)
-    {
-      expiresIn: '12h',// Token expiration time
-      algorithm: 'HS256'//Algorithm used to sign the token
-      //Options: optional object specifying additional settings for the token: This includes the expiration time for the token
-    });
-    res.json({ token: jwtToken }); // Send the token in the response
-  } else {
-    // If no matching user is found, send an error response
+      //If a user is found, create and return a JWT token
+    if (foundUser) {
+      // Create JWT token containing username and userId
+      const jwtToken = jwt.sign({
+        username: foundUser.username,
+        userId: foundUser.id
+      },
+        'secretKey',// Secret key used for signing the token
+        {
+          expiresIn: '12h',// Token expiration time
+          algorithm: 'HS256'//algorithm used to sign the JWT token
+          
+        });
+      res.json({ token: jwtToken });
+      localStorage.setItem({'token': jwtToken})
+    
+    }
+
+  } catch (error) {
     console.error('Login failed: Username or password are incorrect');//Log an error message in the console for debugging purposes
-    res.status(401).json({ message: "User not Authenticated" });// Send a 401 Unauthorized response with an error message.
+    res.status(401).json({ message: "User not Authenticated" });//Respond with a 401 unauthorised response
   }
-});
+  // const { username, password } = req.body;//Extract the username and password from the request body
+  // let foundUser = null; //Initialise a variable to store the found user
+  // console.log('user login');
+
+
+  // // Loop through the users array to find matching username and password
+  // for (let i = 0; i < users.length; i++) {
+  //   if (users[i].username === username && users[i].password === password) {
+  //     foundUser = users[i]; // If match found, assign user object to foundUser
+  //     break; // Exit the loop once a matching user is found
+  //   }
+  // }
+
+  // //If a user is found, create and return a JWT token
+  //   if (foundUser) {
+  //     // Create JWT token containing username and userId
+  //     const jwtToken = jwt.sign({
+  //       username: foundUser.username,
+  //       userId: foundUser.id
+  //     },
+  //       'secretKey',// Secret key used for signing the token
+  //       {
+  //         expiresIn: '12h',// Token expiration time
+  //         algorithm: 'HS256'//algorithm used to sign the JWT token
+          
+  //       });
+  //     res.json({ token: jwtToken });
+  //     // localStorage.setItem({'token': jwtToken})
+  //   }
+  //   else {
+  //     console.error('Login failed: Username or password are incorrect');//Log an error message in the console for debugging purposes
+  //     res.status(401).json({ message: "User not Authenticated" });//Respond with a 401 unauthorised response
+  //   }
+  });
+
+
 
 //Route to send a POST request to the users/register endpoint
 router.post('/register', /*validateUsername,*/ (req, res) => {
