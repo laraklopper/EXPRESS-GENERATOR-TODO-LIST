@@ -192,16 +192,7 @@ router.post('/register', /*validateUsername,*/ (req, res) => {
        // Create a new user object with the provided username, password, and generated ID
       const newUser = { id: newUserId, username: newUsername, password: newPassword };
 
-      // Generate a JWT token for the new user
-      // const token = jwt.sign(
-      //   { username: newUser.username },
-      //   'secretKey',//Secret Key
-      //   { expiresIn: '12h' });//Token expiration time
-
       users.push(newUser); // Add the new user to the users array
-
-      // res.status(200).json({ token });// Send a 200 OK response with the JWT token
-
       console.log(users);//Log the updated code in the console for debugging purposes
     }
   } catch (error) {
