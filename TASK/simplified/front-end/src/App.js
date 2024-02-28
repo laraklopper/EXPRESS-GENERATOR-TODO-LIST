@@ -67,9 +67,12 @@ export default function App() {//Export default App function component
         setError(`Error fetching data: ${error.message}`);// Set error state if an error occurs 
       }
     }
-    // Invoke the fetchTasks function when the component mounts
+    if(loggedIn){
+        // Invoke the fetchTasks function when the component mounts
     fetchTasks()
-  },[]);
+    }
+  
+  },[loggedIn]);
 
 
   //=============REQUESTS=================
