@@ -1,27 +1,38 @@
 const jwt = require('jsonwebtoken');// Import the 'jsonwebtoken' library for handling JSON Web Tokens
 
+const authenticationToken =(req,res, next) => {
+    const authHeader = req.headers.authorization;
+    const token =authHeader && authHeader.split('')[1]
+
+    if (!token) {
+        return res.status(401).json({message: 'Token missing in request header'})     
+    }
+    jwt.verify (token, 'secretKey', (err, decoded)=>{
+        return res.status(401).json({message: 'Invalid token or expired token'})
+    })
+    req.decoded = decoded
+    next();
+}
+
 // Middleware function to check and verify a JWT token from the 'token' header
 const checkJwtToken = (req, res, next) => {
-
     if (req.headers.token) {
         let token = req.headers.token;
         jwt.verify(token, "secretKey", function (error, user) {
             if (error) {
-                
-               
-                res.send({ message: 'Invalid Token' });
-                next();
-
+                console.error('Invalid Token', error.message);
+               return res.status(401).json({ message: 'Invalid Token' })
             } 
             else {
-                req.username = data.username;
-                req.password = data.password;
-                next();
+                const { username, userId } = decoded;
+                req.username = username;
+                req.userId = userId;
+                next()
             }
         })
     } else {
-        res.send({ message: 'No Token Attatched to the Response' })
-    }
+        console.error('No token attatched to the request');
+        return res.status(401).json({ message: 'No Token Attached to the Request' });    }
 };
 
 
@@ -95,6 +106,7 @@ const limitUpdatedTaskLength = (req, res, next) => {
 
 // Export the middleware functions for use in other parts of the application
 module.exports = {
+    authenticationToken,
     checkJwtToken,
     // authenticateUser,
     validateUsername,
