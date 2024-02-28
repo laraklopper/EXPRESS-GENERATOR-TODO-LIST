@@ -17,12 +17,12 @@ let users = [
   {
     id: '0',
     username: 'admin@gmail.com',
-    password: 'passWord1',
+    password: 'password1',
   },
   { 
     id: 1,
     username: 'user1@gmail.com',
-    password: 'passWord2',
+    password: 'password2',
   },
 ];
 //JSON FORMAT
