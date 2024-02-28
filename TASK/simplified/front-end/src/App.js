@@ -65,13 +65,13 @@ export default function App() {//Export default App function component
       } 
       catch (error) {
         setError(`Error fetching data: ${error.message}`);// Set error state if an error occurs 
+         console.error(`Error fetching Data: ${error.message}`); 
       }
     }
     if(loggedIn){
         // Invoke the fetchTasks function when the component mounts
     fetchTasks()
     }
-  
   },[loggedIn]);
 
 
@@ -146,26 +146,16 @@ const addUser = async (e) => {//Define an async function to add a new User
   e.preventDefault(); // Prevent the default form submission behavior
   const formData = new FormData(e.target)
     const newUserData = {newUsername : formData.get("username"), newPassword: formData.get("password")}
-  try {
-    // const token = localStorage.getItem('token'); // Retrieve the token from local storage
-    // //Conditional rendering to check if the token is available
-    // if (!token) {
-    //   throw new Error('No token available'); // Throw an error if no token is available
-    // }
-    
+  try {    
     // Send a POST request to the register endpoint
     const response = await fetch('http://localhost:3001/users/register', {
       method: 'POST',//Request method
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',// Specify the content type as JSON
-        // 'Authorization': `Bearer ${token}`, // Include the token in the authorization header
+       
       },
       body: JSON.stringify(newUserData),
-      // body: JSON.stringify({ // Convert the new user data to a JSON string
-      //   newUsername: newUserData.newUsername, // Get the new username from the newUserData state
-      //   newPassword: newUserData.newPassword, // Get the new password from the newUserData state
-      // }),
     });
 
         //Conditional rendering to check if the response is successful (status code 200-299)
@@ -223,6 +213,7 @@ const addUser = async (e) => {//Define an async function to add a new User
     }
   } catch (error) {
     setError(`Error adding task: ${error.message}`); // Set error message in state
+    console.error(`Error adding tasks: ${error.message}`);
   }
 };
 
@@ -236,12 +227,6 @@ const addUser = async (e) => {//Define an async function to add a new User
   const appLogin = () => {
     setLoggedOut(false)
   }
-  // //Function to toggle between login and registration page
-  // const togglePage = () => {
-  //   setIsRegistration(!isRegistration)
-  //   setNewUserData({ username: '', password: '' })
-  //   setUserData({ username: '', password: '' })
-  // }
 
   //Function to toggle between login and registration page
   const togglePage = () => {
