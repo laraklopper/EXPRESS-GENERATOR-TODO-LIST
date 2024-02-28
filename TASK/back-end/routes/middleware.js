@@ -25,19 +25,19 @@ const checkJwtToken = (req, res, next) => {
 };
 
 
-// Middleware function for user authentication
-const authenticateUser = (req, res, next) => {
-    try {
-        const token = req.headers.authorization.split(' ')[1];
-        req.body.username = jwt.verify(token, "secretKey");
+// // Middleware function for user authentication
+// const authenticateUser = (req, res, next) => {
+//     try {
+//         const token = req.headers.authorization.split(' ')[1];
+//         req.body.username = jwt.verify(token, "secretKey");
 
-        // req.body.username = jwt.verify(token, tokenSecret);
-        next();        
-    } 
-    catch (error) {
-        res.status(401).json({ message: 'Authentication failed' });
-    }
-}
+//         // req.body.username = jwt.verify(token, tokenSecret);
+//         next();        
+//     } 
+//     catch (error) {
+//         res.status(401).json({ message: 'Authentication failed' });
+//     }
+// }
 
 // Middleware function to validate the format of a username 
 const validateUsername = (req, res, next) => {
@@ -96,7 +96,7 @@ const limitUpdatedTaskLength = (req, res, next) => {
 // Export the middleware functions for use in other parts of the application
 module.exports = {
     checkJwtToken,
-    authenticateUser,
+    // authenticateUser,
     validateUsername,
     limitTaskLength,
     enforceContentType,
