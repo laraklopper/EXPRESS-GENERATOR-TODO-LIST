@@ -3,10 +3,6 @@ let router = express.Router();
 const jwt = require('jsonwebtoken');
 const { checkJWTToken, changePasswordVerification } = require('./middleware');
 
-/* GET users listing. */
-router.get('/', checkJWTToken, function(req, res, next) {
-  res.send(JSON.stringify(todos));
-});
 
 let userInformation = {
   username: "admin@test.co.za",
@@ -28,6 +24,10 @@ let todos = [
   },
 ];
 
+/* GET users listing. */
+router.get('/', checkJWTToken, function(req, res, next) {
+  res.send(JSON.stringify(todos));
+});
 
 
 router.post("/login", function(req,res){
