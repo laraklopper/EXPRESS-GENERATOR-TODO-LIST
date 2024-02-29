@@ -3,6 +3,36 @@ let router = express.Router();
 const jwt = require('jsonwebtoken');
 const { checkJWTToken, changePasswordVerification } = require('./middleware');
 
+//===============DATA==================
+//-----------USER DATA-------------
+//In-memory array used to store user-data
+// let users = [
+//   {
+//     id: '0',
+//     username: 'admin@gmail.com',
+//     password: 'passWord1',
+//   },
+//   {
+//     id: 1,
+//     username: 'user1@gmail.com',
+//     password: 'passWord2',
+//   },
+// ];
+
+//----------TASK DATA--------------------
+//In-memory array used to store task-data
+// let tasks = [
+//   {
+//     id: 0,
+//     user: "admin@gmail.com",
+//     title: "Implement a Post route for logging in",
+//   },
+//   {
+//     id: 1,
+//     user: "user1@gmail.com",
+//     title: "Implement custom middleware to authenticate user",
+//   },
+// ];
 /* GET users listing. */
 router.get('/', checkJWTToken, function(req, res, next) {
   res.send(JSON.stringify(todos));
