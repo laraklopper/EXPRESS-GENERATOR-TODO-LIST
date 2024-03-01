@@ -212,7 +212,10 @@ const addUser = async (e) => {//Define an async function to add a new User
   /*Function to set the loggedOut status to false 
   stating that the user is logged in*/
   const appLogin = () => {
+    let token = localStorage.getItem('token', jwtToken);
+    if(token){
     setLoggedOut(false)
+    }
   }
 
   //Function to toggle between login and registration page
