@@ -76,9 +76,35 @@ router.get('/findTasks', checkJwtToken, (req, res) => {
 
 
 //Route for handling users/login endpoint
-router.post("/login", authenticateUser, (req, res) => {//Route for the HTTP request
+router.post("/login", /*authenticateUser*/, (req, res) => {//Route for the HTTP request
   //authenticateUser is a middleware function used for authenticating user credentials during login.
-  const { username, password } = req.body;//Extract the username and password from the request body
+  console.log(req.body);
+  console.log('user is logged in');
+  try{
+     const { username, password } = req.body;//Extract the username and password from the request body
+    const user = users.find(user => user.username === username && user.password === password);
+   // Find user in the 'users' array matching the provided username and password
+  const user = users.find(user => user.username === username && user.password === password);
+  //Conditional rendering to check if the user is found
+  if (user) {
+    // Generate a JWT token with user information
+    const jwtToken = jwt.sign(
+      {
+        username: user.username, userId: user.userId 
+      },
+      'secretKey',    // Secret key used to sign the token
+      {
+        expiresIn: '12h',     // Token expiration time set to 12 hours    
+        algorithm: 'HS256'    // Algorithm used to sign the token
+      }
+    );
+    
+    res.json({ token: jwtToken});//The generated token is sent back as a JSON response
+  }
+  catch(error){
+    
+  }
+  // const { username, password } = req.body;//Extract the username and password from the request body
   
  // Find user in the 'users' array matching the provided username and password
   const user = users.find(user => user.username === username && user.password === password);
