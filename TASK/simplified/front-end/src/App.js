@@ -18,12 +18,14 @@ import LogoutBtn from './components/LogoutBtn'; // Import the LogoutBtn componen
 export default function App() {//Export default App function component
   //========STATE VARIABLES============
   //Task variables
-  const [tasks, setTasks] = useState([]);//State used to store tasks
-  const [newTask, setNewTask] = useState({ 
-    user: '', 
-    title: '' 
-  });
+  // const [tasks, setTasks] = useState([]);//State used to store tasks
+  // const [newTask, setNewTask] = useState({ 
+  //   user: '', 
+  //   title: '' 
+  // });
   //User variables
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [userData, setUserData] = useState({ // State variable to store user login credentials
     username: '', 
     password: '' });
@@ -44,6 +46,7 @@ export default function App() {//Export default App function component
     const fetchTasks = async () => {//Define an async function to fetch tasks
       try {
         const token = localStorage.getItem('token')// Retrieve token from localStorage
+        if(loggedIn && token){
         //Send a GET request to the /findTasks endpoint
         const response = await fetch ('http://localhost:3001/users/findTasks',{
           method: 'GET',//Request method
@@ -62,16 +65,15 @@ export default function App() {//Export default App function component
         else {
           throw new Error('Failed to fetch tasks');//Throw an error message if the GET request is unsuccessful
         }
-      } 
+      } }
       catch (error) {
         setError(`Error fetching data: ${error.message}`);// Set error state if an error occurs 
          console.error(`Error fetching Data: ${error.message}`); 
       }
     }
-    if(loggedIn){
-        // Invoke the fetchTasks function when the component mounts
+    // Invoke the fetchTasks function when the component mounts
     fetchTasks()
-    }
+    
   },[loggedIn]);
 
 
@@ -87,7 +89,7 @@ export default function App() {//Export default App function component
       username : loginData.get("username"), 
       password: loginData.get('password') 
     }
-    
+    // const userData = { username, password };
     try {  
       // Send a POST request to the login endpoint
       const response =await fetch ('http://localhost:3001/users/login', {
@@ -100,39 +102,24 @@ export default function App() {//Export default App function component
       });
 
       console.log(userData);
-      
       // Conditional rendering to check if the response indicates failure (status code not in range 200-299)
-      if (!response.ok) {
-        throw new Error('Username or password are incorrect');// If response indicates failure, throw an error
+      if(response.ok){
+        const data = await response.json();
+        localStorage.setItem("token", data.jwtToken);
+        console.log(data.jwtToken);
+        setLoggedIn(true);
+        setLoggedOut(false);
+        //     setError('');// Clear any previous error message
+      }else{
+        throw new Error('Username or password are incorrect')
       }
-
-      const data = await response.json()// Parse the response body as JSON
+      // if (!response.ok) {
+      //   throw new Error('Username or password are incorrect');// If response indicates failure, throw an error
+      // }
 
       //Conditional rendering to check if the response contains a token
-      if (!data.token) {
-        throw new Error('Internal server Error');// Throw an error indicating internal server error if no token exists
-      }
-
-          localStorage.setItem('username', userData.username);// Store username in local storage
-          localStorage.setItem('token', data.token);//store the token in local storage
-          setLoggedIn(true);//update the state to indicate that the user in logged in
-          setLoggedOut(false); // Update state to indicate user is not logged out
-          setError('');// Clear any previous error message
-      // if (response.ok) {
-      //   const data = await response.json()
-      //   if (data.token) {
-         
-      //     localStorage.setItem('username', userData.username);
-      //     localStorage.setItem('token', data.token)
-      //     setLoggedIn(true);
-      //     setLoggedOut(false);
-      //     setError('');
-      //   } else {
-      //     throw new Error('Internal server error')
-      //   }  
-      // } 
-      // else {
-      //   throw new Error('Username or password are incorrect');
+      // if (!data.token) {
+      //   throw new Error('Internal server Error');// Throw an error indicating internal server error if no token exists
       // }
     } 
     catch (error) {
