@@ -43,7 +43,10 @@ let tasks = [
   },
 ];
 
-
+function generateUniqueId() {
+  const id = Math.floor(Math.random()*1000)
+  return id
+}
 //===========ROUTES=================
 //Route for handling GET to users/ base route endpoint
 router.get('/', (req, res, next) => {
@@ -142,7 +145,7 @@ router.post('/register',validateUsername, (req, res) => {//Route for the HTTP re
       return res.status(400).json({ message: 'Username and password are required' });
     }
           // Conditional rendering to check if 'newUsername' already exists in the 'users' array
-    else if (users.find((user) => user.username === newUsername)) {
+    else if (users.find((user) => user.username === newUsername)/*users.some((user) => user.username === newUsername)*/) {
       return res.status(409).json({ message: 'Username is already taken' });//Send a 409(Conflict) response with an error message
     }
     // Create a new user object with 'newUsername', 'newPassword', and a unique 'userId'
@@ -151,7 +154,6 @@ router.post('/register',validateUsername, (req, res) => {//Route for the HTTP re
     users.push(newUser);//Push the new user objectto the 'users' array
       
     console.log(newUser);// Log the newly registered user to the console for debugging
-
     
     const token = jwt.sign(
       { username: newUser.username },  // Payload containing the 'username'
