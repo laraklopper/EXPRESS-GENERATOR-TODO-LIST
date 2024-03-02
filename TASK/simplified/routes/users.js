@@ -182,7 +182,10 @@ router.post('/register', /*validateUsername,*/ (req, res) => {
       return res.status(400).json({ message: 'Username and password are required' });
     }
       //Conditional rendering to check if the username already exist
-    else if (users.find((user) => user.username === newUsername)) {
+    else if (
+      users.find((user) => user.username === newUsername)
+      /*users.some((user) => user.username === newUsername)*/
+    ) {
       return res.status(409).json({ message: 'Username is already taken' });// If username already exists, return a 409 Conflict response
     }
     else {
@@ -197,7 +200,7 @@ router.post('/register', /*validateUsername,*/ (req, res) => {
     }
   } catch (error) {
     // If an error occurs during user registration, log the error and return a 500 Internal Server Error response
-    console.error('Error occurred while adding user:', error);//Loig an error message in the console for deugging purposes
+    console.error('Error occurred while adding user:', error);//Log an error message in the console for deugging purposes
     return res.status(500).json({ message: 'Internal Server Error' });//Return a 500 Internal Server Error response 
   }
 });
