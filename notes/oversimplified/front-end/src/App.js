@@ -1,119 +1,96 @@
-import React, { useEffect, useState } from 'react'
-import Header from './components/Header'
+import React, { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-// import Button from 'react-bootstrap/Button';
-import Registration from './components/Registration';
 import Login from './components/Login';
+import Registration from './components/Registration';
 import ToggleBtn from './components/ToggleBtn';
-import AddTask from './components/AddTask';
 import LogoutBtn from './components/LogoutBtn';
+import AddTask from './components/AddTask';
 
-
-//App function component
-export default function App() {
-  //========STATE VARIABLES============
-  //Task variables
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState({
-    user: '',
-    title: ''
-  });
-  //User variables
-  const [userData, setUserData] = useState({
-    username: '',
-    password: ''
-  });
-  const [newUserData, setNewUserData] = useState({ 
-    newUsername: '',
-    newPassword: ''
-  });
-  //Event variables
-  const [error, setError] = useState(null);
-  const [loggedIn, setLoggedIn] = useState(false);
+// App function component
+export default function App() {//Export default App function component
+  //========STATE VARIABLES===========
+  const [tasks, setTasks] = useState([]);//State to store task Data
+  const [newTaskUser, setNewTaskUser] = useState('');
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  // State variables for login/logout status
+  const [loggedIn, setLoggedIn] = useState(false);// Tracks whether the user is logged in
   const [loggedOut, setLoggedOut] = useState(true);
-  const [isRegistration, setIsRegistration] = useState(false);
+  const [error, setError] = useState(null);// State variable to store any errors that occur
+  const [isRegistration, setIsRegistration] = useState(false);//State to indicate whether the user is in registration mode
 
-  //==============USE EFFECT HOOK TO FETCH TASK DATA==============
-
-  useEffect (() => {
+  // Use Effect hook to fetch task data
+  useEffect(() => {
+    //Function to fetch Tasks
     const fetchTasks = async () => {
       try {
-        const token = localStorage.getItem('token')
-        const response = await fetch('http://localhost:3001/users/findTasks', {
-          method: 'GET',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+        const token = localStorage.getItem('token');
+        if (loggedIn && token) {
+          const response = await fetch('http://localhost:3001/users/findTasks', {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            }
+          });
+          if (response.ok) {
+            const fetchedData = await response.json();
+            setTasks(fetchedData);
+            console.log(fetchedData);
+          } else {
+            throw new Error('Failed to fetch Tasks');
           }
-        })
-
-        if (response.ok) {
-          const fetchedTasks = await response.json();
-          setTasks(fetchedTasks)
-          console.log(fetchedTasks);
-        } 
-        else {
-          throw new Error ()
-          
         }
       } catch (error) {
-       setError(`Error fetching Data: ${error.message}`)
-        console.error(`Error fetching Data: ${error.message}`); 
+        setError(`Error fetching task data: ${error.message}`);
+        console.error(`Error fetching task data: ${error.message}`);
       }
-    }
+    };
 
-    if (loggedIn) {
-      fetchTasks()
-    }
-  },[loggedIn])
+    fetchTasks();
+  }, [loggedIn]);
+
   //=============REQUESTS=================
   //------------POST REQUESTS--------------------
-  //Function to submitLogin
-  const submitLogin = async (e) => {
+  
+    const submitLogin = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const userData = {username: formData.get('username'), password: formData.get('password')}
+    const userData = { username, password };
     try {
-      const response = await fetch ('http://localhost:3001/users/login', {
+      const response = await fetch('http://localhost:3001/users/login', {
         method: 'POST',
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(userData)
-      })
+      });
 
-      if (!response.ok) {
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("token", data.jwtToken);
+        console.log(data.jwtToken);
+        setLoggedIn(true);
+        setLoggedOut(false);
+      } else {
         throw new Error('Username or password are incorrect');
       }
 
-      const data = await response.json();
-
-      if (!data.token) {
-        throw new Error('Internal server Error');
-      }
-
-      localStorage.setItem('username', userData.username);
-      localStorage.setItem('token', data.token);
-      setLoggedIn(true);
-      setError('');
-    } 
-    catch (error) {
-      setError(`Login Failed ${error.message}`);
-      console.error(`Login Failed ${error.message}`);
-      setLoggedIn(false);
+    } catch (error) {
+      console.error(`Error:, ${error}`);
     }
-  }
+  };
 
-  //Function to add a new user
+  // Function to add new user
   const addUser = async (e) => {
-    e.preventDefault()
-    const formData = new FormData(e.target)
-    const newUserData = { newUsername : formData.get('username'), newPassword: formData.get('password')}
-
+    e.preventDefault();
+    const newUserData = { newUsername, newPassword };
     try {
       const response = await fetch('http://localhost:3001/users/register', {
         method: 'POST',
@@ -121,8 +98,8 @@ export default function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newUserData)
-      })
+        body: JSON.stringify(newUserData),
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -135,126 +112,138 @@ export default function App() {
           throw new Error('Invalid Server Response');
         }
       } else {
-        const errorData = await response.json()
-        throw new Error(errorData.message)
+        const errorData = await response.json();
+        throw new Error(errorData.message);
       }
     } catch (error) {
-      setError(`Error adding new user: ${error.message}`)
-      console.log(`Error adding new user: ${error.message}`);
+      setError(`Error adding new user: ${error.message}`);
     }
-  }
+  };
 
-  //Function to add new Task
+  //Function to addNewTask
   const addTask = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const newTaskData = {user: formData.get('user'), title: formData.get('title')}
-
+    const newTaskData = { user: newTaskUser, title: newTaskTitle };
     try {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error('No token available')
+        throw new Error('No token available');
       }
-      const response = await fetch('http://localhost:3001/users/addTask',{
+      const response = await fetch('http://localhost:3001/users/addTask', {
         method: 'POST',
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
         },
-        body: (newTaskData)
-      })
+        body: JSON.stringify(newTaskData),
+      });
+
       if (response.ok) {
         const newTaskObject = await response.json();
         setTasks(tasks => [...tasks, newTaskObject]);
-        console.log('Task Successfully added');
-      } else {
+        console.log('Task added successfully');
+      }
+      else {
         throw new Error('Failed to add task');
       }
     } catch (error) {
-      setError(`Error adding task: ${error.message}`)
-      console.error(`Error adding tasks: ${error.message}`);
+      setError(`Error adding task: ${error.message}`);
+      console.error(`Error adding task: ${error.message}`);
     }
-  }
+  };
 
-  //=======EVENT LISTENERS===============
 
-  /*Function to set the loggedOut status to false
-stating that the user is logged in*/
+  //===========EVENT LISTENERS==================
+
+  // Login status handler
   const appLogin = () => {
-    setLoggedOut(false)
-  }
-  //Function to toggle between login and registration page
-  const togglePage = () => {
-    setIsRegistration(!isRegistration)
-    if (isRegistration) {
-      setNewUserData({ newUsername: '', newPassword: '' })
-    } else {
-      setUserData({username: '', password: ''})
+    const token = localStorage.getItem('token');
+    if (loggedIn && token) {
+      setLoggedOut(false);
     }
-  }
+  };
 
-  //Function to trigger logout Button
+  // Toggle between registration and login page
+  const togglePage = () => {
+    setIsRegistration(!isRegistration);
+    setNewUsername('');
+    setNewPassword('');
+    setUsername('');
+    setPassword('');
+  };
+
+  // Logout function
   const logout = () => {
-    localStorage.removeItem('token')
-    setLoggedIn(false)
-    setLoggedOut(true)
-    setUserData({username: '', password: ''})
-  }
+    localStorage.removeItem('token');
+    setLoggedIn(false);
+    setLoggedOut(true);
+    setUsername('');
+    setPassword('');
+  };
 
-  //=======JSX RENDERING============
+  //=========JSX RENDERING================
+
   return (
     <>
-    <div id='appBody'>
-      { loggedOut ? (
+      {loggedOut ? (
         <Container className='appContainer'>
-          {isRegistration ? (  
-            <div id='registrationPage'>
-              <Registration
-              addUser={addUser}
-              setNewUserData={setNewUserData}
-              newUserData={newUserData}
-              />
-            </div>
-          ):(
-            <div id='loginPage'>
-              <Login 
-              submitLogin={submitLogin}
-              userData={userData}
-              setUserData={setUserData}
-              appLogin={appLogin}
-              loggedIn={loggedIn}/>
-            </div>
-                      )}
-          <section className='section2'>
-              <ToggleBtn togglePage={togglePage} isRegistration={isRegistration}/>
+          {isRegistration ? (
+            <Registration
+            addUser={addUser}
+            newUsername={newUsername}
+            setNewUsername={setNewUsername}
+            newPassword={newPassword}
+            setNewPassword={setNewPassword}/>
+          ) : (
+            <Login
+            submitLogin={submitLogin}
+            username={username}
+            setUsername={setUsername}
+            password={password}
+            setPassword={setPassword}
+            appLogin={appLogin}
+            />
+          )}
+          <section>
+           <ToggleBtn isRegistration={isRegistration} togglePage={togglePage}/>
           </section>
         </Container>
-      ):(
-        <Container className='appContainer'>
-          <Header heading='TO DO LIST'/>
-          <section className='section1'>
-                <AddTask addTask={addTask} setNewTask={setNewTask} newTask={newTask}/>
-          </section>
-          <section className='section2'>
-            {/* Error message */}
-            { error ? (
+      ) : (
+        <Container>
+          <header>
+            <Row>
+              <Col>
+                <h1 className='h1'>TO DO LIST</h1>
+              </Col>
+            </Row>
+          </header>
+          <AddTask
+          addTask={addTask}
+          newTaskTitle={newTaskTitle}
+          setNewTaskTitle={setNewTaskTitle}
+          newTaskUser={newTaskUser}
+          setNewTaskUser={setNewTaskUser}
+          />
+          <section>
+            <Row>
+              <Col><h3>TASKS</h3></Col>
+            </Row>
+            {error ? (
               <div>{error && <p>{error}</p>}</div>
-            ):(
-              <ul className='taskItems'>
-                {tasks.map((task)=>(
-                  <li className='taskItem'>
-                    <Row className='taskRow'>
-                      <Col className='taskCol'>
-                      <label className='taskLabel'>
-                        <p className='labelText'>USER:</p>
-                        <p className='outputText'>{task.user}</p>
-                      </label>
+            ) : (
+              <ul>
+                {tasks.map((task) => (
+                  <li key={task.id}>
+                    <Row>
+                      <Col>
+                        <label><p>USER:</p>
+                          <p>{task.user}</p>
+                        </label>
                       </Col>
-                      <Col className='taskCol'>
-                         <label className='taskLabel'>
-                          <p className='labelText'>USER:</p>
-                          <p className='outputText'>{task.title}</p>
+                      <Col>
+                        <label><p>TITLE:</p>
+                          <p>{task.title}</p>
                         </label>
                       </Col>
                     </Row>
@@ -263,12 +252,11 @@ stating that the user is logged in*/
               </ul>
             )}
           </section>
-          <section className='section3'>
-                <LogoutBtn logout={logout}/>
+          <section>
+              <LogoutBtn logout={logout}/>
           </section>
         </Container>
       )}
-    </div> 
     </>
-  )
+  );
 }
