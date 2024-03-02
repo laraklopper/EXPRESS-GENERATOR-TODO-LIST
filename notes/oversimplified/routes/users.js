@@ -1,23 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const { checkJwtToken } = require('./middleware');
 
-router.use(cors())
 router.use(express.json())
-
-//===========DATA==================
 //----------USER DATA---------------------
-//In-memory array used to store the data
+// In-memory array used to store the data
 let users = [
   {
-    id: '0',
     username: 'admin@gmail.com',
-    password: 'passWord1',
+    id: '0',
+    password: 'password1',
   },
   {
-    id: 1,
     username: 'user1@gmail.com',
-    password: 'passWord2',
+    id: 1,
+    password: 'password2',
   },
 ];
 
@@ -25,120 +23,113 @@ let users = [
 // In-memory array used to store the data
 let tasks = [
   {
-    id: 0,
     user: "admin@gmail.com",
+    id: 0,
     title: "Implement a Post route for logging in",
   },
   {
-    id: 1,
     user: "user1@gmail.com",
+    id: 1,
     title: "Implement custom middleware to authenticate user",
   },
 ];
-
-//===========FUNCTIONS===================
 
 function generateUniqueId() {
   const id = Math.floor(Math.random()*1000)
   return id
 }
-
-//=========ROUTES============
-
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', (req, res) => {
   res.send('respond with a resource');
 });
 
-// Route to send a GET request to the '/findTasks' endpoint
-router.get('/findTasks', (req, res) => {
-  const taskId = req.query.id;
+router.get('/findTasks', checkJwtToken, (req,res) => {
+  console.log(tasks);
+  const taskId = req.query.taskId;
 
   if (taskId) {
-    const tasks = tasks.find(task => task.id === parseInt({taskId}))
-    return task ? res.json : res.status(404).json({message: 'Task Not Found'});
+    const task = tasks.find(task => task.id === parseInt(taskId)); 
+    return task ? res.json(task) : res.status(404).json({ message: 'Task not found' });
   }
 
-  res.json({tasks})
+  res.json({tasks});
 })
-
-// Route to send a GET request to the '/findTasks' endpoint
 router.post('/login', (req, res) => {
-  console.log('User Login');
+  console.log('login');
   console.log(req.body);
-  try {
 
-    const user = users.find(u => u.username === username && u.password === password);
-    
-    if (!user) {
-      res.json({ login: false });
-      return;
-    }
-    else{
-      const jwtToken = jwt.sign({
-        username: user.username,
-        userId: user.id
-      }, 'secretKey', {
-        expiresIn: '12h',
-        algorithm: 'HS256'
-      });
+  const { username, password } = req.body;
 
-      res.json({ login: true, token: jwtToken });
-    }
-  } catch (error) {
-    console.error('Error occurred during login:', error);
-    res.status(500).json({ message: "Internal Server Error" });
+  // Find user in the users array
+  const foundUser = users.find(user => user.username === username && user.password === password);
+
+  if (foundUser) {
+    // If user found, generate JWT token
+    const jwtToken = jwt.sign(
+      {
+        id: foundUser.id,
+        username: foundUser.username,
+      },
+      'secretKey',
+      { expiresIn: '12h' }
+    );
+
+    res.json({ jwtToken });
+  } else {
+    console.error('Login Failed: User or password are incorrect');
+    res.status(401).json({ message: 'User not authenticated' });
   }
-})
+});
 
-//Route to send a POST request to the users/register endpoint
 router.post('/register', (req, res) => {
-  console.log('Register User');
+  console.log('register');
   console.log(req.body);
   try {
     const {newUsername, newPassword} = req.body;
 
     if (!newUsername || !newPassword) {
-      return res.status(400).json({ message: 'Username and password are required' });
+      return res.status(400).json({message: 'Username and password are required'})
+    } else if (!newUsername && !newPassword) {
+      return res.status(400).json({ message: 'Username and password are required' })
     }
-    else if (users.find((user) => user.username === newUsername)) {
-      return res.status(409).json({ message: 'Username is already taken' });
-    }
+    else if(users.find((user) => user.username === newUsername) /*users.some((user) => user.username === newUsername)*/){
+      return res.status(409).json({message: 'Username is already taken'})
+    } 
     else{
-      const newUserId = generateUniqueId(); 
-      const newUser = { id: newUserId, username: newUsername, password: newPassword };
-      users.push(newUser)
+      const newUserId = generateUniqueId();
       console.log(newUserId);
-      console.log(users)
+      const newUser = { id: newUserId, username: newUsername, password: newPassword };
+      console.log(newUser);
+      users.push(newUser);
     }
-
   } catch (error) {
-    console.error('Error occurred while adding user:', error);
-    return res.status(500).json({ message: 'Internal Server Error' })
+    console.error(`Error occured while adding user ${error.message}`);
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
-})
+});
 
-// Route for sending a POST request to users/addTask endpoint
 router.post('/addTask', (req, res) => {
   console.log('task added');
   console.log(req.body);
   try {
-    const { user, title } = req.body;
+    const {user, title} = req.body;
+
     if (!title || !user) {
       return res.status(400).json({ message: 'User and task name are required' });
     }
-    if (tasks.some((task) => task.title === title && task.user === user)) {
+    else if (tasks.some((task) => task.title === title && task.user === user)) {
       return res.status(409).json({ message: 'Task title already exists' });
     }
+    else{
+      const newTaskObject = { taskId: tasks.length + 1, title };
+      tasks.push(newTaskObject); 
+      res.json(newTaskObject);
+    }
 
-    const newTaskObject = { taskId: tasks.length + 1, title };
-    tasks.push(newTaskObject);
-    res.json(newTaskObject); 
   } catch (error) {
-    console.error('Error occurred adding task:', error);
-    return res.status(500).json({ message: 'Internal Server Error' })
+    console.error('Error adding task', error.message);
+    res.status(500).json({message: 'Internal Server Error'})
+    
   }
-  
-});
-
+})
 module.exports = router;
