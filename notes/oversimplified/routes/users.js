@@ -92,7 +92,9 @@ router.post('/register', (req, res) => {
     } else if (!newUsername && !newPassword) {
       return res.status(400).json({ message: 'Username and password are required' })
     }
-    else if(users.find((user) => user.username === newUsername) /*users.some((user) => user.username === newUsername)*/){
+    else if(users.find((user) => user.username === newUsername) 
+            /*users.some((user) => user.username === newUsername)*/
+           ){
       return res.status(409).json({message: 'Username is already taken'})
     } 
     else{
