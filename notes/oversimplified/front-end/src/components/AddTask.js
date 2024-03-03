@@ -1,7 +1,10 @@
+// Import React and necessary components from Bootstrap
 import React from 'react'
+//Bootstrap
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+//Components
 import FormText from './FormText';
 
 //AddTask function component
