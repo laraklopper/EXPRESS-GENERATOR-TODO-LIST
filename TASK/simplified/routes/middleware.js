@@ -1,19 +1,33 @@
 const jwt = require('jsonwebtoken');// Import the 'jsonwebtoken' library for handling JSON Web Tokens
 
-const authenticationToken =(req,res, next) => {
+// Middleware function to authenticate requests using JWT token
+const authenticationToken = (req, res, next) => {
+    // Extract token from Authorization header
     const authHeader = req.headers.authorization;
-    const token =authHeader && authHeader.split('')[1]
+    const token = authHeader && authHeader.split(' ')[1];
 
+    // Conditional rendering to check if token exists
     if (!token) {
-        return res.status(401).json({message: 'Token missing in request header'})     
+        // Send error response if token is missing
+        return res.status(401).json({ message: 'Token missing in request header' });
     }
-    jwt.verify (token, 'secretKey', (err, decoded)=>{
-        return res.status(401).json({message: 'Invalid token or expired token'})
-    })
-    req.decoded = decoded
-    next();
-}
 
+    // Verify token
+    jwt.verify(token, 'secretKey', (err, decoded) => {
+        if (err) {
+            // Send 401 Unauthorized response with a message
+            return res.status(401).json({ message: 'Invalid token or expired token' });
+        }
+        // Store decoded token data in request object
+        req.decoded = decoded;
+        /*`req.decoded = decoded;` is used to attach the decoded payload of the JWT (JSON Web Token) to the `req` object. When a JWT is successfully verified 
+        using `jwt.verify`, it returns the decoded payload (which typically contains information about the user or some metadata).  By assigning this decoded 
+        payload to `req.decoded`, this information is made available to subsequent middleware functions or route handlers that are executed after this middleware 
+        in the request-response cycle.*/
+        //This allows access to information from the JWT payload throughout the request handling process.
+        next();// Call the next middleware or route handler
+    });
+};
 //Middleware function to check and verify a JWT token from the 'token' header
 const checkJwtToken = (req, res, next) => {
     //Conditional rendering to check if the 'token' header exists
