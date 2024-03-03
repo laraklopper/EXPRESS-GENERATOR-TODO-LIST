@@ -34,16 +34,20 @@ let tasks = [
   },
 ];
 
+//===========Function to generate unique userId=======
+
 function generateUniqueId() {
   const id = Math.floor(Math.random()*1000)
   return id
 }
-/* GET users listing. */
-router.get('/', (req, res) => {
+
+//===========ROUTES=================
+//Route for handling GET to users/ base route endpoint
+router.get('/', /*checkJwtToken,*/(req, res) => {
   res.send('respond with a resource');
 });
 
-router.get('/findTasks', checkJwtToken, (req,res) => {
+router.get('/findTasks', (req,res) => {
   console.log(tasks);
   const taskId = req.query.taskId;
 
