@@ -32,8 +32,9 @@ export default function App() {//Export default App function component
   const [error, setError] = useState(null);
   const [isRegistration, setIsRegistration] = useState(false);
 
-//=================================================
-
+//====================REQUESTS=============================
+  //----------------GET REQUEST------------------------
+  
   //Function to fetch Tasks
   const fetchTasks = async () => {
     try {
@@ -61,11 +62,8 @@ export default function App() {//Export default App function component
     }
   };
 
-
-
-  //=============REQUESTS=================
   //------------POST REQUESTS--------------------
-
+//Function to submitLogin
   const submitLogin = async (e) => {
     e.preventDefault();
     const userData = { username, password };
