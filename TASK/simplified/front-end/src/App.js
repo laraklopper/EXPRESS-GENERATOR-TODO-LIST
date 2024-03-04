@@ -18,14 +18,12 @@ import LogoutBtn from './components/LogoutBtn'; // Import the LogoutBtn componen
 export default function App() {//Export default App function component
   //========STATE VARIABLES============
   //Task variables
-  // const [tasks, setTasks] = useState([]);//State used to store tasks
-  // const [newTask, setNewTask] = useState({ 
-  //   user: '', 
-  //   title: '' 
-  // });
+   const [tasks, setTasks] = useState([]);//State used to store tasks
+  const [newTask, setNewTask] = useState({ 
+    user: '', 
+    title: '' 
+  });
   //User variables
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [userData, setUserData] = useState({ // State variable to store user login credentials
     username: '', 
     password: '' });
