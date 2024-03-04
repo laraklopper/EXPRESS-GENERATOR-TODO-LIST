@@ -170,12 +170,14 @@ const addUser = async (e) => {//Define an async function to add a new User
 };
 
   //Function to add new task
- const addTask = async (newTask) => {//Define an async function to add a new task
+ const addTask = async (e) => {//Define an async function to add a new task
+   e.preventDefault();
+    const newTaskData = { user: newTaskUser, title: newTaskTitle };
   try {
     const token = localStorage.getItem('token'); // Retrieve the authentication token from local storage
-    if (!token) {
-      throw new Error('No token available'); // Throw an error if no token is available
-    }
+    // if (!token) {
+    //   throw new Error('No token available'); // Throw an error if no token is available
+    // }
     
     // Send a POST request to the addTask endpoint
     const response = await fetch('http://localhost:3001/users/addTask', {
