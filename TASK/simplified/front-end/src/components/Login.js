@@ -30,6 +30,7 @@ export default function Login(
                           <p className='labelText'>USERNAME:</p>
                           <input
                               type='text'
+                                value={userData.username}
                               onChange={(e) => setUserData({ ...userData,  
                                 username: e.target.value })}
                               className='loginInput'
@@ -46,6 +47,7 @@ export default function Login(
                           <p className='labelText'>PASSWORD:</p>
                           <input
                               type='password'
+                                value={userData.password}
                               onChange={(e) => setUserData({ ...userData, 
                                 password: e.target.value })}
                               className='loginInput'
