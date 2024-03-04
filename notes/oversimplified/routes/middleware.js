@@ -43,15 +43,27 @@ const checkJwtToken = (req, res, next) => {
 }
 
 //Middleware function to check if the provided username is valid
+// const validateUsername = (req, res, next) => {
+//     const { newUsername } = req.body;
+//     console.log(newUsername);
+
+//     if (!newUsername || !newPassword.endsWith('gmail.com ')) {
+//         return res.status(403).json({ message: 'Access frobidden: Invalid Username' })
+//     }
+//     next();
+// }
 const validateUsername = (req, res, next) => {
     const { newUsername } = req.body;
-    console.log(newUsername);
 
-    if (!newUsername || !newPassword.endsWith('gmail.com ')) {
-        return res.status(403).json({ message: 'Access frobidden: Invalid Username' })
+    if (!newUsername || !newUsername.endsWith('gmail.com')) {
+        return res.status(403).json({ message: 'Access forbidden: Invalid Username' });
     }
+    else if (users.find((user) => user.username === newUsername)) {
+        return res.status(409).json({ message: 'Username is already taken' });
+    }
+    
     next();
-}
+};
 
 
 //Middleware function to limit the length of the task title
