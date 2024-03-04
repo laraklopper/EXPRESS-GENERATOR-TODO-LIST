@@ -27,10 +27,10 @@ export default function AddTask(
                           <input
                               type='text' 
                               placeholder='USER'
-                              value={newTask.user}
+                              value={newTask.newTaskUser}
                               onChange={(e) => 
                                 setNewTask({ ...newTask, 
-                                    user: e.target.value })}
+                                    newTaskUser: e.target.value })}
                               className='taskInput'
                           />
                       </label>
@@ -45,7 +45,7 @@ export default function AddTask(
                               value={newTask.task}
                               onChange={(e) => 
                                 setNewTask({ ...newTask, 
-                                    title: e.target.value })}
+                                    newTaskTitle: e.target.value })}
                           />
                       </label>
                   </Col>
