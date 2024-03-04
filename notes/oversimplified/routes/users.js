@@ -57,21 +57,49 @@ router.get('/', (req, res) => {
   res.send('respond with a resource');
 });
 
-// Route to send a GET request to the '/findTasks' endpoint
-router.get('/findTasks', (req, res) => {
+// Route to send a GET request to the '/tasks' endpoint
+router.get('/tasks', (req, res) => {
   console.log(tasks); // Log the tasks array to the console
-  const taskId = req.query.taskId; // Extract the taskId parameter from the query string
-
-  // Conditional rendering to check if taskId is provided in the query string
-  if (taskId) { 
-    // Find the task in the tasks array that matches the provided taskId
-    const task = tasks.find(task => task.id === parseInt(taskId));
-    // If task is found, respond with the task, otherwise respond with 404 error
-    return task ? res.json(task) : res.status(404).json({ message: 'Task not found' });
+  try {
+    const taskId = req.query.taskId;// Extract the 'taskId' query parameter from the request URL and parses it as an integer
+// Conditional rendering if 'taskId' is a valid number
+    if (!isNaN(taskId)) {
+      // Search for a task with the matching 'taskId' in the 'tasks' array
+      const task = tasks.find(task => task.id === taskId)
+      //Conditional rendering to check if a task is found
+      if (task) {
+        res.json(task)// Send the task as a JSON response id the ta
+      } else {/* If no task is found send a 404 status code with a 
+        JSON response indicating that the task was not found*/
+        // res.status(404).json({message: 'Task not found'})
+         return task ? res.json(task) : res.status(404).json({ message: 'Task not found' })
+      }
+    } else {
+      // If no 'taskId' is provided or not a valid number send all the tasks as a JSON response
+      res.json(task)
+    }
+  } catch (error) {
+    res.status(500).json({message: 'Internal Server Error'})// Send a 500 status code with a JSON response indicating an internal server error
   }
-  
-  res.json(tasks);// If no taskId is provided, respond with the entire tasks array
+  }
 })
+
+
+// // Route to send a GET request to the '/findTasks' endpoint
+// router.get('/findTasks', (req, res) => {
+//   console.log(tasks); // Log the tasks array to the console
+//   const taskId = req.query.taskId; // Extract the taskId parameter from the query string
+
+//   // Conditional rendering to check if taskId is provided in the query string
+//   if (taskId) { 
+//     // Find the task in the tasks array that matches the provided taskId
+//     const task = tasks.find(task => task.id === parseInt(taskId));
+//     // If task is found, respond with the task, otherwise respond with 404 error
+//     return task ? res.json(task) : res.status(404).json({ message: 'Task not found' });
+//   }
+  
+//   res.json(tasks);// If no taskId is provided, respond with the entire tasks array
+// })
 
 
 //Route to send a POST request to the users/login endpoint
@@ -116,47 +144,64 @@ router.post('/login', (req, res) => {
     res.status(401).json({ message: 'User not authenticated' });
   }
 });
-
 //Route to send a POST request to the users/register endpoint
-router.post('/register', (req, res) => {
-  console.log('register'); // Log to console indicating that registration process has started
-  console.log(req.body); // Log the request body, which should contain the new username and password
-  
+router.post('/register', validateUsername, (req, res) => {
+  //   console.log('register'); // Log to console indicating that registration process has started
+//   console.log(req.body); // Log the request body, which should contain the new username and password
   try {
-    const { newUsername, newPassword } = req.body; // Extract new username and password from request body
-
-    // Check if new username or password is missing
-    if (!newUsername || !newPassword) {
-      return res.status(400).json({ message: 'Username and password are required' });
-    } 
-
-    // Check if both username and password are empty strings
-    else if (!newUsername && !newPassword) {
-      return res.status(400).json({ message: 'Username and password are required' });
-    }
-
-    // Check if the new username already exists in the users array
-    else if (users.find((user) => user.username === newUsername)
-            /*users.some((user) => user.username === newUsername)*/) 
-    {
-      return res.status(409).json({ message: 'Username is already taken' });
-    }
-
-    // If all checks pass, proceed with user registration
-    else {
-      const newUserId = generateUniqueId(); // Generate a unique ID for the new user
-      console.log(newUserId);
-      const newUser = { id: newUserId, username: newUsername, password: newPassword }; // Create a new user object
-      console.log(newUser);
-      users.push(newUser); // Add the new user to the users array
-      res.json(newUser); // Respond with the details of the newly registered user
-    }
-  } catch (error) {
-    // Catch any errors that occur during the registration process and respond with 500 Internal Server Error status
-    console.error(`Error occurred while adding user ${error.message}`);
+    const { newUsername, newPassword } = req.body;// Extract new username and password from request body
+    const newUserId = generateUniqueId();    // Generate a unique user ID
+  // Create a new user object with the provided username, password, and generated ID
+    const newUser = { id: newUserId, username: newUsername, password: newPassword };
+    users.push(newUser); // Add the new user to the users array
+    res.json(newUser);// Send a JSON response containing the details of the newly registered user
+  } 
+  catch (error) 
+  {
+    console.error(`Error occurred while adding user: ${error.message}`);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
+// router.post('/register', (req, res) => {
+//   console.log('register'); // Log to console indicating that registration process has started
+//   console.log(req.body); // Log the request body, which should contain the new username and password
+  
+//   try {
+//     const { newUsername, newPassword } = req.body; // Extract new username and password from request body
+
+//     // Conditional rendering if new username or password is missing
+//     if (!newUsername || !newPassword) {
+//       return res.status(400).json({ message: 'Username and password are required' });
+//     } 
+
+//     // Conditional rendering to check if both username and password are empty strings
+//     else if (!newUsername && !newPassword) {
+//       return res.status(400).json({ message: 'Username and password are required' });
+//     }
+
+//     // Conditional rendering if the new username already exists in the users array
+//     else if (users.find((user) => user.username === newUsername)
+//             /*users.some((user) => user.username === newUsername)*/) 
+//     {
+//       return res.status(409).json({ message: 'Username is already taken' });
+//     }
+
+//     // If all checks pass, proceed with user registration
+//     else {
+//       const newUserId = generateUniqueId(); // Generate a unique ID for the new user
+//       console.log(newUserId);
+//       const newUser = { id: newUserId, username: newUsername, password: newPassword }; // Create a new user object
+//       console.log(newUser);
+//       users.push(newUser); // Add the new user to the users array
+//       res.json(newUser); // Respond with the details of the newly registered user
+//     }
+//   } catch (error) {
+//     // Catch any errors that occur during the registration process and respond with 500 Internal Server Error status
+//     console.error(`Error occurred while adding user ${error.message}`);//Log an error message in the console for debugging purposes
+//     return res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// });
 
 
 // Route for sending a POST request to users/addTask endpoint
