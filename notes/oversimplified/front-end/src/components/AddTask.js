@@ -22,7 +22,7 @@ export default function AddTask(
     return (
         <section className='section1'>
             <Row>
-                <Col>ADD TASK:</Col>
+                <Col><h3 className="h3">ADD TASK:</h3></Col>
             </Row>
             <FormText details="ENTER TASK DETAILS" />
             <form onSubmit={addTask}>
