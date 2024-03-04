@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');// Import the 'jsonwebtoken' library for han
 
 // Middleware function to authenticate requests using JWT token
 const authenticationToken = (req, res, next) => {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization;// Express headers are auto converted to lowercase
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
