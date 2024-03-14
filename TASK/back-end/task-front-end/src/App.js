@@ -247,14 +247,13 @@ export default function App() {//Export default App function component
   // Function to delete a task
   const deleteTask = async (taskId) => {//Definc an async function to delete a task
     try {
-      // const token = '';
       const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:3001/users/deleteTask/${taskId}`, {
         method: 'DELETE',
         mode: 'cors',
         headers: {
           'Content-type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'Authorization': token,
         },
       });
 
