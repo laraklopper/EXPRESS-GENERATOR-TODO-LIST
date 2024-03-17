@@ -19,31 +19,34 @@ import UpdateForm from './components/UpdateForm'
 export default function App() {//Export default App function component
   //========STATE VARIABLES==============
   //Task variables
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState({
+  const [tasks, setTasks] = useState([]);// State variable to store tasks
+  const [newTask, setNewTask] = useState({// State variable to store new task data
     user: '',   
     title: ''   
   });
   //User variables
-  const [userData, setUserData] = useState({  
+  const [userData, setUserData] = useState({   // State variable to store user data
     username: '',  
     password: ''  
   });
-  const [newUserData, setNewUserData] = useState({
+  // Variables to edit task details
+  const [newUserData, setNewUserData] = useState({ // State variable to store new user data for registration
     newUsername: '',  
     newPassword: ''   
   });
   //Variables to edit task details
-  const [newUser, setNewUser] = useState('');
-  const [newTitle, setNewTitle] = useState('');
-  const [update, setUpdate] = useState(false)
-  const [taskToUpdate, setTaskToUpdate] = useState(null)
+  const [newUser, setNewUser] = useState(''); // State variable to store new user data for task update
+  const [newTitle, setNewTitle] = useState(''); // State variable to store new task title for task update
+  const [update, setUpdate] = useState(false); // State variable to control task update mode
+  const [taskToUpdate, setTaskToUpdate] = useState(null); // State variable to store task to be updated
+  const [taskAdded, setTaskAdded] = useState(false);// State variable to track task addition
+  const [taskRemoved, setTaskRemoved] = useState(false):// State variable to track task removal
   //Event variables
-  const [error, setError] = useState(null);
-  const [isRegistration, setIsRegistration] = useState(false);
+  const [error, setError] = useState(null);// State variable to store error messages
+  const [isRegistration, setIsRegistration] = useState(false);// State variable to control registration mode
   //State variables to manage user Login
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [loggedOut, setLoggedOut] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);// State variable to track user login status
+  const [loggedOut, setLoggedOut] = useState(true);// State variable to track user logout status
 
   //==========USE EFFECT HOOK TO FETCH TASKDATA==================
   //Fetch tasks from the server when the component mounts
@@ -76,7 +79,7 @@ export default function App() {//Export default App function component
           console.log(fetchedData);
         } 
         else {
-          throw new Error('Tasks data is missing in the response');
+          throw new Error('Task data is missing in the response');
         }
         
       } 
@@ -85,12 +88,21 @@ export default function App() {//Export default App function component
         console.error(`Error fetching tasks: ${error.message}`); 
       }
     }
-    
+    //Conditional rendering to check if the user is logged in 
     if (loggedIn === true) {
-      fetchTasks();
+    fetchTasks();// Fetch tasks when the component mounts or when user logs in
+  	if(taskToUpdate !== null ){//Conditional rendering to display tasks after a task is edited
+        fetchTasks();// Fetch tasks when a task is updated
+      }
+      else if(taskRemoved){//Conditional rendering to display tasks after a task is removed
+        fetchTasks(); // Fetch tasks when a task is removed
+      }    
+      else if(taskAdded){//Conditional rendering to display tasks after a task is added
+        fetchTasks();// Fetch tasks when a task is added
+      }
     }
-  }, [loggedIn])
-  
+  }, [loggedIn,taskToUpdate, taskRemoved, taskAdded])
+  /*Dependencies array for the */
 
   //===========REQUESTS=============
   //Function to submitLogin
@@ -111,7 +123,6 @@ export default function App() {//Export default App function component
           }
         ),
       });
-
       
       if (response.ok) {
         const data = await response.json();
@@ -120,8 +131,6 @@ export default function App() {//Export default App function component
         localStorage.setItem('token', data.token);
         localStorage.setItem('loggedIn', true); 
 
-
-        
         setLoggedIn(true);
         setError('');
         setUserData({username: ' ', password: ' '})
@@ -197,6 +206,7 @@ export default function App() {//Export default App function component
 
       if (response.ok) {
         console.log('Task added successfully');
+        setTaskAdded
         console.log(tasks);
       }
       else {
@@ -248,10 +258,9 @@ export default function App() {//Export default App function component
       setNewTitle('');
 
       setLoggedIn(true)
-
-
       console.log('Task successfully updated');
       console.log(tasks);
+      setTaskRemoved
 
     } catch (error) {
       console.error('Error updating task', error.message);
