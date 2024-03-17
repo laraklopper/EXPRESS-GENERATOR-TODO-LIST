@@ -13,6 +13,7 @@ export default function Header(//Export default Header function component
     //=======JSX RENDERING=========
 
   return (
+    {/* Header */}
     <header id='header'>
         <Row>
             <Col>
