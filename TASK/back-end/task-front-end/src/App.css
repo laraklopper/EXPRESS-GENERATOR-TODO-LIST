@@ -1,0 +1,163 @@
+body{
+  background-color: #2e3e0f;
+}
+/* App Container */
+.appContainer{
+  margin: 0px;
+  padding: 0px;
+  display: grid;
+  background-color: darkolivegreen;
+}
+#root{
+  display: flex;
+  justify-content: center;
+  margin: 0px;
+  padding: 0px;
+background-color: #2e3e0f;
+}
+/* Header */
+#header{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  padding: 10px;
+  background-color: olivedrab;
+}
+/* Section 1 */
+.section1{
+  margin-left: 0px;
+  margin-right: 0px;
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+}
+/* section2 */
+.section2 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #89a84b ;
+}
+.labelText{
+  font-weight: bold;
+}
+/* section3 */
+.section3{
+  margin-top: 10px;
+  margin-bottom: 15px;
+  margin-left: 0px;
+  margin-right: 0px;
+  background-color: darkkhaki;
+  padding: 10px;
+
+}
+/* Login Page */
+#loginPage{
+  display: block;
+  margin: 10px;
+  padding: 15px;
+}
+#loginForm{
+  display: block;
+  padding: 10px;
+  background-color: gray;
+  border-color: black;
+  border-style: solid;
+  margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+.loginCol {
+  display: flex;
+  align-items: baseline;
+}
+
+.loginLabel {
+  display: flex;
+  align-items: baseline;
+  font-weight: bold;
+}
+
+.loginInput{
+  margin-left: 10px;
+}
+/* Registration Page */
+#registrationPage{
+  display: block;
+  margin: 10px;
+  padding: 10px;
+}
+#registrationForm{
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  
+  background-color: gray;
+ border-color: black;
+    
+      border-style: solid;
+}
+.regisLabel {
+  display: flex;
+  align-items: baseline;
+}
+.regisInput{
+  margin-left: 10px;
+}
+.h1{
+  text-align: center;
+  font-family: cursive;
+  font-weight: bold;
+  font-size: 34px;
+}
+.h3{
+  text-align: center;
+  font-weight: bold;
+}
+.row{
+  text-align: center;
+}
+
+
+/* TASK FORM */
+#form{
+  padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
+  
+    background-color: gray;
+    border-color: black;
+  
+    border-style: solid;
+}
+.formLabel{
+  display: flex;
+  align-items: baseline;
+
+}
+.formInput{
+  margin-left: 10px;
+}
+/* Output */
+.output{
+      display: flex;
+        flex-direction: row;
+        margin: 0px;
+}
+.userLabel{
+  font-weight: bold;
+}
+.taskLabel{
+  font-weight: bold;
+}
+.outputBtns{
+  display: flex;
+  justify-content: center;
+}
