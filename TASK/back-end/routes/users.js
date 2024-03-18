@@ -7,11 +7,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel'); // Import the User model
 const Task = require('../models/taskModel'); // Import the Task model
 const cors = require('cors'); //Import Cross-Origin Resource Sharing middleware
-/*/ const {
-  validateUsername, 
-  checkJwtToken, 
-  limitTaskLength, 
-  enforceContentType} = require('./middleware');//Import middleware functions*/
+//Import custom middleware
+const { checkJwtToken, validateUsername, validateTask, validateUpdatedTask} = require ('./middleware')
 
 //==========MIDDLEWARE===========
 router.use(express.json()); // Parse incoming request bodies in JSON format
@@ -25,7 +22,7 @@ router.get('/', function (req, res, next) {
 });
 
 // Route to handle GET requests to fetch all tasks 
-router.get('/findTasks',/*checkJwtToken*/ async(req, res) => {
+router.get('/findTasks',checkJwtToken, async(req, res) => {
   try {
     const tasks = await Task.find({})
 
@@ -80,7 +77,7 @@ router.post('/login', async (req, res) => {
 
 
 //Route to send a POST request the register endpoint
-router.post('/register',/*validateUsername*/ async(req, res) => {
+router.post('/register', validateUsername, async(req, res) => {
   //Debugging
   console.log(req.body);
   console.log('user register'); 
@@ -115,7 +112,7 @@ router.post('/register',/*validateUsername*/ async(req, res) => {
 
 
 //Route to send a POST request to the /addTask endpoint
-router.post('/addTask', /*limitTaskLength, enforceContentType,*/ async (req, res) => {
+router.post('/addTask', validateTask, async (req, res) => {
   // Debugging
   console.log(req.body);
   console.log('add Task');
@@ -151,7 +148,7 @@ router.post('/addTask', /*limitTaskLength, enforceContentType,*/ async (req, res
 
 
 // Route to send a PUT request to the edit task endpoint
-router.put('/editTask/:_id', async (req, res) => {
+router.put('/editTask/:_id', validateUpdatedTask, async (req, res) => {
 
   console.log(req.body);
   console.log('editing task');  
