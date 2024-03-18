@@ -1,95 +1,72 @@
 // Import the 'jsonwebtoken' library for handling JSON Web Tokens
 const jwt = require('jsonwebtoken');
 
+
+//------------------FINDTASKS ENDPOINT-------------------
+
 // Middleware function to authenticate requests using JWT token
 const authenticationToken = (req, res, next) => {
     // Extract the Authorization header from the request
     const authHeader = req.headers.authorization;
 
+    // Extract the token from the Authorization header
     const token = authHeader && authHeader.split(' ')[1];
+    //Conditional rendering to check if the token is missing
     if (!token) {
-        return res.status(401).json({ 
-            message: 'Token missing in request header' 
-        });
-    }
-    // Verify the token
-    jwt.verify(token, 'secretKey', (err, decoded) => {
-        if (err) {           
-            return res.status(401).json({ 
-                message: 'Invalid token or expired token' 
-            });
-        }
-        req.decoded = decoded;
-
-        next();// Call the next middleware function
-    });
-};
-
-// // Middleware function for user authentication
-// const authenticateUser = (req, res, next) => {
-//     try {
-//         const token = req.headers.authorization.split(' ')[1];
-//         req.body.username = jwt.verify(token, "secretKey");
-
-//         // req.body.username = jwt.verify(token, tokenSecret);
-//         next();
-//     }
-//     catch (error) {
-//         res.status(401).json({ message: 'Authentication failed' });
-//     }
-// }
-
-// Middleware function to verify JWT token
-const verificationToken = (req, res, next) => {
-    // Extract the token from the request body, query parameters, or headers
-    const token = req.body.token || req.query.token || req.headers['authorization'];
-
-    if (!token) {
+        // If token is missing, return a 401 Unauthorized response
         return res.status(401).json({
-            success: false,
-            message: 'No token provided.'
+            message: 'Token missing in request header'
         });
     }
-
-    // Verify the token
+    // Verify the token using the provided secret key
     jwt.verify(token, 'secretKey', (err, decoded) => {
-        /*jwt.verify(token, 'secretKey', callback) verifies the provided JWT token 
-        (token) using the specified secret key ('secretKey'). If the token is successfully verified, 
-        the callback function is invoked with two arguments: err (an error object) and 
-        decoded (the decoded token payload)*/
+        // Conditional rendering to check if there's an error during token verification
         if (err) {
-            return res.status(403).send({
-                success: false,
-                message: 'Failed to authenticate.'
-            });
+            //Conditional rendering to check if error is due to an expired token
+            if (err.name === 'TokenExpiredError') {
+                return res.status(401).json({
+                    message: 'Expired'
+                })
+            } 
+            else {//Contitional rendering to check if the error is due to invalid or expired token
+                return res.status(401).json({
+                    message: 'Invalid token or expired token'
+                })
+            };
         }
-        req.decoded = decoded;
-        /*If the token is successfully verified, the 'decoded' parameter contains the 
-        decoded token payload. Access the decoded token payload and perform further 
-        actions if needed.*/
+        req.decoded = decoded;// If token is successfully verified, attach the decoded token to the request object
         next();// Call the next middleware function
     });
 };
+
+
 
 //Middleware function to check and verify a JWT token from the 'token' header
 const checkJwtToken = (req, res, next) => {
     if (req.headers.token) {
         // If the 'token' header exists, extract the token
-        let token = req.headers.token;
+        let tokenHeader = req.headers.authorization;
+        const token = tokenHeader.split(' ')[1]// Extract token without 'Bearer' prefix
+
         // Verify the token
-        jwt.verify(token, 'secretKey', function (error, decoded) {
+        jwt.verify(token, 
+                   'secretKey', 
+                   function (error, decoded) {
+            //Conditional rendering to check if there is an error during token verification
             if (error) {
-                // Log the error and return a 401 Unauthorized response with a message
+                
+                /* If there is an error during token verification log the error and 
+                return a 401 Unauthorized response with a message*/
                 console.error('Invalid Token', error.message);
                 return res.status(401).json({ 
                     message: 'Invalid Token' 
                 });
             } 
             else {
-                /*/ If token verification succeeds, extract username
+                /* If token verification succeeds, extract username
                  and userId from the decoded token*/
                 const { username, userId } = decoded;
-
+                // Attach username and userId to the request object for further use
                 req.username = username;
                 req.userId = userId;
                               
@@ -104,41 +81,127 @@ const checkJwtToken = (req, res, next) => {
     }
 };
 
+// Middleware function to verify JWT token
+const verificationToken = (req, res, next) => {
+    
+    const tokenHeader = req.headers.authorization;// Extract the token from the 'authorization' header
+     // Conditional rendering to check if the 'authorization' header exists
+    if (!tokenHeader) {
+        return res.status(401).json({
+            success: false,
+            message: 'No token provided.'
+        });
+    }
+    
+    // Extract the token without 'Bearer' prefix
+    const token = tokenHeader.split(' ')[1]; // Split the header and get the token part without 'Bearer'
+    // Verify the token
+    jwt.verify(token, 'secretKey', (err, decoded) => {
+     /*jwt.verify(token, 'secretKey', callback) verifies the provided JWT token 
+        (token) using the specified secret key ('secretKey'). If the token is successfully verified, 
+        the callback function is invoked with two arguments: err (an error object) and 
+        decoded (the decoded token payload)*/
+
+        // Conditional rendering to check if there is an error during token verification
+        if (err) {
+            /*Return a 403 Forbidden status response indicating failed authentication*/
+            return res.status(403).send({
+                success: false,
+                message: 'Failed to authenticate.'
+            });
+        }
+        req.decoded = decoded;       
+    /*If the token is successfully verified, attach the decoded token to the request object.
+    The 'decoded' parameter contains the decoded token payload.*/
+        next();// Call the next middleware function
+    });
+};
+
+
+//------------LOGIN ENDPOINT----------------------------
+
+// Middleware function for user authentication
+// const authenticateUser = (req, res, next) => {
+//     try {
+//         // Extract the token from the 'Authorization' header
+//         const token = req.headers.authorization.split(' ')[1];
+//         req.body.username = jwt.verify(token, "secretKey");// Verify the token and extract the username
+
+
+//         next();// Call the next middleware function
+//     }
+//     catch (error) {
+//         /* If an error occurs during token verification, return a 
+//         401 Unauthorized response indicating authentication failure*/
+//         res.status(401).json({ message: 'Authentication failed' });
+//     }
+// }
+
+// ----------------REGISTER ENDPOINT-------------------
+
 //Middleware function to check if the new username provided is valid
 const validateUsername = async (req, res, next) => {
     try {
-        const { username } = req.body;//Extract the newUsername from the requestBody 
-        console.log("Username:", username);
-
+        const { username } = req.body;//Extract the newUsername from the request Body 
+        console.log("Username:", username);// Log the extracted username for debugging purposes
+        
+        // Conditional rendering to check if the username is missing or does not end with '@gmail.com'
         if (!username || !username.endsWith('@gmail.com')) {
+            // If the username is invalid, return a 403 Forbidden response
             return res.status(403).json({ 
                 message: 'Access Forbidden: Invalid Username' 
             });
         }   
 
-
+        // Conditional rendering to check if the username already exists in the database
         const existingUser = await User.findOne({ username: username });
         if (existingUser) {
+            // If the username already exists, return a 400 Bad Request response
             return res.status(400).json({ message: 'Username already exists' });
         }
-        next();// If all conditions pass, call next middleware function
+        next();// If all conditions pass, call the next middleware function
     } 
-    catch (error) {
-        //Log an error message in the console for debugging purposes
-        console.error(error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+    catch (error) {        
+        console.error(error);//Log an error message in the console for debugging purposes
+        return res.status(500).json({ message: 'Internal Server Error' });// Return a 500 Internal Server Error response
     }  
-
-    
 };
+
+//-------------------ADDTASK ENDPOINT---------------------------------
+// Custom middleware to enforce JSON content type and limit task length
+function validateTask(req, res, next) {
+    // Extract the value of 'Content-Type' header
+  const contentType = req.headers['content-type'];
+    
+  // Conditiontional rendering to check if content type is JSON
+  if (!contentType || contentType !== 'application/json') {
+    return res.status(400).json({ message: 'Content-Type must be application/json' });
+  }
+
+  const { user, title } = req.body;// Extract 'user' and 'title' from the request body
+
+  // Conditional rendering to check if 'user' or 'title' is missing
+  if (!user || !title) {
+          // If 'user' or 'title' is missing, return a 400 Bad Request response
+    return res.status(400).json({ message: 'User and title are required' });
+  }
+    // Conditional renderinf if task length is within limit
+  if (title.length > 140) {
+          // If the length of the 'title' exceeds 140 characters, return a 400 Bad Request response
+    return res.status(400).json({ message: 'Task title must be 140 characters or less' });
+  }
+
+  next(); // Move to the next middleware
+}
 
 //Middleware function to limit the length of the task title
 const limitTaskLength = (req, res, next) => {
     //Extract the new task title from the request body
     const { newTask } = req.body;
-    const maxLength = 140;
-
+    const maxLength = 140;//Maximumum length
+// Conditional rendering to check if the new task title exceeds the maximum length
     if (newTask && newTask.length > maxLength) {
+    // If the title exceeds the maximum length, return a 400 Bad Request response
         return res.status(400).json({
             message: `Task title exceeds the maximum length of ${maxLength} characters.`,
         });
@@ -152,8 +215,10 @@ const limitTaskLength = (req, res, next) => {
 const enforceContentType = (req, res, next) => {
     // Extract the value of 'Content-Type' header
     const contentType = req.headers['content-type']; 
+    // Conditional rendering if the 'Content-Type' header is missing or not 'application/json'
 
     if (!contentType || contentType !== 'application/json') {
+        // If the 'Content-Type' is missing or not 'application/json', return a 415 Unsupported Media Type response
         return res.status(415).json(
           { message: 'Unsupported Media Type: Content-Type must be application/json'}
         );
@@ -162,17 +227,25 @@ const enforceContentType = (req, res, next) => {
     next(); // Call the next middleware or route handler
 };
 
-const limitUpdatedTaskLength = (req, res, next) => {
-    const { updatedTitle } = req.body;
-    const maxLength = 140;
+//------------EDITTASK ENDPOINT--------------------
 
+/Custom middleware to limit the updated title length 
+const limitUpdatedTaskLength = (req, res, next) => {
+    // Extract the updated task title from the request body
+    const { updatedTitle } = req.body;
+    const maxLength = 140;//Maximum length
+    
+    // Conditional rendering if the updated task title exceeds the maximum length
     if (updatedTitle && updatedTitle.length > maxLength) {
+        // If the title exceeds the maximum length, return a 400 Bad Request response
         return res.status(400).json({
             message: `The updatedTitle exceeds the maximum length of ${maxLength} characters.`,
         });
     }
-    next();
+    next();// Call the next middleware or route handler
 }
+
+
 // Export the middleware functions for use in other parts of the application
 module.exports = {
     authenticationToken,
@@ -183,4 +256,5 @@ module.exports = {
     enforceContentType,
     verificationToken,
     limitUpdatedTaskLength,
+    validateTask
 }
