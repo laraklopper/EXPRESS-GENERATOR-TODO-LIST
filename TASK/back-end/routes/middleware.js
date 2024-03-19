@@ -46,21 +46,18 @@ const checkJwtToken = (req, res, next) => {
     if (req.headers.token) {
         // If the 'token' header exists, extract the token
         let tokenHeader = req.headers.authorization;
-        const token = tokenHeader.split(' ')[1]// Extract token without 'Bearer' prefix
+        // const token = tokenHeader.split(' ')[1]// Extract token without 'Bearer' prefix
 
         // Verify the token
-        jwt.verify(token, 
-                   'secretKey', 
-                   function (error, decoded) {
+        jwt.verify(token, 'secretKey', function (error, decoded) {
             //Conditional rendering to check if there is an error during token verification
             if (error) {
                 
+                
+                console.error('Invalid Token', error.message);//Log an error message in the console for debugging purposes
                 /* If there is an error during token verification log the error and 
                 return a 401 Unauthorized response with a message*/
-                console.error('Invalid Token', error.message);
-                return res.status(401).json({ 
-                    message: 'Invalid Token' 
-                });
+                return res.status(401).json({message: 'Invalid Token' });
             } 
             else {
                 /* If token verification succeeds, extract username
@@ -74,97 +71,33 @@ const checkJwtToken = (req, res, next) => {
             }
         });
     } else {
-        console.error('No token attached to the request');
-        return res.status(401).json({ 
-            message: 'No Token Attached to the Request' 
-        })
+        console.error('No token attached to the request');//Log an error message in the console for debugging purposes
+        return res.status(401).json({message: 'No Token Attached to the Request'});
     }
 };
-
-// Middleware function to verify JWT token
-const verificationToken = (req, res, next) => {
-    
-    const tokenHeader = req.headers.authorization;// Extract the token from the 'authorization' header
-     // Conditional rendering to check if the 'authorization' header exists
-    if (!tokenHeader) {
-        return res.status(401).json({
-            success: false,
-            message: 'No token provided.'
-        });
-    }
-    
-    // Extract the token without 'Bearer' prefix
-    const token = tokenHeader.split(' ')[1]; // Split the header and get the token part without 'Bearer'
-    // Verify the token
-    jwt.verify(token, 'secretKey', (err, decoded) => {
-     /*jwt.verify(token, 'secretKey', callback) verifies the provided JWT token 
-        (token) using the specified secret key ('secretKey'). If the token is successfully verified, 
-        the callback function is invoked with two arguments: err (an error object) and 
-        decoded (the decoded token payload)*/
-
-        // Conditional rendering to check if there is an error during token verification
-        if (err) {
-            /*Return a 403 Forbidden status response indicating failed authentication*/
-            return res.status(403).send({
-                success: false,
-                message: 'Failed to authenticate.'
-            });
-        }
-        req.decoded = decoded;       
-    /*If the token is successfully verified, attach the decoded token to the request object.
-    The 'decoded' parameter contains the decoded token payload.*/
-        next();// Call the next middleware function
-    });
-};
-
-
-//------------LOGIN ENDPOINT----------------------------
-
-// Middleware function for user authentication
-// const authenticateUser = (req, res, next) => {
-//     try {
-//         // Extract the token from the 'Authorization' header
-//         const token = req.headers.authorization.split(' ')[1];
-//         req.body.username = jwt.verify(token, "secretKey");// Verify the token and extract the username
-
-
-//         next();// Call the next middleware function
-//     }
-//     catch (error) {
-//         /* If an error occurs during token verification, return a 
-//         401 Unauthorized response indicating authentication failure*/
-//         res.status(401).json({ message: 'Authentication failed' });
-//     }
-// }
 
 // ----------------REGISTER ENDPOINT-------------------
 
 //Middleware function to check if the new username provided is valid
 const validateUsername = async (req, res, next) => {
     try {
-        const { username } = req.body;//Extract the newUsername from the request Body 
+        const { username } = req.body;//Extract the newUsername from the requestBody 
         console.log("Username:", username);// Log the extracted username for debugging purposes
-        
+
         // Conditional rendering to check if the username is missing or does not end with '@gmail.com'
         if (!username || !username.endsWith('@gmail.com')) {
+            
+            console.error('Access Forbidden: Invalid Username');//Log an error message in the console for debugging purposes
             // If the username is invalid, return a 403 Forbidden response
-            return res.status(403).json({ 
-                message: 'Access Forbidden: Invalid Username' 
-            });
+            return res.status(403).json({ message: 'Access Forbidden: Invalid Username'});
+            
         }   
-
-        // Conditional rendering to check if the username already exists in the database
-        const existingUser = await User.findOne({ username: username });
-        if (existingUser) {
-            // If the username already exists, return a 400 Bad Request response
-            return res.status(400).json({ message: 'Username already exists' });
-        }
-        next();// If all conditions pass, call the next middleware function
+        next();// If all conditions pass, call next middleware function
     } 
-    catch (error) {        
-        console.error(error);//Log an error message in the console for debugging purposes
+    catch (error) {
+        console.error(`Error validating username`, error.message);//Log an error message in the console for debugging purposes
         return res.status(500).json({ message: 'Internal Server Error' });// Return a 500 Internal Server Error response
-    }  
+    }     
 };
 
 //-------------------ADDTASK ENDPOINT---------------------------------
