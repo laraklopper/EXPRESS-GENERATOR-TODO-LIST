@@ -1,19 +1,19 @@
 // Import necessary modules and packages
-import React, { useEffect, useState } from 'react';
-import './App.css'
+import React, { useEffect, useState } from 'react';// Import the React module to use React functionalities
+import './App.css';//Import CSS stylesheet
 //Bootstrap
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container'; // Import the Container component from react-bootstrap
+import Row from 'react-bootstrap/Row'; // Import the Row component from react-bootstrap
+import Col from 'react-bootstrap/Col'; // Import the Col component from react-bootstrap
+import Button from 'react-bootstrap/Button'; // Import the Button component from react-bootstrap
 //Components
-import Header from './components/Header'; 
-import ToggleBtn from './components/ToggleBtn';
-import LogoutBtn from './components/LogoutBtn';
-import Login from './components/Login';
-import Registration from './components/Registration';
-import AddTask from './components/AddTask'; 
-import UpdateForm from './components/UpdateForm'
+import Header from './components/Header';// Import the Header component from './components/Header'
+import ToggleBtn from './components/ToggleBtn';// Import the ToggleBtn component from './components/ToggleBtn'
+import LogoutBtn from './components/LogoutBtn';// Import the LogoutBtn component from './components/LogoutBtn'
+import Login from './components/Login';// Import the Login function component from './components/Login'
+import Registration from './components/Registration';// Import the Registration component from './components/Registration'
+import AddTask from './components/AddTask'; // Import the AddTask component from './components/AddTask'
+import UpdateForm from './components/UpdateForm';//Import the UpdateForm component from './components/UpdateForm'
 
 //App function component
 export default function App() {//Export default App function component
@@ -63,29 +63,30 @@ export default function App() {//Export default App function component
           method: 'GET',
           mode: 'cors',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': token 
+            'Content-Type': 'application/json',// Specify the Content-Type being sent in the request payload.
+            'Authorization': token //Add the Authorization header containing the JWT token
           }
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch tasks');
+          throw new Error('Failed to fetch tasks');//Throw an error message if GET request is unsuccessful
         }
         const fetchedData = await response.json();
 
         
         if (fetchedData && fetchedData.tasks) {
-          setTasks(fetchedData.tasks);
-          console.log(fetchedData);
+          setTasks(fetchedData.tasks);// Update the tasks state with the fetched tasks
+          console.log(fetchedData);//Log the fetched data in the console for debugging purpose
         } 
         else {
-          throw new Error('Task data is missing in the response');
+          throw new Error('Task data is missing in the response');// Throw an error if tasks data is missing in the response
         }
         
       } 
       catch (error) {
-        setError(`Error fetching tasks: ${error.message}`);
-        console.error(`Error fetching tasks: ${error.message}`); 
+        setError(`Error fetching tasks: ${error.message}`);// Set error message in the error state
+        console.error(`Error fetching tasks: ${error.message}`); //Log an error message in the console for debugging purposes
+      }
       }
     }
     //Conditional rendering to check if the user is logged in 
@@ -108,6 +109,7 @@ export default function App() {//Export default App function component
   //Function to submitLogin
   const submitLogin = async (e) => {//Define an async function to submitLogin
     e.preventDefault();
+    // console.log('user logged in');
     try {
       // Send a POST request to the server for user login
       const response = await fetch ('http://localhost:3001/users/login', {
