@@ -3,81 +3,34 @@ const jwt = require('jsonwebtoken');
 
 
 //------------------FINDTASKS ENDPOINT-------------------
-
-// Middleware function to authenticate requests using JWT token
-const authenticationToken = (req, res, next) => {
-    // Extract the Authorization header from the request
-    const authHeader = req.headers.authorization;
-
-    // Extract the token from the Authorization header
-    const token = authHeader && authHeader.split(' ')[1];
-    //Conditional rendering to check if the token is missing
-    if (!token) {
-        // If token is missing, return a 401 Unauthorized response
-        return res.status(401).json({
-            message: 'Token missing in request header'
-        });
-    }
-    // Verify the token using the provided secret key
-    jwt.verify(token, 'secretKey', (err, decoded) => {
-        // Conditional rendering to check if there's an error during token verification
-        if (err) {
-            //Conditional rendering to check if error is due to an expired token
-            if (err.name === 'TokenExpiredError') {
-                return res.status(401).json({
-                    message: 'Expired'
-                })
-            } 
-            else {//Contitional rendering to check if the error is due to invalid or expired token
-                return res.status(401).json({
-                    message: 'Invalid token or expired token'
-                })
-            };
-        }
-        req.decoded = decoded;// If token is successfully verified, attach the decoded token to the request object
-        next();// Call the next middleware function
-    });
-};
-
-
-
 //Middleware function to check and verify a JWT token from the 'token' header
 const checkJwtToken = (req, res, next) => {
-    if (req.headers.token) {
-        // If the 'token' header exists, extract the token
-        let tokenHeader = req.headers.authorization;
-        // const token = tokenHeader.split(' ')[1]// Extract token without 'Bearer' prefix
-
-        // Verify the token
-        jwt.verify(token, 'secretKey', function (error, decoded) {
-            //Conditional rendering to check if there is an error during token verification
-            if (error) {
-                
-                
-                console.error('Invalid Token', error.message);//Log an error message in the console for debugging purposes
-                /* If there is an error during token verification log the error and 
-                return a 401 Unauthorized response with a message*/
-                return res.status(401).json({message: 'Invalid Token' });
-            } 
-            else {
-                /* If token verification succeeds, extract username
-                 and userId from the decoded token*/
-                const { username, userId } = decoded;
-                // Attach username and userId to the request object for further use
-                req.username = username;
-                req.userId = userId;
-                              
-                next(); // Call the next middleware function in the chain
-            }
-        });
-    } else {
-        console.error('No token attached to the request');//Log an error message in the console for debugging purposes
-        return res.status(401).json({message: 'No Token Attached to the Request'});
+    const token = req.headers.authorization; // Extract token from request headers
+    // Conditional rendering to check if token is missing
+    if (!token) {
+       // If token is missing, return a 401 Unauthorized response with an error message
+        return res.status(401).json({ message: 'Unauthorized: Token missing' });
     }
+    try {
+        // Verify the token
+        const decoded = jwt.verify(token, 'secretKey');
+       /* If the token is present, it attempts to verify it using the jwt.verify method provided by the 
+       jsonwebtoken library. This method decodes and verifies the token's signature and expiration.*/
+        req.user =decoded  // if verification is successfulAttach decoded user information to the request object
+        console.log('Token provided');// Log a message in the console indicating that a token was provided
+        next()// Call the next middleware in the chain
+    } 
+    catch (error) {
+        console.error('No token attached to the request');//Log an error message in the console for debugging purposes
+        return res.status(403).json({ message: 'Forbidden: Invalid token' });//return a 403 Forbidden response with an error message
+    }
+};
+
 };
 
 // ----------------REGISTER ENDPOINT-------------------
 
+//Middleware function to check if the new username provided is valid
 //Middleware function to check if the new username provided is valid
 const validateUsername = async (req, res, next) => {
     try {
@@ -100,11 +53,17 @@ const validateUsername = async (req, res, next) => {
     }     
 };
 
+    catch (error) {
+        console.error(`Error validating username`, error.message);//Log an error message in the console for debugging purposes
+        return res.status(500).json({ message: 'Internal Server Error' });// Return a 500 Internal Server Error response
+    }     
+};
+
 //-------------------ADDTASK ENDPOINT---------------------------------
 // Custom middleware to enforce JSON content type and limit task length
 function validateTask(req, res, next) {
-    // Extract the value of 'Content-Type' header
-  const contentType = req.headers['content-type'];
+  const contentType = req.headers['content-type'];// Extract the value of 'Content-Type' header
+
     
   // Conditiontional rendering to check if content type is JSON
   if (!contentType || contentType !== 'application/json') {
@@ -127,67 +86,60 @@ function validateTask(req, res, next) {
   next(); // Move to the next middleware
 }
 
-//Middleware function to limit the length of the task title
-const limitTaskLength = (req, res, next) => {
-    //Extract the new task title from the request body
-    const { newTask } = req.body;
-    const maxLength = 140;//Maximumum length
-// Conditional rendering to check if the new task title exceeds the maximum length
-    if (newTask && newTask.length > maxLength) {
-    // If the title exceeds the maximum length, return a 400 Bad Request response
-        return res.status(400).json({
-            message: `Task title exceeds the maximum length of ${maxLength} characters.`,
-        });
-    }
-
-    next();// Call the next middleware or route handler
-}
-
-
-//Middleware to enforce the content-type header to be application/json
-const enforceContentType = (req, res, next) => {
+// Custom middleware to enforce JSON content type and limit task length
+function validateTask(req, res, next) {
     // Extract the value of 'Content-Type' header
-    const contentType = req.headers['content-type']; 
-    // Conditional rendering if the 'Content-Type' header is missing or not 'application/json'
-
+    const contentType = req.headers['content-type'];
+    // Conditional rendering to check if 'Content-Type' header is missing or not 'application/json'
     if (!contentType || contentType !== 'application/json') {
-        // If the 'Content-Type' is missing or not 'application/json', return a 415 Unsupported Media Type response
-        return res.status(415).json(
-          { message: 'Unsupported Media Type: Content-Type must be application/json'}
-        );
+        return res.status(400).json({ message: 'Content-Type must be application/json' });
+    }
+    const { user, title } = req.body; // Extract user and title from request body
+    
+    //Conditional rendering to check if the user or title is missing
+    if (!user || !title) {
+        // If 'user' or 'title' is missing, return a 400 Bad Request response
+        return res.status(400).json({ message: 'User and title are required' });
+    }
+    //Conditional rendering to check if the title exceeds 140 characters
+    if (title.length > 140) {
+        // If the length of the 'title' exceeds 140 characters, return a 400 Bad Request response
+        return res.status(400).json({ message: 'Task title must be 140 characters or less' });
     }
 
-    next(); // Call the next middleware or route handler
-};
-
+    next(); // Move to the next middleware
+}
 //------------EDITTASK ENDPOINT--------------------
 
-/Custom middleware to limit the updated title length 
-const limitUpdatedTaskLength = (req, res, next) => {
-    // Extract the updated task title from the request body
-    const { updatedTitle } = req.body;
-    const maxLength = 140;//Maximum length
-    
-    // Conditional rendering if the updated task title exceeds the maximum length
-    if (updatedTitle && updatedTitle.length > maxLength) {
-        // If the title exceeds the maximum length, return a 400 Bad Request response
-        return res.status(400).json({
-            message: `The updatedTitle exceeds the maximum length of ${maxLength} characters.`,
-        });
-    }
-    next();// Call the next middleware or route handler
-}
+// Custom middleware to enforce JSON content type and limit task length of an edited task
+const validateUpdatedTask = (req, res, next) => {
+    const contentType = req.headers['content-type'];//Extract the value of the 'Content-Type' header from the request headers 
+    //Conditional rendering to checks if the 'Content-Type' header is missing or not set to 'application/json'
+    if (!contentType || contentType !== 'application/json') {
 
+        return res.status(400).json({ message: 'Content-Type must be application/json' });
+    }
+    // console.log(req.body);
+    const { newUser, newTitle } = req.body// Extract newUser and newTitle from request body
+
+    // Conditional rendering to check the if newUser or newTitle is missing
+    if (!newUser || !newTitle) {
+        // If 'newUser' or 'newTitle' is missing, return a 400 Bad Request response
+        return res.status(400).json({ message: 'User and title are required' });
+    }
+    //Conditional rendering to check if the newTitle length exceedes 140 characters
+    if (newTitle.length > 140) {
+        // If the length of the 'newTitle' exceeds 140 characters, return a 400 Bad Request response
+        return res.status(400).json({ message: 'Task title must be 140 characters or less' });
+    }
+    next(); // Move to the next middleware
+
+}
 
 // Export the middleware functions for use in other parts of the application
 module.exports = {
-    authenticationToken,
     checkJwtToken,
-    // authenticateUser,
     validateUsername,
-    limitTaskLength,
-    enforceContentType,
-    verificationToken,
-    limitUpdatedTaskLength,
-    validateTask
+    validateTask,
+    validateUpdatedTask,
 }
