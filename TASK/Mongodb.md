@@ -22,6 +22,7 @@
 ```
 
 #### users
+
 1. 
 ```json
 {
@@ -51,48 +52,6 @@
 ```
 
 3. 
-```json
-{
-  "_id": {
-    "$oid": "65f15495176aa87b8b1c29f4"
-  },
-  "username": "user2@gmail.com",
-  "password": "password3",
-  "__v": {
-    "$numberInt": "0"
-  }
-}
-```
-
-4. 
-```json
-{
-  "_id": {
-    "$oid": "65f46112c5e9f5330367c6ae"
-  },
-  "username": "sammy@gmail.com",
-  "password": "password123",
-  "__v": {
-    "$numberInt": "0"
-  }
-}
-```
-
-5. 
-```json
-{
-  "_id": {
-    "$oid": "65f84e150fc28731dd4d67b9"
-  },
-  "username": "user5@gmail.com",
-  "password": "passwor",
-  "__v": {
-    "$numberInt": "0"
-  }
-}
-```
-
-6. 
 ```json
 {
   "_id": {
