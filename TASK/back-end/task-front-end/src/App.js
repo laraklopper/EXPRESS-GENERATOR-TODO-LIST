@@ -103,7 +103,8 @@ export default function App() {//Export default App function component
       }
     }
   }, [loggedIn,taskToUpdate, taskRemoved, taskAdded])
-  /*Dependencies array for the */
+  /*Dependency array to specify
+  that the effect should re-run whenever any of these dependencies change.*/
 
   //===========REQUESTS=============
   //Function to submitLogin
