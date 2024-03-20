@@ -1,3 +1,62 @@
-# READ ME
+# EXPRESS 3 
 
-![image](https://github.com/laraklopper/EXPRESS-3/assets/135839853/34faefa5-c9f8-4a4a-b548-06cf51edee80)
+## TABLE OF CONTENTS
+1. [BACK-END](#back-end)
+2. [FRONT-END](#front-end)
+3. [MONGODB](#mongodb)
+4. [CRUD](#crud)
+   
+## BACK-END
+- npx express-generator
+- npm install nodemon
+- npm install jsonwebtoken
+- npm install cors
+- npm install body-parser
+## FRONT-END
+- npx create-react-app front-end
+- npm install react-bootstrap bootstrap
+
+## MONGODB
+- npm install dotenv
+- npm install mongoose
+
+```
+//==============CONNECT TO MONGODB USING MONGOOSE=======================
+mongoose.Promise = global.Promise;
+
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  dbName: database,
+})
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((err) => {
+    console.error('Error connecting to MongoDB', err); 
+  });
+
+//==============MONGO CONNECTION EVENT HANDLERS========================
+// Set up an event listener for the 'error' event on the Mongoose connection 
+// Function executed when there is an error in the MongoDB connection
+mongoose.connection.on('error', function (error) {
+  console.log('Could not connect to the database. Exiting now...', error);
+  process.exit(1);
+});
+
+// Set up an event listener for the 'open' event on the Mongoose connection
+// Function executed when the MongoDB connection is successfully open
+mongoose.connection.once('open', function () {
+  console.log('Successfully connected to database');
+});
+```
+
+## CRUD
+
+| CRUD Operation | HTTP Method | Description                               |
+|----------------|-------------|-------------------------------------------|
+| Create         | POST        | Create a new resource                     |
+| Read           | GET         | Retrieve existing resource(s)             |
+| Update         | PUT         | Modify an existing resource               |
+| Delete         | DELETE      | Remove an existing resource               |
+
+
