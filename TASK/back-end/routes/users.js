@@ -17,17 +17,18 @@ router.use(cors()); //Enable Cross-Origin Resource sharing
 
 //========ROUTES=============
 // Route to handle GET requests to the base root path '/' to get users from database
-// router.get('/', async (req, res, next) => {
-//   try {
-//     const users = await User.find({})
-
-//     console.log(users);
-//     res.status(200).json(users);
-//   } catch (error) {
-//     console.error('Error fetching users', error.message);
-//     res.status(500).json({ message: 'Internal server Error' })
-//   }
-// });
+/* router.get('/', async (req, res, next) => {
+     try {
+       const users = await User.find({})
+  
+       console.log(users);
+       res.status(200).json(users);
+     } 
+     catch (error) {
+       console.error('Error fetching users', error.message);
+       res.status(500).json({ message: 'Internal server Error' })
+     }
+ });*/
 
 
 // Route to handle GET requests to fetch all tasks 
