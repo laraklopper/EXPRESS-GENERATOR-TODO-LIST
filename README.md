@@ -1,10 +1,13 @@
-# EXPRESS 3 
+# TODO LIST
+
+MERN Stack todoList created using Express-generator, create-react-app, MongoDB and Node.js
 
 ## TABLE OF CONTENTS
 1. [BACK-END](#back-end)
 2. [FRONT-END](#front-end)
 3. [MONGODB](#mongodb)
 4. [CRUD](#crud)
+
    
 ## BACK-END
 - npx express-generator
