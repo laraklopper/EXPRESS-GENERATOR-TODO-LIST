@@ -16,6 +16,8 @@ MERN Stack todoList created using Express-generator, create-react-app, MongoDB a
 - npm install cors
 - npm install body-parser
 
+### CUSTOM MIDDLEWARE
+
 The `middleware.js` file contains custom middleware functions to:
 - check and verify a JWT token from the 'token' header 
 - check if the new username provided is valid
