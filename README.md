@@ -21,6 +21,7 @@ The `middleware.js` file contains custom middleware functions to:
 - check if the new username provided is valid
 - enforce JSON content type and limit task length
 - enforce JSON content type and limit task length of an edited task
+
 The `middleware.js` also imports the 'jsonwebtoken' library for handling JSON Web Tokens.
 
 ## FRONT-END
