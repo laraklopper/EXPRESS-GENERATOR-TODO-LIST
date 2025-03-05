@@ -15,6 +15,14 @@ MERN Stack todoList created using Express-generator, create-react-app, MongoDB a
 - npm install jsonwebtoken
 - npm install cors
 - npm install body-parser
+
+The `middleware.js` file contains custom middleware functions to:
+- check and verify a JWT token from the 'token' header 
+- check if the new username provided is valid
+- enforce JSON content type and limit task length
+- enforce JSON content type and limit task length of an edited task
+The `middleware.js` also imports the 'jsonwebtoken' library for handling JSON Web Tokens.
+
 ## FRONT-END
 - npx create-react-app front-end
 - npm install react-bootstrap bootstrap
