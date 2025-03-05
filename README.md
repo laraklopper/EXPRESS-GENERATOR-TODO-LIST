@@ -22,7 +22,7 @@ The `middleware.js` file contains custom middleware functions to:
 - enforce JSON content type and limit task length
 - enforce JSON content type and limit task length of an edited task
 
-The `middleware.js` also imports the 'jsonwebtoken' library for handling JSON Web Tokens.
+The `middleware.js` also imports the `jsonwebtoken` library for handling JSON Web Tokens.
 
 ## FRONT-END
 - npx create-react-app front-end
